@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class selectTile : MonoBehaviour {
+public class WorldManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -10,6 +10,6 @@ public class selectTile : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		Map.selectTile();
 	}
 }
