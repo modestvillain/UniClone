@@ -3,13 +3,78 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public static  class Map {
-	public static List<HexTile> tileList = new List<HexTile>();
+public class Map : MonoBehaviour {
+
+	public List<GameObject> tileList = new List<GameObject>();
+	public GameObject whiteHexTile;
+
+
+	void Start(){
+		this.createMap();
+	}
+
+	public void Update(){
+		if(this.tileList.Count> 0){
+			this.selectTile();
+		}
+	}
+
+	public void createHexTile(float i, float j, int upDown, float widthAway){
+		GameObject newT = (GameObject) Instantiate(whiteHexTile);
+		this.tileList.Add(newT);
+		HexTile hextile = newT.GetComponent<HexTile>();
+		hextile.map = this;
+		Vector2 loc = new Vector2(i,j);
+		Vector2 pos = new Vector2();
+		switch(upDown){
+		case 0:
+			pos.x = loc.x + widthAway;
+			pos.y = loc.y;
+			break;
+		case 1:
+			pos.x = loc.x + widthAway -.3f;
+			pos.y = loc.y +.3f;
+			break;
+		case -1:
+			pos.x = loc.x + widthAway- .7f;
+			pos.y = loc.y - .3f;
+			break;
+		default:
+			pos.x = loc.x + widthAway ;
+			pos.y = loc.y;
+			break;
+		}
+
+		newT.transform.position = pos;
+		hextile.location = loc;
+		hextile.setWidthAndHeight();
+	}
+
+	public void createMap(){
+
+
+		float widthAway = 0;
+		float start = -10;
+
+		//for(float j = 1.255f; j< 3; j+= 1.255f){
+		float j = 0;
+			for(float i = start; i < 10; i++){
+				this.createHexTile(i+ 1, j + 1, 1, widthAway);
+				this.createHexTile(i, j, 0, widthAway);
+			    this.createHexTile(i, j - 1, -1, widthAway);
+
+				widthAway+=.5f;
+				
+			}//for
+		//start+= widthAway/2;
+		//}//for
 
 
 
+		
+	}//method
 
-	public static void selectTile(){
+	public void selectTile(){
 		if (Input.GetMouseButtonDown(0))
 			
 		{
@@ -27,8 +92,8 @@ public static  class Map {
 					//highlight it
 					hit.collider.gameObject.SendMessage("highlight");
 
-					foreach(HexTile tile in tileList){
-						if(tile.gameObject != hit.collider.gameObject){
+					foreach(GameObject tile in tileList){
+						if(tile != hit.collider.gameObject){
 							//change to normal
 							tile.SendMessage("deselect");
 						}

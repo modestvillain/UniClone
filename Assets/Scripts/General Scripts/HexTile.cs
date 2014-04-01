@@ -6,16 +6,19 @@ public class HexTile:MonoBehaviour {
 	public Vector2 location;
 	public Sprite normalSprite;
 	public Sprite highLightSprite;
+	public Map map;
+	public int hexWidth;
+	public int hexHeight;
 
 
 
 
 	// Use this for initialization
 	void Start () {
-
-		Map.tileList.Add(this);
 	
 	}
+
+
 	
 	// Update is called once per frame
 	void Update () {
@@ -31,4 +34,13 @@ public class HexTile:MonoBehaviour {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.sprite = normalSprite;
 	}
+
+	public void setWidthAndHeight(){
+
+		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		this.hexWidth =  sr.sprite.texture.width;
+		this.hexHeight = sr.sprite.texture.height;
+	}
+
+
 }
