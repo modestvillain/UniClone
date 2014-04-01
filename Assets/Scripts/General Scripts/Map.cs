@@ -47,7 +47,7 @@ public class Map : MonoBehaviour {
 
 		newT.transform.position = pos;
 		hextile.location = loc;
-	
+		hextile.setWidthAndHeight();
 	}
 
 	public void createMap(){
