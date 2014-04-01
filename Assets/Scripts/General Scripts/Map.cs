@@ -11,15 +11,12 @@ public class Map : MonoBehaviour {
 
 	void Start(){
 		this.createMap();
-
 	}
 
 	public void Update(){
 		if(this.tileList.Count> 0){
 			this.selectTile();
 		}
-
-
 	}
 
 	public void createHexTile(float i, float j, int upDown, float widthAway){
@@ -47,7 +44,7 @@ public class Map : MonoBehaviour {
 			pos.y = loc.y;
 			break;
 		}
-		hextile.position = pos;
+
 		newT.transform.position = pos;
 		hextile.location = loc;
 		hextile.setWidthAndHeight();
