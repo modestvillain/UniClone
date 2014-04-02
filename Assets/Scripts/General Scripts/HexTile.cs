@@ -9,6 +9,7 @@ public class HexTile:MonoBehaviour {
 	public Map map;
 	public int hexWidth;
 	public int hexHeight;
+	public Vector2 position;
 
 
 
