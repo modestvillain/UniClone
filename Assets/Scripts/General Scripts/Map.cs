@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Map : MonoBehaviour {
 
-	public List<GameObject> tileList = new List<GameObject>();
+	public List<HexTile> tileList = new List<HexTile>();
 	public GameObject whiteHexTile;
 
 
@@ -24,8 +24,9 @@ public class Map : MonoBehaviour {
 
 	public void createHexTile(float i, float j, int upDown, float widthAway){
 		GameObject newT = (GameObject) Instantiate(whiteHexTile);
-		this.tileList.Add(newT);
 		HexTile hextile = newT.GetComponent<HexTile>();
+		this.tileList.Add(hextile);
+
 		hextile.map = this;
 		Vector2 loc = new Vector2(i,j);
 		Vector2 pos = new Vector2();
@@ -50,7 +51,8 @@ public class Map : MonoBehaviour {
 		hextile.position = pos;
 		newT.transform.position = pos;
 		hextile.location = loc;
-		hextile.setWidthAndHeight();
+		hextile.center = new Vector2(pos.x + .1f, pos.y + .1f);
+		//hextile.setWidthAndHeight();
 	}
 
 	public void createMap(){
@@ -95,10 +97,11 @@ public class Map : MonoBehaviour {
 					//highlight it
 					hit.collider.gameObject.SendMessage("highlight");
 
-					foreach(GameObject tile in tileList){
-						if(tile != hit.collider.gameObject){
+					foreach(HexTile tile in tileList){
+						if(tile.gameObject != hit.collider.gameObject){
 							//change to normal
-							tile.SendMessage("deselect");
+							tile.deselect();
+						
 						}
 					}//foreach
 				}//if

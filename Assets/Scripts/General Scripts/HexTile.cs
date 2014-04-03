@@ -10,13 +10,13 @@ public class HexTile:MonoBehaviour {
 	public int hexWidth;
 	public int hexHeight;
 	public Vector2 position;
-
+	public Vector2 center;
 
 
 
 	// Use this for initialization
 	void Start () {
-	
+		this.center = 
 	}
 
 
@@ -31,7 +31,7 @@ public class HexTile:MonoBehaviour {
 		sr.sprite = highLightSprite;
 	}
 
-	void deselect(){
+	public void deselect(){
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.sprite = normalSprite;
 	}

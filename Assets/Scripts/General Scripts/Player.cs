@@ -7,29 +7,24 @@ public class Player  {
 	Sprite normalSprite;
 
 
-	public Player(List<GameObject> tileList,  Sprite normalSprite){
+	public Player(List<HexTile> tileList,  Sprite normalSprite){
 		this.createPlayerInRandomLocation(tileList, normalSprite);
 	}
 
 
-	void randomSpawn(List<GameObject> tileList){
-		//int rand = Random.Range(0, tileList.Count-1);
-		//this.player.transform.position = new Vector2(tileList[rand].transform.position.x, tileList[rand].transform.position.y);
 
-	}
 
-	GameObject createPlayerInRandomLocation(List<GameObject> tileList, Sprite normalSprite){
+	GameObject createPlayerInRandomLocation(List<HexTile> tileList, Sprite normalSprite){
 		this.normalSprite = normalSprite;
-		this.player = new GameObject("player");
+		this.player = new GameObject("player");//this instantiates already
 
 		player.AddComponent("PolygonCollider2D");
 		player.AddComponent("SpriteRenderer");
-		player.GetComponent<SpriteRenderer>().sprite = normalSprite;
-		//int rand = Random.Range(0, tileList.Count -1);
-		player.transform.position = new Vector2(tileList[0].transform.position.x, tileList[0].transform.position.y);
-		Debug.Log("player pos " + player.transform.position);
-		player.AddComponent("Player");
-		GameObject.Instantiate(this.player);
+		SpriteRenderer sr = player.GetComponent<SpriteRenderer>();
+		sr.sprite = normalSprite;
+		sr.sortingOrder = 1;
+		int rand = Random.Range(0, tileList.Count -1);
+		player.transform.position = new Vector2(tileList[rand].center.x, tileList[rand].center.y);
 		return player;
 		
 	}
