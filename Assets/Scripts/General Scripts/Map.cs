@@ -129,7 +129,13 @@ public class Map : MonoBehaviour {
 			if(hit)	{
 
 				if(hit.collider.tag == "hexTile") {
-
+					foreach(HexTile tile in tileList) {
+						if(tile.gameObject != hit.collider.gameObject){
+							//change to normal
+							tile.deselect();
+							
+						}
+					}
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
 					hexScript.highlight();
 
@@ -143,24 +149,13 @@ public class Map : MonoBehaviour {
 					else {
 						if(hexScript.isOccupied()) {
 							this.worldManager.mode = WorldManager.MOVEMODE;
+							foreach(HexTile hex in hexScript.neighbors) {
+								hex.highlight();
+							}
 						}
-					}
-
-					foreach(HexTile tile in tileList) {
-						if(tile.gameObject != hit.collider.gameObject){
-							//change to normal
-							tile.deselect();
-						
-						}
-					}//foreach
-					foreach(HexTile hex in hexScript.neighbors) {
-						Debug.Log (hex.x + ", " + hex.y);
-						hex.highlight();
 					}
 				}//if
-				
 			}//if hit
 		}//if
-
 	}//method
 }//class
