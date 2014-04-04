@@ -28,7 +28,7 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	public void spawnPlayer(){
-		if(!this.playerSet && this.map.tileList.Count > 0){
+		if(!this.playerSet && !map.empty){
 			this.createPlayerInRandomLocation(this.map.tileList, playerSprite);
 			playerSet = true;
 		}

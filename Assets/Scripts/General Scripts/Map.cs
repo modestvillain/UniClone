@@ -6,23 +6,26 @@ using System.Collections.Generic;
 public class Map : MonoBehaviour {
 
 	public GameObject[,] tiles;
+	public List<HexTile> tileList;
 	public GameObject whiteHexTile;
 	public WorldManager worldManager;
 	public int modX=0;
+	public int realWidth;
 	public int mapWidth;
 	public int mapHeight;
+	public bool empty=true;
 
 	void Start() {
 		mapWidth = 8;
 		mapHeight = 8;
-		int realWidth = mapWidth + (int)((mapHeight - 1) / 2);
+		realWidth = mapWidth + (int)((mapHeight - 1) / 2);
 		tiles = new GameObject[realWidth,mapHeight];
 		this.createMap();
 		this.worldManager = GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>();
 	}
 
 	public void Update() {
-		if(this.tileList.Count> 0){
+		if(!empty){
 			this.selectTile();
 		}
 	}
@@ -58,10 +61,13 @@ public class Map : MonoBehaviour {
 		hextile.y = (int)y;
 		hextile.setWidthAndHeight();
 		hextile.center = new Vector2(pos.x + .1f, pos.y + .1f);
+
+		tileList.Add(hextile);
 		tiles[hextile.x,hextile.y]=newT;
 	}
 
 	public void createMap() {
+		empty = false;
 		float widthAway = .5f;
 		int off=-1;										/* FOR INITIALIZING FIRST/BOTTOM ROW */
 		int count=0;
@@ -101,7 +107,6 @@ public class Map : MonoBehaviour {
 							this.worldManager.mode = WorldManager.MOVEMODE;
 						}
 					}
-
 
 					foreach(HexTile tile in tileList){
 						if(tile.gameObject != hit.collider.gameObject){

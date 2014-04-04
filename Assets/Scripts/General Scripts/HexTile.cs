@@ -9,6 +9,8 @@ public class HexTile:MonoBehaviour {
 	public Map map;
 	public int hexWidth;
 	public int hexHeight;
+	public int x;
+	public int y;
 	public Vector2 position;
 	public Vector2 center;
 	public GameObject occupant;
