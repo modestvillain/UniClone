@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿                                                                                                                                                                         using UnityEngine;
 using System.Collections;
 
 public class HexTile:MonoBehaviour {
@@ -11,12 +11,12 @@ public class HexTile:MonoBehaviour {
 	public int hexHeight;
 	public Vector2 position;
 	public Vector2 center;
+	public GameObject occupant;
 
 
 
 	// Use this for initialization
 	void Start () {
-		this.center = 
 	}
 
 
@@ -26,7 +26,11 @@ public class HexTile:MonoBehaviour {
 	
 	}
 
-	void highlight(){
+	public bool isOccupied(){
+		return occupant!=null;
+	}
+
+	public void highlight(){
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.sprite = highLightSprite;
 	}

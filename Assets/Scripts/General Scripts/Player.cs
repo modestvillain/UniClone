@@ -2,30 +2,30 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Player  {
-	GameObject player;
-	Sprite normalSprite;
-
-
-	public Player(List<HexTile> tileList,  Sprite normalSprite){
-		this.createPlayerInRandomLocation(tileList, normalSprite);
-	}
+public class Player:MonoBehaviour  {
+	public GameObject player;
+	public Sprite normalSprite;
+	int numMoveTiles = 1;
+	//GameObject Map;
 
 
 
 
-	GameObject createPlayerInRandomLocation(List<HexTile> tileList, Sprite normalSprite){
-		this.normalSprite = normalSprite;
-		this.player = new GameObject("player");//this instantiates already
 
-		player.AddComponent("PolygonCollider2D");
-		player.AddComponent("SpriteRenderer");
-		SpriteRenderer sr = player.GetComponent<SpriteRenderer>();
-		sr.sprite = normalSprite;
-		sr.sortingOrder = 1;
-		int rand = Random.Range(0, tileList.Count -1);
-		player.transform.position = new Vector2(tileList[rand].center.x, tileList[rand].center.y);
-		return player;
-		
-	}
+
+
+
+	public void move(GameObject hextile){
+
+		//set the location equal to the corresponding tile's position
+		//if checking the map reveals that the move is okay{
+		HexTile hexscript = hextile.GetComponent<HexTile>();
+		this.player.transform.position = hexscript.center;
+		//remove self from occupant of previous tile
+		//put this one as occupied
+		hexscript.occupant = this.player;
+		hexscript.deselect();
+		//}
+
+	}//move
 }

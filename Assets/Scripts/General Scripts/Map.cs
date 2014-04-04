@@ -7,10 +7,12 @@ public class Map : MonoBehaviour {
 
 	public List<HexTile> tileList = new List<HexTile>();
 	public GameObject whiteHexTile;
+	public WorldManager worldManager;
 
 
 	void Start(){
 		this.createMap();
+		this.worldManager = GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>();
 
 	}
 
@@ -94,8 +96,24 @@ public class Map : MonoBehaviour {
 				
 				Debug.Log("object clicked: "+hit.collider.tag);
 				if(hit.collider.tag == "hexTile"){
+					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
 					//highlight it
-					hit.collider.gameObject.SendMessage("highlight");
+					hexScript.highlight();
+					//see if player is in it
+					Debug.Log ("Player in it: " +  hexScript.isOccupied());
+					//if occupied, turn into move mode
+					if(this.worldManager.mode == WorldManager.MOVEMODE){
+						//then move the player to that tile
+						Player script = (Player)worldManager.player.GetComponent("Player");
+						script.move(hit.collider.gameObject);
+						worldManager.mode = WorldManager.NORMALMODE;
+					}
+					else{
+						if(hexScript.isOccupied()){
+							this.worldManager.mode = WorldManager.MOVEMODE;
+						}
+					}
+
 
 					foreach(HexTile tile in tileList){
 						if(tile.gameObject != hit.collider.gameObject){
@@ -108,7 +126,7 @@ public class Map : MonoBehaviour {
 				
 			}//if hit
 			else{
-				Debug.Log ("Not hit");
+				//Debug.Log ("Not hit");
 			}
 		}//if
 
