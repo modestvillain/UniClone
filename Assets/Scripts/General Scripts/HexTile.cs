@@ -1,5 +1,7 @@
 ﻿                                                                                                                                                                         using UnityEngine;
 using System.Collections;
+using System.Collections;
+using System.Collections.Generic;
 
 public class HexTile:MonoBehaviour {
 
@@ -14,11 +16,12 @@ public class HexTile:MonoBehaviour {
 	public Vector2 position;
 	public Vector2 center;
 	public GameObject occupant;
-
+	public List<HexTile> neighbors = new List<HexTile>();
 
 
 	// Use this for initialization
 	void Start () {
+
 	}
 
 
