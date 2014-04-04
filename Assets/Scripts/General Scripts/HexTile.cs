@@ -8,6 +8,7 @@ public class HexTile:MonoBehaviour {
 	public Vector2 location;
 	public Sprite normalSprite;
 	public Sprite highLightSprite;
+	public Sprite greyOutSprite;
 	public Map map;
 	public int hexWidth;
 	public int hexHeight;
@@ -43,6 +44,11 @@ public class HexTile:MonoBehaviour {
 	public void deselect(){
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.sprite = normalSprite;
+	}
+
+	public void greyOut(){
+		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		sr.sprite = this.greyOutSprite;
 	}
 
 	public void setWidthAndHeight(){
