@@ -8,6 +8,7 @@ public class HexTile:MonoBehaviour {
 	public Vector2 location;
 	public Sprite normalSprite;
 	public Sprite highLightSprite;
+	public Sprite occupiedSprite;
 	public Map map;
 	public int hexWidth;
 	public int hexHeight;
@@ -37,7 +38,8 @@ public class HexTile:MonoBehaviour {
 
 	public void highlight(){
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
-		sr.sprite = highLightSprite;
+		if(isOccupied())	sr.sprite = occupiedSprite;
+		else 				sr.sprite = highLightSprite;
 	}
 
 	public void deselect(){
