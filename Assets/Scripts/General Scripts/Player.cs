@@ -5,11 +5,13 @@ using System.Collections.Generic;
 public class Player:MonoBehaviour  {
 	public GameObject player;
 	public Sprite normalSprite;
+	public HexTile currentTileScript;
+	public int numMoveTiles;
 	public int HP;
 	public int DMG;
 	public int DEF;
 	public int MOB;
-	
+
 	public void move(GameObject hextile){
 
 		//set the location equal to the corresponding tile's position
@@ -19,7 +21,9 @@ public class Player:MonoBehaviour  {
 		//remove self from occupant of previous tile
 		//put this one as occupied
 		hexscript.occupant = this.player;
+		this.currentTileScript.occupant = null;
 		hexscript.deselect();
+		this.currentTileScript = hexscript;
 
 	}//move
 }

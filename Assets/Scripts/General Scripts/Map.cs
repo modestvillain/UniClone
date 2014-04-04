@@ -124,7 +124,7 @@ public class Map : MonoBehaviour {
 
 	public List<HexTile> legalMoves(Player p) {
 		List<HexTile> legal = new List<HexTile>();
-		legal.Add(p.)
+//		legal.Add(p.)
 		for(int i=0; i<p.MOB; i++) {
 
 		}
