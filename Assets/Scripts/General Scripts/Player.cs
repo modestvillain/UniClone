@@ -6,6 +6,7 @@ public class Player:MonoBehaviour  {
 	public GameObject player;
 	public Sprite normalSprite;
 	int numMoveTiles = 1;
+	public HexTile currentTileScript;
 	//GameObject Map;
 
 
@@ -24,7 +25,9 @@ public class Player:MonoBehaviour  {
 		//remove self from occupant of previous tile
 		//put this one as occupied
 		hexscript.occupant = this.player;
+		this.currentTileScript.occupant = null;
 		hexscript.deselect();
+		this.currentTileScript = hexscript;
 		//}
 
 	}//move

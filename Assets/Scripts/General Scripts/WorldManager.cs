@@ -49,6 +49,7 @@ public class WorldManager : MonoBehaviour {
 		Player playerScript = (Player)player.GetComponent("Player");
 		playerScript.normalSprite = normalSprite;
 		playerScript.player = player;
+		playerScript.currentTileScript = tileList[rand];
 
 	}
 
