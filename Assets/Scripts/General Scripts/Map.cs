@@ -5,95 +5,83 @@ using System.Collections.Generic;
 
 public class Map : MonoBehaviour {
 
-	public List<HexTile> tileList = new List<HexTile>();
+	public GameObject[,] tiles;
 	public GameObject whiteHexTile;
 	public WorldManager worldManager;
+	public int modX=0;
+	public int mapWidth;
+	public int mapHeight;
 
-
-	void Start(){
+	void Start() {
+		mapWidth = 8;
+		mapHeight = 8;
+		int realWidth = mapWidth + (int)((mapHeight - 1) / 2);
+		tiles = new GameObject[realWidth,mapHeight];
 		this.createMap();
 		this.worldManager = GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>();
-
 	}
 
-	public void Update(){
+	public void Update() {
 		if(this.tileList.Count> 0){
 			this.selectTile();
 		}
-
-
 	}
 
-	public void createHexTile(float i, float j, int upDown, float widthAway){
+	public void createHexTile(float x, float y, int upDown, float widthAway) {
 		GameObject newT = (GameObject) Instantiate(whiteHexTile);
 		HexTile hextile = newT.GetComponent<HexTile>();
-		this.tileList.Add(hextile);
 
 		hextile.map = this;
-		Vector2 loc = new Vector2(i,j);
+
+		Vector2 loc = new Vector2(1.5f*x,y);
 		Vector2 pos = new Vector2();
-		switch(upDown){
-		case 0:
-			pos.x = loc.x + widthAway;
-			pos.y = loc.y;
-			break;
-		case 1:
-			pos.x = loc.x + widthAway -.3f;
-			pos.y = loc.y +.3f;
-			break;
-		case -1:
-			pos.x = loc.x + widthAway- .7f;
-			pos.y = loc.y - .3f;
-			break;
-		default:
-			pos.x = loc.x + widthAway ;
-			pos.y = loc.y;
-			break;
+
+		switch (upDown) {
+			case 0:
+				pos.x = loc.x + widthAway;
+				pos.y = loc.y*1.3f;
+				break;
+			case 1:
+				pos.x = loc.x + widthAway-.7f;
+				pos.y = loc.y*1.3f;
+				break;
+			default:									/* COPY OF CASE 0 FOR INITIALIZATION, MINUS X MODIFICATION */
+				pos.x = loc.x + widthAway;
+				pos.y = loc.y*1.3f;
+				break;
 		}
-		hextile.position = pos;
 		newT.transform.position = pos;
+
+		hextile.position = pos;
 		hextile.location = loc;
+		hextile.x = modX;
+		hextile.y = (int)y;
+		hextile.setWidthAndHeight();
 		hextile.center = new Vector2(pos.x + .1f, pos.y + .1f);
-		//hextile.setWidthAndHeight();
+		tiles[hextile.x,hextile.y]=newT;
 	}
 
-	public void createMap(){
+	public void createMap() {
+		float widthAway = .5f;
+		int off=-1;										/* FOR INITIALIZING FIRST/BOTTOM ROW */
+		int count=0;
 
-
-		float widthAway = 0;
-		float start = -10;
-
-		//for(float j = 1.255f; j< 3; j+= 1.255f){
-		float j = 0;
-			for(float i = start; i < 10; i++){
-				this.createHexTile(i+ 1, j + 1, 1, widthAway);
-				this.createHexTile(i, j, 0, widthAway);
-			    this.createHexTile(i, j - 1, -1, widthAway);
-
-				widthAway+=.5f;
-				
-			}//for
-		//start+= widthAway/2;
-		//}//for
-
-
-
-		
-	}//method
+		for(int y = 0; y < mapHeight; y++){
+			for(int x = 0; x < mapWidth; x++) {
+				this.createHexTile(x, y, off, widthAway);
+			}
+			modX=count;
+			if(off==1) {off=0; modX=++count;}
+			else if(off==0) off=1;
+			else off=1;
+		}	
+	}
 
 	public void selectTile(){
-		if (Input.GetMouseButtonDown(0))
-			
-		{
-			
+		if (Input.GetMouseButtonDown(0)) {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 			
-			
-			
-			if(hit)
-				
-			{
-				
+			if(hit)	{
 				Debug.Log("object clicked: "+hit.collider.tag);
 				if(hit.collider.tag == "hexTile"){
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
