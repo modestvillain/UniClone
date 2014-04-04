@@ -7,7 +7,9 @@ public class WorldManager : MonoBehaviour {
 	public Map map;
 	public GameObject player;
 	public Sprite playerSprite;
-	bool playerSet = false;
+	public bool playerSet = false;
+	public GameObject BLUE;
+	public GameObject RED;
 	public static int MOVEMODE = 1;
 	public static int NORMALMODE = 2;
 	public int mode;// int 1 is move mode, 2 means normal mode
@@ -15,8 +17,12 @@ public class WorldManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		this.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
-
-
+		BLUE = new GameObject();
+		BLUE.name = "BLUE";
+		BLUE.tag = "BLUE";
+		RED = new GameObject();
+		RED.name = "RED";
+		RED.tag = "RED";
 		//player.SendMessage("crecreatePlayerInRandomLocation", map.tileList);
 	}
 	

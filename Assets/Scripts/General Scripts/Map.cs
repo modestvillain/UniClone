@@ -9,6 +9,7 @@ public class Map : MonoBehaviour {
 	public List<HexTile> tileList;
 	public GameObject whiteHexTile;
 	public WorldManager worldManager;
+	public Player player;
 	public int modX=0;
 	public int realWidth;
 	public int mapWidth;
@@ -121,19 +122,25 @@ public class Map : MonoBehaviour {
 		}
 	}
 
+	public List<HexTile> legalMoves(Player p) {
+		List<HexTile> legal = new List<HexTile>();
+		legal.Add(p.)
+		for(int i=0; i<p.MOB; i++) {
+
+		}
+	}
+
 	public void selectTile() {
 
 		if (Input.GetMouseButtonDown(0)) {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 			
 			if(hit)	{
-
 				if(hit.collider.tag == "hexTile") {
 					foreach(HexTile tile in tileList) {
-						if(tile.gameObject != hit.collider.gameObject){
+						if(tile.gameObject != hit.collider.gameObject) {
 							//change to normal
 							tile.deselect();
-							
 						}
 					}
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
@@ -149,7 +156,9 @@ public class Map : MonoBehaviour {
 					else {
 						if(hexScript.isOccupied()) {
 							this.worldManager.mode = WorldManager.MOVEMODE;
-							foreach(HexTile hex in hexScript.neighbors) {
+							Player player = (Player)worldManager.player.GetComponent("Player");
+							List<HexTile> legalTiles = legalMoves (player);
+							foreach(HexTile hex in legalTiles) {
 								hex.highlight();
 							}
 						}

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class Player:MonoBehaviour  {
 	public GameObject player;
 	public Sprite normalSprite;
-	public int numMoveTiles = 1;
 	public int HP;
 	public int DMG;
 	public int DEF;
