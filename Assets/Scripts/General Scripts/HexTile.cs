@@ -8,11 +8,8 @@ public class HexTile:MonoBehaviour {
 	public Vector2 location;
 	public Sprite normalSprite;
 	public Sprite highLightSprite;
-<<<<<<< HEAD
 	public Sprite occupiedSprite;
-=======
 	public Sprite greyOutSprite;
->>>>>>> 10582fd645e7c2561054af9d96e164e806082303
 	public Map map;
 	public int hexWidth;
 	public int hexHeight;
