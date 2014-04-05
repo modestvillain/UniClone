@@ -123,11 +123,25 @@ public class Map : MonoBehaviour {
 	}
 
 	public List<HexTile> legalMoves(Player p) {
-		List<HexTile> legal = new List<HexTile>();
-//		legal.Add(p.)
-		for(int i=0; i<p.MOB; i++) {
 
+		List<HexTile> legal = new List<HexTile>(p.currentTileScript.neighbors);
+		List<HexTile> temp = new List<HexTile>();
+
+		for(int i=1; i<p.MOB; i++) {
+			foreach(HexTile hex in legal) {
+				foreach(HexTile ht in hex.neighbors) {
+					if(!temp.Contains(ht)) {
+						temp.Add (ht);
+					}
+				}
+			}
+			foreach(HexTile hex in temp) {
+				legal.Add(hex);
+			}
+			temp = new List<HexTile>();
 		}
+
+		return legal;
 	}
 
 	public void selectTile() {
@@ -143,21 +157,22 @@ public class Map : MonoBehaviour {
 							tile.deselect();
 						}
 					}
+					Player player = (Player)worldManager.player.GetComponent("Player");
+					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
 					hexScript.highlight();
 
-					//if tile occupied, turn into move mode
-					if(this.worldManager.mode == WorldManager.MOVEMODE) {
+					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
+					if(this.worldManager.mode == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
 						//move occupant to that tile
-						Player script = (Player)worldManager.player.GetComponent("Player");
-						script.move(hit.collider.gameObject);
-						worldManager.mode = WorldManager.NORMALMODE;
+						if(true) {
+							player.move(hit.collider.gameObject);
+							worldManager.mode = WorldManager.NORMALMODE;
+						}
 					}
 					else {
 						if(hexScript.isOccupied()) {
 							this.worldManager.mode = WorldManager.MOVEMODE;
-							Player player = (Player)worldManager.player.GetComponent("Player");
-							List<HexTile> legalTiles = legalMoves (player);
 							foreach(HexTile hex in legalTiles) {
 								hex.highlight();
 							}

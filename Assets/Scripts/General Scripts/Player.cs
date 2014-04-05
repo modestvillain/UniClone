@@ -10,7 +10,7 @@ public class Player:MonoBehaviour  {
 	public int HP;
 	public int DMG;
 	public int DEF;
-	public int MOB;
+	public int MOB=2;
 
 	public void move(GameObject hextile){
 
