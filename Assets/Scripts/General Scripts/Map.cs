@@ -168,27 +168,40 @@ public class Map : MonoBehaviour {
 //					Player player = (Player)worldManager.player.GetComponent("Player");
 					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
-					hexScript.highlight();
+
+
+
+
 
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
 					if(this.worldManager.mode == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript
 					   && !hexScript.isOccupied()) {
 						//move occupant to that tile
 						player.move(hit.collider.gameObject);//SendMessage("move", hit.collider.gameObject);
+						hexScript.deselect ();
 						worldManager.mode = WorldManager.NORMALMODE;
 					}
 
 					else {
 						worldManager.mode = WorldManager.NORMALMODE;
-						if(hexScript.isOccupied() && hexScript.occupant.tag == "Player") {
+						if(hexScript.isOccupied() && hexScript.occupant.transform.parent.tag == "BLUE") {
 							worldManager.mode = WorldManager.MOVEMODE;
-							setPlayerScript(hexScript.occupant);
+//							setPlayerScript(hexScript.occupant);
+							player = (Player)hexScript.occupant.GetComponent(hexScript.occupant.tag);
 							legalTiles = legalMoves (player);
+
+							foreach(HexTile hex in tileList){
+								hex.greyOut();
+							}
 							foreach(HexTile hex in legalTiles) {
-								hex.highlight();
+								//hex.highlight();
+								hex.deselect();
 							}
 						}
+						hexScript.highlight();
 					}
+
+
 				}
 			}
 		}//if

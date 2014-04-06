@@ -36,6 +36,8 @@ public class WorldManager : MonoBehaviour {
 	public void spawnPlayer(){
 		if(!this.playerSet && !map.empty){
 			this.createPlayerInRandomLocation(this.map.tileList, playerSprite);
+			this.createPlayerInRandomLocation(this.map.tileList, playerSprite);
+			this.createSoldierInRandomLocation();
 			this.createSoldierInRandomLocation();
 			playerSet = true;
 		}
@@ -61,6 +63,7 @@ public class WorldManager : MonoBehaviour {
 		playerScript.player = player;
 		playerScript.currentTileScript = tileList[rand];
 		map.player = playerScript;
+		player.transform.parent = GameObject.FindGameObjectWithTag("BLUE").transform;
 	}
 
 	void createSoldierInRandomLocation(){
@@ -73,11 +76,12 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	GameObject instantiatePlayerSoldier(){
-		GameObject solider = (GameObject)Instantiate(Resources.Load("Prefabs/Soldier"));
-		solider.name = "soldier";
-		solider.tag = "Player";
-		solider.GetComponent<Soldier>().player = solider;
-		return solider;		
+		GameObject soldier = (GameObject)Instantiate(Resources.Load("Prefabs/Soldier"));
+		soldier.name = "soldier";
+		soldier.tag = "Player";
+		soldier.GetComponent<Soldier>().player = soldier;
+		soldier.transform.parent = GameObject.FindGameObjectWithTag("BLUE").transform;
+		return soldier;		
 	}
 
 	void positionPlayerSoldier(GameObject solider, HexTile hextile){
