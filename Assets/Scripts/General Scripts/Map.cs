@@ -9,6 +9,7 @@ public class Map : MonoBehaviour {
 	public List<HexTile> tileList;
 	public GameObject whiteHexTile;
 	public WorldManager worldManager;
+	public Player player;
 	public int modX=0;
 	public int realWidth;
 	public int mapWidth;
@@ -121,27 +122,50 @@ public class Map : MonoBehaviour {
 		}
 	}
 
+	public List<HexTile> legalMoves(Player p) {
+
+		List<HexTile> legal = new List<HexTile>(p.currentTileScript.neighbors);
+		List<HexTile> temp = new List<HexTile>();
+
+		for(int i=1; i<p.MOB; i++) {
+			foreach(HexTile hex in legal) {
+				foreach(HexTile ht in hex.neighbors) {
+					if(!temp.Contains(ht)) {
+						temp.Add (ht);
+					}
+				}
+			}
+			foreach(HexTile hex in temp) {
+				legal.Add(hex);
+			}
+			temp = new List<HexTile>();
+		}
+
+		return legal;
+	}
+
 	public void selectTile() {
 
 		if (Input.GetMouseButtonDown(0)) {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 			
 			if(hit)	{
-
 				if(hit.collider.tag == "hexTile") {
 					foreach(HexTile tile in tileList) {
-						if(tile.gameObject != hit.collider.gameObject){
+						if(tile.gameObject != hit.collider.gameObject) {
 							//change to normal
 							tile.deselect();
-							
 						}
 					}
+//					Player player = (Player)worldManager.player.GetComponent("Player");
+					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
 					hexScript.highlight();
 
-					//if tile occupied, turn into move mode
-					if(this.worldManager.mode == WorldManager.MOVEMODE) {
+					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
+					if(this.worldManager.mode == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
 						//move occupant to that tile
+<<<<<<< HEAD
 						HexTile hScript = hit.collider.gameObject.GetComponent<HexTile>();
 						hScript.occupant.GetComponent<Player>().move(hit.collider.gameObject);//SendMessage("move", hit.collider.gameObject);
 						//script.move(hit.collider.gameObject);
@@ -149,8 +173,18 @@ public class Map : MonoBehaviour {
 					}
 					else {
 						if(hexScript.isOccupied && hexScript.occupant.tag == "Player") {
+=======
+						if(true) {
+							player.move(hit.collider.gameObject);
+							worldManager.mode = WorldManager.NORMALMODE;
+						}
+					}
+					else {
+						if(hexScript.isOccupied()) {
+							player = (Player)hexScript.occupant.GetComponent("Player");
+>>>>>>> 671d5be4b7ad0a6287596a3d2d5471975ac63912
 							this.worldManager.mode = WorldManager.MOVEMODE;
-							foreach(HexTile hex in hexScript.neighbors) {
+							foreach(HexTile hex in legalTiles) {
 								hex.highlight();
 							}
 						}

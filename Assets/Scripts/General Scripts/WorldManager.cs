@@ -7,7 +7,9 @@ public class WorldManager : MonoBehaviour {
 	public Map map;
 	public GameObject player;
 	public Sprite playerSprite;
-	bool playerSet = false;
+	public bool playerSet = false;
+	public GameObject BLUE;
+	public GameObject RED;
 	public static int MOVEMODE = 1;
 	public static int NORMALMODE = 2;
 	public int mode;// int 1 is move mode, 2 means normal mode
@@ -15,8 +17,17 @@ public class WorldManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		this.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
+<<<<<<< HEAD
 	
 
+=======
+		BLUE = new GameObject();
+		BLUE.name = "BLUE";
+		BLUE.tag = "BLUE";
+		RED = new GameObject();
+		RED.name = "RED";
+		RED.tag = "RED";
+>>>>>>> 671d5be4b7ad0a6287596a3d2d5471975ac63912
 		//player.SendMessage("crecreatePlayerInRandomLocation", map.tileList);
 	}
 	
@@ -50,12 +61,11 @@ public class WorldManager : MonoBehaviour {
 		player.transform.position = new Vector2(tileList[rand].center.x, tileList[rand].center.y);
 		//tile now occupied
 		tileList[rand].occupant = player;
-
 		Player playerScript = (Player)player.GetComponent("Player");
 		playerScript.normalSprite = normalSprite;
 		playerScript.player = player;
 		playerScript.currentTileScript = tileList[rand];
-
+		map.player = playerScript;
 	}
 
 	void createSoldierInRandomLocation(){
