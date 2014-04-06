@@ -142,12 +142,13 @@ public class Map : MonoBehaviour {
 					//if tile occupied, turn into move mode
 					if(this.worldManager.mode == WorldManager.MOVEMODE) {
 						//move occupant to that tile
-						Player script = (Player)worldManager.player.GetComponent("Player");
-						script.move(hit.collider.gameObject);
+						HexTile hScript = hit.collider.gameObject.GetComponent<HexTile>();
+						hScript.occupant.GetComponent<Player>().move(hit.collider.gameObject);//SendMessage("move", hit.collider.gameObject);
+						//script.move(hit.collider.gameObject);
 						worldManager.mode = WorldManager.NORMALMODE;
 					}
 					else {
-						if(hexScript.isOccupied()) {
+						if(hexScript.isOccupied && hexScript.occupant.tag == "Player") {
 							this.worldManager.mode = WorldManager.MOVEMODE;
 							foreach(HexTile hex in hexScript.neighbors) {
 								hex.highlight();

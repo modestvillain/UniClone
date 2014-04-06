@@ -6,11 +6,17 @@ public class Player:MonoBehaviour  {
 	public GameObject player;
 	public Sprite normalSprite;
 	public HexTile currentTileScript;
-	public int numMoveTiles;
-	public int HP;
-	public int DMG;
-	public int DEF;
-	public int MOB;
+
+	public ArrayList actionsList;
+	public int HP;//health
+	public int DMG;//damage - attack strength
+	public int DEF;//defense
+	public int MOB;//mobility
+	public int cost;
+	public int attackRange;
+	public bool canCapture;
+	public bool canAttackAfterMove;
+	public int repair;
 
 	public void move(GameObject hextile){
 
@@ -21,9 +27,11 @@ public class Player:MonoBehaviour  {
 		//remove self from occupant of previous tile
 		//put this one as occupied
 		hexscript.occupant = this.player;
+
 		this.currentTileScript.occupant = null;
 		hexscript.deselect();
 		this.currentTileScript = hexscript;
+
 
 	}//move
 }
