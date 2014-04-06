@@ -9,6 +9,9 @@ public class HexTile:MonoBehaviour {
 	public Sprite highLightSprite;
 	public Sprite occupiedSprite;
 	public Sprite greyOutSprite;
+	public Sprite blueBaseSprite;
+	public Sprite redBaseSprite;
+	public Sprite greyBaseSprite;
 	public Map map;
 	public int hexWidth;
 	public int hexHeight;
@@ -18,16 +21,11 @@ public class HexTile:MonoBehaviour {
 	public Vector2 center;
 	public GameObject occupant;
 	public List<HexTile> neighbors = new List<HexTile>();
-
-
-	// Use this for initialization
+	
 	void Start () {
 
 	}
-
-
 	
-	// Update is called once per frame
 	void Update () {
 	
 	}

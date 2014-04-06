@@ -33,6 +33,9 @@ public class Map : MonoBehaviour {
 		}
 	}
 
+	/*
+	 * Instantiates hex tile, places it on map, adds it to tiles and tileList
+	 */
 	public void createHexTile(float x, float y, int upDown, float widthAway) {
 
 		GameObject newT = (GameObject) Instantiate(whiteHexTile);
@@ -71,11 +74,14 @@ public class Map : MonoBehaviour {
 		modX++;
 	}
 
+	/*
+	 * Creates hex grid, establishes coordinate system
+	 */
 	public void createMap() {
 
 		empty = false;
 		float widthAway = .5f;
-		int off=-1;										/* FOR INITIALIZING FIRST/BOTTOM ROW */
+		int off=-1;										/* FOR INITIALIZING FIRST / BOTTOM ROW */
 		int count=0;
 
 		for(int y = 0; y < mapHeight; y++) {
@@ -91,6 +97,10 @@ public class Map : MonoBehaviour {
 		createAdjacencies();
 	}
 
+	/*
+	 * Using self-defined coordinate system, find neighboring tiles
+	 * and create adjacency list for each individual hex tile
+	 */
 	public void createAdjacencies() {
 
 		foreach(HexTile ht in tileList) {
@@ -122,6 +132,10 @@ public class Map : MonoBehaviour {
 		}
 	}
 
+	/*
+	 * Consider legal tiles for a given player to move to
+	 * @return	list of tiles a player can reach
+	 */
 	public List<HexTile> legalMoves(Player p) {
 
 		List<HexTile> legal = new List<HexTile>(p.currentTileScript.neighbors);
@@ -144,14 +158,27 @@ public class Map : MonoBehaviour {
 		return legal;
 	}
 
+	/*
+	 * Since the "player" can be one of many different kinds,
+	 * this method pulls the script for the correct player type
+	 */
 	public void setPlayerScript(GameObject g) {
+
 		if(g.tag == "Player")
 			player = (Player)g.GetComponent("Player");
 		else if(g.tag == "Soldier")
 			player = (Player)g.GetComponent("Soldier");
-
 	}
 
+	/*
+	 * Pretty self-explanatory, selects and highlights tiles under
+	 * different conditions:
+	 * 		1. If tile selected with player on it, consider legal actions
+	 * 		2. If #1 was the case last time, the new selected tile should
+	 * 		   indicate the new tile to move to, or the opponent to attack
+	 * 		3. If nothing is special about the tile, just highlight the tile
+	 * 		   and ignore history
+	 */
 	public void selectTile() {
 
 		if (Input.GetMouseButtonDown(0)) {
@@ -165,7 +192,6 @@ public class Map : MonoBehaviour {
 							tile.deselect();
 						}
 					}
-//					Player player = (Player)worldManager.player.GetComponent("Player");
 					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
 					hexScript.highlight();
@@ -174,12 +200,13 @@ public class Map : MonoBehaviour {
 					if(this.worldManager.mode == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript
 					   && !hexScript.isOccupied()) {
 						//move occupant to that tile
-						player.move(hit.collider.gameObject);//SendMessage("move", hit.collider.gameObject);
+						player.move(hit.collider.gameObject);
 						worldManager.mode = WorldManager.NORMALMODE;
 					}
 
 					else {
 						worldManager.mode = WorldManager.NORMALMODE;
+
 						if(hexScript.isOccupied() && hexScript.occupant.tag == "Player") {
 							worldManager.mode = WorldManager.MOVEMODE;
 							setPlayerScript(hexScript.occupant);
