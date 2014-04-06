@@ -51,12 +51,11 @@ public class WorldManager : MonoBehaviour {
 		int rand = Random.Range(0, tileList.Count -1);
 		player.transform.position = new Vector2(tileList[rand].center.x, tileList[rand].center.y);
 		tileList[rand].occupant = player;
-
 		Player playerScript = (Player)player.GetComponent("Player");
 		playerScript.normalSprite = normalSprite;
 		playerScript.player = player;
 		playerScript.currentTileScript = tileList[rand];
-
+		map.player = playerScript;
 	}
 
 

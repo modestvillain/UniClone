@@ -157,7 +157,7 @@ public class Map : MonoBehaviour {
 							tile.deselect();
 						}
 					}
-					Player player = (Player)worldManager.player.GetComponent("Player");
+//					Player player = (Player)worldManager.player.GetComponent("Player");
 					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
 					hexScript.highlight();
@@ -172,6 +172,7 @@ public class Map : MonoBehaviour {
 					}
 					else {
 						if(hexScript.isOccupied()) {
+							player = (Player)hexScript.occupant.GetComponent("Player");
 							this.worldManager.mode = WorldManager.MOVEMODE;
 							foreach(HexTile hex in legalTiles) {
 								hex.highlight();
