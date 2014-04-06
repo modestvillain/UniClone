@@ -35,62 +35,65 @@ public class WorldManager : MonoBehaviour {
 
 	public void spawnPlayer(){
 		if(!this.playerSet && !map.empty){
-			this.createPlayerInRandomLocation(this.map.tileList, playerSprite);
-			this.createPlayerInRandomLocation(this.map.tileList, playerSprite);
-			this.createSoldierInRandomLocation();
-			this.createSoldierInRandomLocation();
+
+			this.createPlayerInRandomLocation("Soldier", "BLUE");
+			this.createPlayerInRandomLocation("Aerial", "BLUE");
+		
 			playerSet = true;
 		}
 	}
 
-	void createPlayerInRandomLocation(List<HexTile> tileList, Sprite normalSprite){
 
-		this.player = new GameObject("player");//this instantiates already
-		player.AddComponent("SpriteRenderer");
-		player.AddComponent("Player");
-		player.tag = "Player";
-		SpriteRenderer sr = player.GetComponent<SpriteRenderer>();
-		sr.sprite = normalSprite;
-		sr.sortingOrder = 1;
+	void createPlayerInRandomLocation(string prefabname, string side){
+		//side = BLUE or RED
+		int rand = Random.Range(0, map.tileList.Count -1);
+		this.positionPlayer( this.instantiatePlayer(prefabname, side), map.tileList[rand]);
+	}
 
-		//place player
-		int rand = Random.Range(0, tileList.Count -1);
-		player.transform.position = new Vector2(tileList[rand].center.x, tileList[rand].center.y);
-		//tile now occupied
-		tileList[rand].occupant = player;
-		Player playerScript = (Player)player.GetComponent("Player");
-		playerScript.normalSprite = normalSprite;
+
+	GameObject instantiatePlayer(string prefabName, string side){
+		string path = "Prefabs/" + prefabName;
+		GameObject player = (GameObject)Instantiate(Resources.Load(path));
+		player.name = prefabName;
+		player.tag = prefabName;
+		Player playerScript = WorldManager.getPlayerScript(player);
 		playerScript.player = player;
-		playerScript.currentTileScript = tileList[rand];
+		map.player = playerScript;
+		player.transform.parent = GameObject.FindGameObjectWithTag(side).transform;
+		return player;
+	}
+
+	GameObject instantiateRedPlayer(string prefabName){
+		string path = "Prefabs/" + prefabName;
+		GameObject player = (GameObject)Instantiate(Resources.Load(path));
+		player.name = prefabName;
+		player.tag = prefabName;
+		Player playerScript = WorldManager.getPlayerScript(player);
+		playerScript.player = player;
 		map.player = playerScript;
 		player.transform.parent = GameObject.FindGameObjectWithTag("BLUE").transform;
+		return player;
 	}
 
-	void createSoldierInRandomLocation(){
 
-		int rand = Random.Range(0, map.tileList.Count -1);
-
-		this.positionPlayerSoldier(this.instantiatePlayerSoldier(), map.tileList[rand]);
-
-
+	void positionPlayer(GameObject player, HexTile hextile){
+		player.transform.position = hextile.center;
+		hextile.occupant = player;
+		WorldManager.getPlayerScript(player).currentTileScript = hextile;
 	}
 
-	GameObject instantiatePlayerSoldier(){
-		GameObject soldier = (GameObject)Instantiate(Resources.Load("Prefabs/Soldier"));
-		soldier.name = "soldier";
-		soldier.tag = "Player";
-		soldier.GetComponent<Soldier>().player = soldier;
-		soldier.transform.parent = GameObject.FindGameObjectWithTag("BLUE").transform;
-		return soldier;		
+	public static Player getPlayerScript(GameObject g) {
+		if(g.tag == "Player")
+			return(Player)g.GetComponent("Player");
+		else if(g.tag == "Soldier")
+			return (Player)g.GetComponent("Soldier");
+		else if(g.tag == "Aerial")
+			return (Player)g.GetComponent("Aerial");
+		else{
+			return null;
+		}
+		
 	}
-
-	void positionPlayerSoldier(GameObject solider, HexTile hextile){
-		solider.transform.position = hextile.center;
-		hextile.occupant = solider;
-		solider.GetComponent<Soldier>().currentTileScript = hextile;
-
-	}
-
 
 
 

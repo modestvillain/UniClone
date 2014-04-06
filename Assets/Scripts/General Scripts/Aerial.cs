@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Soldier : Player {
+public class Aerial : Player {
 
 	// Use this for initialization
 	void Start () {
-		this.cost = 100;
+		this.cost = 350;
 		this.attackRange = 1;
-		this.MOB = 1;
-		this.DEF = 5;
-		this.canCapture = true;
+		this.MOB = 3;
+		this.DEF = 7;
+		this.canCapture = false;
 		this.canAttackAfterMove = true;
-		this.repair = 1;
+		this.repair = 2;
 		this.HP = 10;
 		this.DMG = 6; //taking ground light variable for now
 
