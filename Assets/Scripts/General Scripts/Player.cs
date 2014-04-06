@@ -6,8 +6,6 @@ public class Player:MonoBehaviour  {
 	public GameObject player;
 	public Sprite normalSprite;
 	public HexTile currentTileScript;
-<<<<<<< HEAD
-
 	public ArrayList actionsList;
 	public int HP;//health
 	public int DMG;//damage - attack strength
@@ -18,13 +16,6 @@ public class Player:MonoBehaviour  {
 	public bool canCapture;
 	public bool canAttackAfterMove;
 	public int repair;
-=======
-	public int numMoveTiles;
-	public int HP;
-	public int DMG;
-	public int DEF;
-	public int MOB=2;
->>>>>>> 671d5be4b7ad0a6287596a3d2d5471975ac63912
 
 	public void move(GameObject hextile){
 

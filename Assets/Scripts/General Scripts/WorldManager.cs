@@ -17,17 +17,12 @@ public class WorldManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		this.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
-<<<<<<< HEAD
-	
-
-=======
 		BLUE = new GameObject();
 		BLUE.name = "BLUE";
 		BLUE.tag = "BLUE";
 		RED = new GameObject();
 		RED.name = "RED";
 		RED.tag = "RED";
->>>>>>> 671d5be4b7ad0a6287596a3d2d5471975ac63912
 		//player.SendMessage("crecreatePlayerInRandomLocation", map.tileList);
 	}
 	

@@ -7,7 +7,7 @@ public class Soldier : Player {
 	void Start () {
 		this.cost = 100;
 		this.attackRange = 1;
-		this.MOB = 11;
+		this.MOB = 2;
 		this.DEF = 5;
 		this.canCapture = true;
 		this.canAttackAfterMove = true;

@@ -144,6 +144,14 @@ public class Map : MonoBehaviour {
 		return legal;
 	}
 
+	public void setPlayerScript(GameObject g) {
+		if(g.tag == "Player")
+			player = (Player)g.GetComponent("Player");
+		else if(g.tag == "Soldier")
+			player = (Player)g.GetComponent("Soldier");
+
+	}
+
 	public void selectTile() {
 
 		if (Input.GetMouseButtonDown(0)) {
@@ -163,34 +171,26 @@ public class Map : MonoBehaviour {
 					hexScript.highlight();
 
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
-					if(this.worldManager.mode == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
+					if(this.worldManager.mode == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript
+					   && !hexScript.isOccupied()) {
 						//move occupant to that tile
-<<<<<<< HEAD
-						HexTile hScript = hit.collider.gameObject.GetComponent<HexTile>();
-						hScript.occupant.GetComponent<Player>().move(hit.collider.gameObject);//SendMessage("move", hit.collider.gameObject);
-						//script.move(hit.collider.gameObject);
+						player.move(hit.collider.gameObject);//SendMessage("move", hit.collider.gameObject);
 						worldManager.mode = WorldManager.NORMALMODE;
 					}
+
 					else {
-						if(hexScript.isOccupied && hexScript.occupant.tag == "Player") {
-=======
-						if(true) {
-							player.move(hit.collider.gameObject);
-							worldManager.mode = WorldManager.NORMALMODE;
-						}
-					}
-					else {
-						if(hexScript.isOccupied()) {
-							player = (Player)hexScript.occupant.GetComponent("Player");
->>>>>>> 671d5be4b7ad0a6287596a3d2d5471975ac63912
-							this.worldManager.mode = WorldManager.MOVEMODE;
+						worldManager.mode = WorldManager.NORMALMODE;
+						if(hexScript.isOccupied() && hexScript.occupant.tag == "Player") {
+							worldManager.mode = WorldManager.MOVEMODE;
+							setPlayerScript(hexScript.occupant);
+							legalTiles = legalMoves (player);
 							foreach(HexTile hex in legalTiles) {
 								hex.highlight();
 							}
 						}
 					}
-				}//if
-			}//if hit
+				}
+			}
 		}//if
 	}//method
 }//class
