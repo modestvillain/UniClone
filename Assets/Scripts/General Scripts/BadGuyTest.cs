@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Soldier : Player {
+public class BadGuyTest : Player {
 
 	// Use this for initialization
 	void Start () {
@@ -14,9 +14,6 @@ public class Soldier : Player {
 		this.repair = 1;
 		this.HP = 10;
 		this.DMG = 6; //taking ground light variable for now
-		this.actionsList = new ArrayList();
-
-
 	}
 	
 	// Update is called once per frame

@@ -17,6 +17,12 @@ public class Player:MonoBehaviour  {
 	public bool canAttackAfterMove;
 	public int repair;
 
+
+	//for menu
+	public bool canMove = false;
+	public bool canAttack = false;
+	public bool isOn = false;
+
 	public void move(GameObject hextile){
 
 		//set the location equal to the corresponding tile's position
@@ -31,6 +37,71 @@ public class Player:MonoBehaviour  {
 		hexscript.deselect();
 		this.currentTileScript = hexscript;
 
+		WorldManager.MODE = WorldManager.NORMALMODE;
+		this.isOn = false;
+
 
 	}//move
+
+	//attack
+	public void attack(Player enemyScript){
+		if(this.DMG> enemyScript.DEF){
+			enemyScript.HP -= this.DMG;
+			if(enemyScript.HP <=0){
+				Destroy(enemyScript.gameObject);
+			}
+		}
+		else{
+			this.HP -= enemyScript.DMG;
+			if(this.HP <=0){
+				Destroy(this.gameObject);
+			}
+		}
+	}
+
+	void OnGUI(){
+		
+		if(isOn){
+			int space = 0;//has spacing of thirty
+			
+			
+			if(canMove){
+				if(GUI.Button(new Rect(20,40,80,20), "Move")) {
+					//Application.LoadLevel(1);
+				}
+				space +=30;
+			}
+			
+			
+			if(canAttack){
+				if(GUI.Button(new Rect(20,40 + space,80,20), "Attack")) {
+					//Application.LoadLevel(2);
+				}
+				space+=30;
+			}
+			
+			if(GUI.Button(new Rect(20,40 + space,80,20), "Cancel")){
+				//then cancel
+				
+			}
+			space +=30;
+			
+			// Make a background box
+			GUI.Box(new Rect(10,10,100,30 + space), "Actions");
+		}
+	}//method
+
+	public void turnMenuOn(){
+		this.isOn = true;
+	}
+
+	public void turnMenuOff(){
+		this.isOn = false;
+	}
+
+	public void allMenuActionsOn(){
+		this.turnMenuOn();
+		this.canMove = true;
+		this.canAttack = true;
+		}
 }

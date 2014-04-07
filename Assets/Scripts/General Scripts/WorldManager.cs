@@ -12,10 +12,11 @@ public class WorldManager : MonoBehaviour {
 	public GameObject RED;
 	public static int MOVEMODE = 1;
 	public static int NORMALMODE = 2;
-	public int mode;// int 1 is move mode, 2 means normal mode
+	public static int MODE;// int 1 is move mode, 2 means normal mode
 
 	// Use this for initialization
 	void Start () {
+		//GUIMenuTest();
 		this.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
 		BLUE = GameObject.FindGameObjectWithTag("BLUE");
 		RED = GameObject.FindGameObjectWithTag("RED");
@@ -33,6 +34,7 @@ public class WorldManager : MonoBehaviour {
 
 			this.createPlayerInRandomLocation("Soldier", "BLUE");
 			this.createPlayerInRandomLocation("Aerial", "BLUE");
+			this.createPlayerInRandomLocation("BadGuyTest", "RED");
 		
 			playerSet = true;
 		}
@@ -84,10 +86,20 @@ public class WorldManager : MonoBehaviour {
 			return (Player)g.GetComponent("Soldier");
 		else if(g.tag == "Aerial")
 			return (Player)g.GetComponent("Aerial");
+		else if(g.tag == "BadGuyTest")
+			return (Player)g.GetComponent("BadGuyTest");
 		else{
 			return null;
 		}
 		
+	}
+
+	void GUIMenuTest(){
+		ActionsMenu menu = (ActionsMenu)this.gameObject.AddComponent<ActionsMenu>();
+		menu.canMove = true;
+		menu.canAttack = true;
+		menu.isOn = true;
+
 	}
 
 

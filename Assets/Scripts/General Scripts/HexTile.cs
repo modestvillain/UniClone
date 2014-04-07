@@ -9,6 +9,7 @@ public class HexTile:MonoBehaviour {
 	public Sprite highLightSprite;
 	public Sprite occupiedSprite;
 	public Sprite greyOutSprite;
+	public Sprite enemyTileSprite;
 	public Map map;
 	public int hexWidth;
 	public int hexHeight;
@@ -45,6 +46,11 @@ public class HexTile:MonoBehaviour {
 	public void greyOut() {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.sprite = this.greyOutSprite;
+	}
+
+	public void highlightEnemy() {
+		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		sr.sprite = this.enemyTileSprite;
 	}
 	
 	public void setWidthAndHeight() {
