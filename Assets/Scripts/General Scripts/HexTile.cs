@@ -19,6 +19,7 @@ public class HexTile:MonoBehaviour {
 	public Vector2 center;
 	public GameObject occupant;
 	public List<HexTile> neighbors = new List<HexTile>();
+
 	
 	void Start () {
 
@@ -47,6 +48,7 @@ public class HexTile:MonoBehaviour {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.sprite = this.greyOutSprite;
 	}
+	
 
 	public void highlightEnemy() {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
@@ -59,6 +61,8 @@ public class HexTile:MonoBehaviour {
 		this.hexWidth =  sr.sprite.texture.width;
 		this.hexHeight = sr.sprite.texture.height;
 	}
+
+
 
 
 }

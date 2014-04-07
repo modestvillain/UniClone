@@ -296,7 +296,7 @@ public class Map : MonoBehaviour {
 				//then attack that enemy
 
 				else if(hit.collider.tag == "Base") {
-
+					hit.collider.gameObject.GetComponent<Base>().highlight();
 				}
 
 				if(this.player!=null && WorldManager.MODE == WorldManager.NORMALMODE){
