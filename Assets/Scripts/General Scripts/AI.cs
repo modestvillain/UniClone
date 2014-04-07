@@ -13,7 +13,7 @@ public class AI : MonoBehaviour {
 	
 	}
 
-	public tuple[] getMoveList(Team myTeam,HexTile[] tileList, int credits){
+	public tuple[] getMoveList(TeamManager myTeam,HexTile[] tileList, int credits){
 		//get Legal Moves
 			//get all friendly troops
 		Player[] listOfFriendlies = myTeam.getTroops ();
