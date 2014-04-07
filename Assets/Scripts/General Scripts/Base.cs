@@ -5,10 +5,8 @@ using System.Collections.Generic;
 public class Base : HexTile {
 
 	public Sprite blueBaseSprite;
-	public Sprite blueBaseHighlightSprite;
 	public Sprite redBaseSprite;
 	public Sprite greyBaseSprite;
-
 	
 	void Start () {
 		
@@ -20,7 +18,6 @@ public class Base : HexTile {
 	
 	public void highlight() {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
-		sr.sprite = this.highLightSprite;
 	}
 	
 	public void deselect() {
@@ -33,7 +30,7 @@ public class Base : HexTile {
 		case 0:
 			gameObject.transform.parent = GameObject.FindGameObjectWithTag("BLUE").transform;
 			normalSprite = blueBaseSprite;
-			highLightSprite = blueBaseHighlightSprite;
+			highLightSprite = blueBaseSprite;
 			occupiedSprite = blueBaseSprite;
 			greyOutSprite = blueBaseSprite;
 			sr.sprite = normalSprite;
