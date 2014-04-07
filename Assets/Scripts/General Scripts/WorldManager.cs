@@ -12,11 +12,11 @@ public class WorldManager : MonoBehaviour {
 	public GameObject RED;
 	public static int MOVEMODE = 1;
 	public static int NORMALMODE = 2;
-	public int mode;// int 1 is move mode, 2 means normal mode
+	public static int MODE;// int 1 is move mode, 2 means normal mode
 
 	// Use this for initialization
 	void Start () {
-		GUIMenuTest();
+		//GUIMenuTest();
 		this.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
 		BLUE = GameObject.FindGameObjectWithTag("BLUE");
 		RED = GameObject.FindGameObjectWithTag("RED");
@@ -95,7 +95,11 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	void GUIMenuTest(){
-		this.gameObject.AddComponent<ActionsMenu>();
+		ActionsMenu menu = (ActionsMenu)this.gameObject.AddComponent<ActionsMenu>();
+		menu.canMove = true;
+		menu.canAttack = true;
+		menu.isOn = true;
+
 	}
 
 

@@ -234,47 +234,73 @@ public class Map : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 			
 			if(hit)	{
+				//if you didn't hit the tile, deselect it
 				foreach(HexTile tile in tileList) {
 					if(tile.gameObject != hit.collider.gameObject) {
-						//change to normal
 						tile.deselect();
 					}
 				}
+				//if you hit a tile...
 				if(hit.collider.tag == "hexTile") {
 					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
 
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
-					if(this.worldManager.mode == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript
-					   && !hexScript.isOccupied()) {
-						//move occupant to that tile
-						player.move(hit.collider.gameObject);
-						hexScript.deselect ();
-						worldManager.mode = WorldManager.NORMALMODE;
+					if(WorldManager.MODE == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
+						if(!hexScript.isOccupied()){
+							player.move(hit.collider.gameObject);
+							hexScript.deselect ();
+						}
+						else{
+							if(hexScript.occupant.transform.parent.tag == "RED"){
+
+								hexScript.deselect();
+								Player enemyScript = WorldManager.getPlayerScript(hexScript.occupant);
+								Debug.Log ("Attacking enemy, health is: " + enemyScript.HP );
+								player.attack(enemyScript);
+								Debug.Log ("Attacking enemy, health is NOW: " + enemyScript.HP );
+							
+							}
+						}
+
 					}
+				
 
 					else {
-						worldManager.mode = WorldManager.NORMALMODE;
-
+						WorldManager.MODE = WorldManager.NORMALMODE;
 						if(hexScript.isOccupied() && hexScript.occupant.transform.parent.tag == "BLUE") {
-
-							worldManager.mode = WorldManager.MOVEMODE;
+							WorldManager.MODE = WorldManager.MOVEMODE;
 							player = (Player)hexScript.occupant.GetComponent(hexScript.occupant.tag);
+							player.allMenuActionsOn();
 							legalTiles = legalMoves (player);
-
 							foreach(HexTile hex in tileList){
 								hex.greyOut();
 							}
 							foreach(HexTile hex in legalTiles) {
 								hex.deselect();
+								//if an enemy is within attack range here, highlight it's tile in red
+								if(hex.isOccupied() && hex.occupant.transform.parent.tag == "RED"){
+									hex.highlightEnemy();//if you can reach enemy allow to attack it
+								}
 							}
 						}
 						hexScript.highlight();
 					}
 				}
 
+
+				//if the player is within allowed amount to attack enemy
+				//highlight the enemy
+				//go into move mode
+				//if the player clicks on the enemy in move mode
+				//then attack that enemy
+
 				else if(hit.collider.tag == "Base") {
 
+				}
+
+				if(this.player!=null && WorldManager.MODE == WorldManager.NORMALMODE){
+					player.isOn = false;
 				}
 			}
 		}//if
