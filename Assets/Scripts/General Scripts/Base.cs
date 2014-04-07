@@ -7,6 +7,7 @@ public class Base : HexTile {
 	public Sprite blueBaseSprite;
 	public Sprite redBaseSprite;
 	public Sprite greyBaseSprite;
+	public TeamManager team;
 	
 	void Start () {
 		
@@ -14,6 +15,23 @@ public class Base : HexTile {
 
 	void Update () {
 		
+	}
+
+	public void spawnPlayer() {
+
+	}
+
+	GameObject instantiatePlayer(string prefabName) {
+
+		string path = "Prefabs/" + prefabName;
+		GameObject player = (GameObject)Instantiate(Resources.Load(path));
+		player.name = prefabName;
+		player.tag = prefabName;
+		Player playerScript = WorldManager.getPlayerScript(player);
+		playerScript.player = player;
+		map.player = playerScript;
+		player.transform.parent = team.transform;
+		return player;
 	}
 	
 	public void highlight() {
@@ -28,7 +46,9 @@ public class Base : HexTile {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		switch(baseType) {
 		case 0:
-			gameObject.transform.parent = GameObject.FindGameObjectWithTag("BLUE").transform;
+			team = GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>();
+			gameObject.transform.parent = team.transform;
+			team.GetComponent<TeamManager>().bases.Add (this);
 			normalSprite = blueBaseSprite;
 			highLightSprite = blueBaseSprite;
 			occupiedSprite = blueBaseSprite;
