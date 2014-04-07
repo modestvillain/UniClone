@@ -33,4 +33,10 @@ public class Player:MonoBehaviour  {
 
 
 	}//move
+
+	//attack
+	public void attack(){
+		//if a dude to attack is within the attack range, then highlight the bad dude with red
+		//on highlight, also have option to move and attack
+	}
 }

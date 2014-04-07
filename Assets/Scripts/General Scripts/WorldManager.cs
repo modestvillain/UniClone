@@ -16,6 +16,7 @@ public class WorldManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		GUIMenuTest();
 		this.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
 		BLUE = GameObject.FindGameObjectWithTag("BLUE");
 		RED = GameObject.FindGameObjectWithTag("RED");
@@ -33,6 +34,7 @@ public class WorldManager : MonoBehaviour {
 
 			this.createPlayerInRandomLocation("Soldier", "BLUE");
 			this.createPlayerInRandomLocation("Aerial", "BLUE");
+			this.createPlayerInRandomLocation("BadGuyTest", "RED");
 		
 			playerSet = true;
 		}
@@ -84,10 +86,16 @@ public class WorldManager : MonoBehaviour {
 			return (Player)g.GetComponent("Soldier");
 		else if(g.tag == "Aerial")
 			return (Player)g.GetComponent("Aerial");
+		else if(g.tag == "BadGuyTest")
+			return (Player)g.GetComponent("BadGuyTest");
 		else{
 			return null;
 		}
 		
+	}
+
+	void GUIMenuTest(){
+		this.gameObject.AddComponent<ActionsMenu>();
 	}
 
 
