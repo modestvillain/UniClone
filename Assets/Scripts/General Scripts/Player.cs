@@ -16,7 +16,9 @@ public class Player:MonoBehaviour  {
 	public bool canCapture;
 	public bool canAttackAfterMove;
 	public int repair;
+	public bool turnIsOver = false;
 
+	public GameObject turnOverTile;
 
 	//for menu
 	public bool canMove = false;
@@ -36,9 +38,9 @@ public class Player:MonoBehaviour  {
 		this.currentTileScript.occupant = null;
 		hexscript.deselect();
 		this.currentTileScript = hexscript;
+		this.endTurn();
 
-		WorldManager.MODE = WorldManager.NORMALMODE;
-		this.isOn = false;
+
 
 
 	}//move
@@ -57,6 +59,8 @@ public class Player:MonoBehaviour  {
 				Destroy(this.gameObject);
 			}
 		}
+
+		this.endTurn();
 	}
 
 	void OnGUI(){
@@ -104,4 +108,12 @@ public class Player:MonoBehaviour  {
 		this.canMove = true;
 		this.canAttack = true;
 		}
+
+	public void endTurn(){
+		this.turnIsOver = true;
+		this.turnMenuOff();
+		this.turnOverTile = (GameObject)Instantiate(Resources.Load("Prefabs/blackoutTile"));
+		turnOverTile.transform.position = currentTileScript.gameObject.transform.position;
+		WorldManager.MODE = WorldManager.NORMALMODE;
+	}
 }
