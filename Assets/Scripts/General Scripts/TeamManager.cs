@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public static class TeamManager {
+public class TeamManager : MonoBehaviour {
 
-	public static int CREDITS;
+	public int CREDITS;
 
 }
