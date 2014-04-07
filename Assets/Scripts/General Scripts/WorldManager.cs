@@ -17,18 +17,13 @@ public class WorldManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		this.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
-		BLUE = new GameObject();
-		BLUE.name = "BLUE";
-		BLUE.tag = "BLUE";
-		RED = new GameObject();
-		RED.name = "RED";
-		RED.tag = "RED";
+		BLUE = GameObject.FindGameObjectWithTag("BLUE");
+		RED = GameObject.FindGameObjectWithTag("RED");
 		//player.SendMessage("crecreatePlayerInRandomLocation", map.tileList);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-			//map.Update();
 		this.spawnPlayer();
 			
 	}

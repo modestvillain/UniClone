@@ -9,9 +9,6 @@ public class HexTile:MonoBehaviour {
 	public Sprite highLightSprite;
 	public Sprite occupiedSprite;
 	public Sprite greyOutSprite;
-	public Sprite blueBaseSprite;
-	public Sprite redBaseSprite;
-	public Sprite greyBaseSprite;
 	public Map map;
 	public int hexWidth;
 	public int hexHeight;
@@ -30,27 +27,27 @@ public class HexTile:MonoBehaviour {
 	
 	}
 
-	public bool isOccupied(){
+	public bool isOccupied() {
 		return occupant!=null;
 	}
 
-	public void highlight(){
+	public void highlight() {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		if(isOccupied())	sr.sprite = occupiedSprite;
 		else 				sr.sprite = highLightSprite;
 	}
 
-	public void deselect(){
+	public void deselect() {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.sprite = normalSprite;
 	}
 
-	public void greyOut(){
+	public void greyOut() {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.sprite = this.greyOutSprite;
 	}
-
-	public void setWidthAndHeight(){
+	
+	public void setWidthAndHeight() {
 
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		this.hexWidth =  sr.sprite.texture.width;

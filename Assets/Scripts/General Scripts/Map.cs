@@ -38,9 +38,9 @@ public class Map : MonoBehaviour {
 	 */
 	public void createHexTile(float x, float y, int upDown, float widthAway) {
 
-		GameObject newT = (GameObject) Instantiate(whiteHexTile);
+		GameObject newT = (GameObject) Instantiate(Resources.Load("Prefabs/whiteHexTile"));
+		newT.transform.parent = this.transform;
 		HexTile hextile = newT.GetComponent<HexTile>();
-
 		hextile.map = this;
 
 		Vector2 loc = new Vector2(1.5f*x,y);
@@ -75,18 +75,66 @@ public class Map : MonoBehaviour {
 	}
 
 	/*
+	 * Instantiates base, places it on map, adds it to tiles and tileList
+	 */
+	public void createBase(float x, float y, int upDown, float widthAway, int baseType) {
+		
+		GameObject newBase = (GameObject) Instantiate(Resources.Load("Prefabs/Base"));
+		Base baseScript = newBase.GetComponent<Base>();
+		baseScript.map = this;
+		
+		Vector2 loc = new Vector2(1.5f*x,y);
+		Vector2 pos = new Vector2();
+		
+		switch (upDown) {
+		case 0:
+			pos.x = loc.x + widthAway;
+			pos.y = loc.y*1.3f;
+			break;
+		case 1:
+			pos.x = loc.x + widthAway-.7f;
+			pos.y = loc.y*1.3f;
+			break;
+		default:									/* COPY OF CASE 0 FOR INITIALIZATION, MINUS X MODIFICATION */
+			pos.x = loc.x + widthAway;
+			pos.y = loc.y*1.3f;
+			break;
+		}
+		newBase.transform.position = pos;
+
+		baseScript.setBase(baseType);
+		baseScript.position = pos;
+		baseScript.location = loc;
+		baseScript.x = modX;
+		baseScript.y = (int)y;
+		baseScript.setWidthAndHeight();
+		baseScript.center = new Vector2(pos.x + .1f, pos.y + .1f);
+		
+		tileList.Add(baseScript);
+		tiles[baseScript.x,baseScript.y]=baseScript;
+		modX++;
+	}
+
+	/*
 	 * Creates hex grid, establishes coordinate system
 	 */
 	public void createMap() {
 
-		empty = false;
 		float widthAway = .5f;
 		int off=-1;										/* FOR INITIALIZING FIRST / BOTTOM ROW */
 		int count=0;
 
 		for(int y = 0; y < mapHeight; y++) {
 			for(int x = 0; x < mapWidth; x++) {
-				this.createHexTile(x, y, off, widthAway);
+				if(y==0 && x==0) {
+					createBase(x, y, off, widthAway,0);
+				}
+				else if(y==mapHeight-1 && x==mapWidth-1) {
+					createBase(x, y, off, widthAway,1);
+				}
+				else {
+					createHexTile(x, y, off, widthAway);
+				}
 			}
 			modX=count;
 			if(off==1) {off=0; modX=++count;}
@@ -95,6 +143,7 @@ public class Map : MonoBehaviour {
 		}
 
 		createAdjacencies();
+		empty = false;
 	}
 
 	/*
@@ -185,26 +234,21 @@ public class Map : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 			
 			if(hit)	{
-				if(hit.collider.tag == "hexTile") {
-					foreach(HexTile tile in tileList) {
-						if(tile.gameObject != hit.collider.gameObject) {
-							//change to normal
-							tile.deselect();
-						}
+				foreach(HexTile tile in tileList) {
+					if(tile.gameObject != hit.collider.gameObject) {
+						//change to normal
+						tile.deselect();
 					}
+				}
+				if(hit.collider.tag == "hexTile") {
 					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
-
-
-
-
 
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
 					if(this.worldManager.mode == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript
 					   && !hexScript.isOccupied()) {
 						//move occupant to that tile
 						player.move(hit.collider.gameObject);
-						player.move(hit.collider.gameObject);//SendMessage("move", hit.collider.gameObject);
 						hexScript.deselect ();
 						worldManager.mode = WorldManager.NORMALMODE;
 					}
@@ -227,7 +271,9 @@ public class Map : MonoBehaviour {
 						}
 						hexScript.highlight();
 					}
+				}
 
+				else if(hit.collider.tag == "Base") {
 
 				}
 			}
