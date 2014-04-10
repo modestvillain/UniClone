@@ -16,6 +16,12 @@ public class Aerial : Player {
 		this.HP = AerialStats.HEALTH;
 		this.DMG = AerialStats.DAMAGE; //taking ground light variable for now
 	}
+
+	void OnEnable() {
+		setup ();
+		normalSprite = Resources.Load<Sprite>("Sprites/Cute Dragon");
+		gameObject.GetComponent<SpriteRenderer>().sprite = normalSprite;
+	}
 	
 	// Update is called once per frame
 	void Update () {

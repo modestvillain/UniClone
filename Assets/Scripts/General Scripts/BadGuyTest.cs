@@ -15,9 +15,9 @@ public class BadGuyTest : Player {
 		this.HP = 10;
 		this.DMG = 6; //taking ground light variable for now
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	void OnEnable() {
+		normalSprite = Resources.Load<Sprite>("Sprites/badGuy");
+		gameObject.GetComponent<SpriteRenderer>().sprite = normalSprite;
 	}
 }

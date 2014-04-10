@@ -57,6 +57,7 @@ public class WorldManager : MonoBehaviour {
 		Player playerScript = WorldManager.getPlayerScript(player);
 		map.player = playerScript;
 		player.transform.parent = GameObject.FindGameObjectWithTag(side).transform;
+		playerScript.team = GameObject.FindGameObjectWithTag(side).GetComponent<TeamManager>();
 		return player;
 	}
 

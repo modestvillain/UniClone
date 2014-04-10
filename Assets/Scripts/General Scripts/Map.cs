@@ -107,7 +107,7 @@ public class Map : MonoBehaviour {
 		baseScript.location = loc;
 		baseScript.x = modX;
 		baseScript.y = (int)y;
-		baseScript.setWidthAndHeight();
+		//baseScript.setWidthAndHeight();
 		baseScript.center = new Vector2(pos.x + .1f, pos.y + .1f);
 		
 		tileList.Add(baseScript);
@@ -227,7 +227,7 @@ public class Map : MonoBehaviour {
 		}
 		List<HexTile> legal = new List<HexTile>();
 		foreach(HexTile hex in inRange) {
-			if(hex.isOccupied() && p.team == ((Player)hex.occupant.GetComponent(hex.occupant.tag)).team)
+			if(hex.isOccupied() && p.team != ((Player)hex.occupant.GetComponent(hex.occupant.tag)).team)
 				legal.Add(hex);
 		}
 		return legal;
@@ -273,25 +273,21 @@ public class Map : MonoBehaviour {
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
 					if(WorldManager.MODE == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
-						if(!hexScript.isOccupied()){
+						if(!hexScript.isOccupied()) {
 							player.move(hit.collider.gameObject);
-							hexScript.deselect ();
+							//hexScript.deselect ();
 						}
-						else{
-							if(hexScript.occupant.transform.parent.tag == "RED"){
-
+						else {
+							if(hexScript.occupant.transform.parent.tag != player.player.transform.parent.tag) {
 								hexScript.deselect();
 								Player enemyScript = WorldManager.getPlayerScript(hexScript.occupant);
 								Debug.Log ("Attacking enemy, health is: " + enemyScript.HP );
 								player.attack(enemyScript);
 								Debug.Log ("Attacking enemy, health is NOW: " + enemyScript.HP );
-							
 							}
 						}
-
 					}
 				
-
 					else {
 						WorldManager.MODE = WorldManager.NORMALMODE;
 						if(hexScript.isOccupied() && hexScript.occupant.transform.parent.tag == "BLUE") {
@@ -300,18 +296,14 @@ public class Map : MonoBehaviour {
 							player.allMenuActionsOn();
 							legalTiles = legalMoves (player);
 							List<HexTile> attacks = legalAttacks(player);
-							foreach(HexTile hex in tileList){
+							foreach(HexTile hex in tileList) {
 								hex.greyOut();
 							}
 							foreach(HexTile hex in legalTiles) {
 								hex.deselect();
-								//if an enemy is within attack range here, highlight it's tile in red
-								if(hex.isOccupied() && hex.occupant.transform.parent.tag == "RED"){
-									hex.highlightEnemy();//if you can reach enemy allow to attack it
-								}
 							}
 							foreach(HexTile hex in attacks) {
-								hex.highlight();
+								hex.highlightEnemy();
 							}
 						}
 						hexScript.highlight();
