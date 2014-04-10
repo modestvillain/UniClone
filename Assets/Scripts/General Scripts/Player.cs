@@ -41,6 +41,7 @@ public class Player:MonoBehaviour  {
 	}
 
 	public void move(GameObject hextile) {
+
 		player = gameObject;
 		HexTile hexscript = hextile.GetComponent<HexTile>();
 		this.player.transform.position = hexscript.center;
@@ -48,23 +49,15 @@ public class Player:MonoBehaviour  {
 		this.currentTileScript.occupant = null;
 		hexscript.deselect();
 		this.currentTileScript = hexscript;
-		this.endTurn();
+//		this.endTurn();
 	}//move
 	
 	public void attack(Player enemyScript) {
-		if(this.DMG> enemyScript.DEF) {
-			enemyScript.HP -= this.DMG;
-			if(enemyScript.HP <=0) {
-				Destroy(enemyScript.gameObject);
-			}
-		}
-		else{
-			this.HP -= enemyScript.DMG;
-			if(this.HP <=0) {
-				Destroy(this.gameObject);
-			}
-		}
 
+		enemyScript.HP -= this.DMG*(this.DMG/enemyScript.DEF);
+		if(enemyScript.HP <=0){
+			Destroy(enemyScript.gameObject);
+		}
 		this.endTurn();
 	}
 
@@ -117,8 +110,13 @@ public class Player:MonoBehaviour  {
 	public void endTurn(){
 		turnOverTile.transform.position = currentTileScript.gameObject.transform.position;
 		this.turnIsOver = true;
+		turnOverTile.SetActive(true);
 		this.turnMenuOff();
-		WorldManager.MODE = WorldManager.NORMALMODE;
+		WorldManager.NORMALMODE = true;
+	}
+
+	public void disableTurnOverTile(){
+		this.turnOverTile.SetActive(false);
 	}
 
 }

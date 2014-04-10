@@ -70,8 +70,4 @@ public class HexTile:MonoBehaviour {
 		this.hexWidth =  sr.sprite.texture.width;
 		this.hexHeight = sr.sprite.texture.height;
 	}
-
-
-
-
 }

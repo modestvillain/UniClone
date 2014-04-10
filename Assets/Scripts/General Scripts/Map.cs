@@ -15,6 +15,7 @@ public class Map : MonoBehaviour {
 	public int mapWidth;
 	public int mapHeight;
 	public bool empty=true;
+	public Base lastBaseSelected;
 
 	void Start() {
 
@@ -209,8 +210,8 @@ public class Map : MonoBehaviour {
 
 	public List<HexTile> legalAttacks(Player p) {
 		
-		List<HexTile> inRange = new List<HexTile>();
-		List<HexTile> temp = new List<HexTile>(p.currentTileScript.neighbors);
+		List<HexTile> inRange = new List<HexTile>(p.currentTileScript.neighbors);
+		List<HexTile> temp = new List<HexTile>();
 		
 		for(int i=1; i<p.attackRange; i++) {
 			foreach(HexTile hex in inRange) {
@@ -260,25 +261,50 @@ public class Map : MonoBehaviour {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 			
 			if(hit)	{
-				//if you didn't hit the tile, deselect it
+				GameObject[] bases = GameObject.FindGameObjectsWithTag("Base");
 				foreach(HexTile tile in tileList) {
 					if(tile.gameObject != hit.collider.gameObject) {
 						tile.deselect();
 					}
 				}
+//				Debug.Log(hit.collider.gameObject.GetComponent<HexTile>().occupant.tag);
 
 				//if you hit a tile...
 				if(hit.collider.tag == "hexTile") {
 					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
+					if(WorldManager.MOVEMODE && hexScript.isOccupied() && hexScript.occupant.transform.parent.tag != player.transform.parent.tag) {
+						WorldManager.setAttack();
+					}
+					hexScript.deselect();
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
-					if(WorldManager.MODE == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
-						if(!hexScript.isOccupied()) {
-							player.move(hit.collider.gameObject);
-							//hexScript.deselect ();
+
+					if(WorldManager.MOVEMODE) {
+						//if next selected tile is empty.
+						if(legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
+							if(!hexScript.isOccupied()){
+								player.move(hit.collider.gameObject);
+								hexScript.deselect ();
+							}
+						}
+//						WorldManager.MODE = WorldManager.NORMALMODE;
+						List<HexTile> attacks = legalAttacks(player);
+						if (attacks.Count>0) {
+							WorldManager.setAttack ();
+							foreach(HexTile hex in attacks) {
+								hex.highlightEnemy();
+							}
 						}
 						else {
-							if(hexScript.occupant.transform.parent.tag != player.player.transform.parent.tag) {
+							WorldManager.setNormal();
+							player.endTurn();
+						}
+						//if next selected tile contains an enemy..
+					}
+					else if(WorldManager.ATTACKMODE || WorldManager.MOVEMODE) {
+						List<HexTile> attacks = legalAttacks(player);
+						if(hexScript.isOccupied()) {
+							if(hexScript.occupant.transform.parent.tag != player.transform.parent.tag && attacks.Contains(hexScript)){
 								hexScript.deselect();
 								Player enemyScript = WorldManager.getPlayerScript(hexScript.occupant);
 								Debug.Log ("Attacking enemy, health is: " + enemyScript.HP );
@@ -286,14 +312,16 @@ public class Map : MonoBehaviour {
 								Debug.Log ("Attacking enemy, health is NOW: " + enemyScript.HP );
 							}
 						}
+						WorldManager.setNormal();
+						player.endTurn();
 					}
-				
 					else {
-						WorldManager.MODE = WorldManager.NORMALMODE;
+						WorldManager.setNormal();
+						//if you selected your own memeber..
 						if(hexScript.isOccupied() && hexScript.occupant.transform.parent.tag == "BLUE") {
-							WorldManager.MODE = WorldManager.MOVEMODE;
+							WorldManager.setMove();
 							player = (Player)hexScript.occupant.GetComponent(hexScript.occupant.tag);
-							player.allMenuActionsOn();
+							//player.allMenuActionsOn();
 							legalTiles = legalMoves (player);
 							List<HexTile> attacks = legalAttacks(player);
 							foreach(HexTile hex in tileList) {
@@ -305,16 +333,33 @@ public class Map : MonoBehaviour {
 							foreach(HexTile hex in attacks) {
 								hex.highlightEnemy();
 							}
+							if(lastBaseSelected!=null){
+								lastBaseSelected.SendMessage("deselect");
+							}
+							hexScript.highlight();
 						}
-						hexScript.highlight();
+
+						else if(!hexScript.isOccupied()) {
+							hexScript.highlight();
+						}
+
 					}
 				}
-				else if(hit.collider.tag == "Base") {
+				else if(hit.collider.tag == "Base" && hit.collider.transform.parent.tag != "RED") {
 					hit.collider.gameObject.GetComponent<Base>().baseSelected();
-				}
-				if(this.player!=null && WorldManager.MODE == WorldManager.NORMALMODE){
+					this.lastBaseSelected = hit.collider.gameObject.GetComponent<Base>();
 					player.isOn = false;// makes the menu turn off
+				}
 
+				if(this.player!=null && WorldManager.NORMALMODE){
+					player.isOn = false;// makes the menu turn off
+					if(hit.collider.tag != "Base"){
+
+						if(lastBaseSelected!= null){
+							lastBaseSelected.SendMessage("deselect");
+						}
+
+					}
 				}
 			}
 		}//if
