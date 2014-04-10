@@ -8,28 +8,18 @@ public class Base : HexTile {
 	public Sprite blueBaseHighlightSprite;
 	public Sprite redBaseSprite;
 	public Sprite greyBaseSprite;
-<<<<<<< HEAD
-
 	public string side;
-
-
 	public Texture2D aerialPic;
 	public Texture2D soldierPic;
 	public Texture2D checkMark;
-
-	//for menu
 	bool shouldShowStats = false;
 	bool menuOn = false;
 	IStats selectedStats = WorldManager.aerialStats;
-
 	string create;
-=======
 	public TeamManager team;
->>>>>>> 28a5539e9831dc564ac5fe92aa41ea00d808e991
 	
 	void Start () {
-
-	
+		
 	}
 
 	void Update () {
