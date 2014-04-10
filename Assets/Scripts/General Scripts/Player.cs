@@ -20,32 +20,35 @@ public class Player:MonoBehaviour  {
 
 	public GameObject turnOverTile;
 
-	//for menu
+
 	public bool canMove = false;
-	public bool canAttack = false;
+	public bool canAttack = false;  	//for menu
 	public bool isOn = false;
 
-	public void move(GameObject hextile){
+	void Start() {
 
-		//set the location equal to the corresponding tile's position
-		//if checking the map reveals that the move is okay
+	}
+
+	void OnEnable() {
+		setup ();
+	}
+
+	public void setup() {
+		player = gameObject;
+		turnOverTile = (GameObject)Instantiate(Resources.Load("Prefabs/blackoutTile"));
+		turnOverTile.transform.position = new Vector2(100,100);
+	}
+
+	public void move(GameObject hextile){
 		HexTile hexscript = hextile.GetComponent<HexTile>();
 		this.player.transform.position = hexscript.center;
-		//remove self from occupant of previous tile
-		//put this one as occupied
 		hexscript.occupant = this.player;
-
 		this.currentTileScript.occupant = null;
 		hexscript.deselect();
 		this.currentTileScript = hexscript;
 		this.endTurn();
-
-
-
-
 	}//move
-
-	//attack
+	
 	public void attack(Player enemyScript){
 		if(this.DMG> enemyScript.DEF){
 			enemyScript.HP -= this.DMG;
@@ -110,10 +113,10 @@ public class Player:MonoBehaviour  {
 		}
 
 	public void endTurn(){
+		turnOverTile.transform.position = currentTileScript.gameObject.transform.position;
 		this.turnIsOver = true;
 		this.turnMenuOff();
-		this.turnOverTile = (GameObject)Instantiate(Resources.Load("Prefabs/blackoutTile"));
-		turnOverTile.transform.position = currentTileScript.gameObject.transform.position;
 		WorldManager.MODE = WorldManager.NORMALMODE;
 	}
+
 }

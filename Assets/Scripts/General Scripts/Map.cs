@@ -287,20 +287,12 @@ public class Map : MonoBehaviour {
 						hexScript.highlight();
 					}
 				}
-
-
-				//if the player is within allowed amount to attack enemy
-				//highlight the enemy
-				//go into move mode
-				//if the player clicks on the enemy in move mode
-				//then attack that enemy
-
 				else if(hit.collider.tag == "Base") {
-					hit.collider.gameObject.GetComponent<Base>().highlight();
+					hit.collider.gameObject.GetComponent<Base>().baseSelected();
 				}
-
 				if(this.player!=null && WorldManager.MODE == WorldManager.NORMALMODE){
-					player.isOn = false;
+					player.isOn = false;// makes the menu turn off
+
 				}
 			}
 		}//if

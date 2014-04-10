@@ -9,9 +9,23 @@ public class Base : HexTile {
 	public Sprite redBaseSprite;
 	public Sprite greyBaseSprite;
 
+	public string side;
+
+
+	public Texture2D aerialPic;
+	public Texture2D soldierPic;
+	public Texture2D checkMark;
+
+	//for menu
+	bool shouldShowStats = false;
+	bool menuOn = false;
+	IStats selectedStats = WorldManager.aerialStats;
+
+	string create;
 	
 	void Start () {
-		
+
+	
 	}
 
 	void Update () {
@@ -24,7 +38,13 @@ public class Base : HexTile {
 	}
 	
 	public void deselect() {
-		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		//SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		this.turnMenuOff();
+	}
+
+	public void baseSelected(){
+		this.highlight();
+		this.turnMenuOn();
 	}
 	
 	public void setBase(int baseType) {
@@ -37,6 +57,7 @@ public class Base : HexTile {
 			occupiedSprite = blueBaseSprite;
 			greyOutSprite = blueBaseSprite;
 			sr.sprite = normalSprite;
+			this.side = "BLUE";
 			break;
 		case 1:
 			gameObject.transform.parent = GameObject.FindGameObjectWithTag("RED").transform;
@@ -45,6 +66,7 @@ public class Base : HexTile {
 			occupiedSprite = redBaseSprite;
 			greyOutSprite = redBaseSprite;
 			sr.sprite = normalSprite;
+			this.side = "RED";
 			break;
 		default:
 			normalSprite = greyBaseSprite;
@@ -52,7 +74,83 @@ public class Base : HexTile {
 			occupiedSprite = greyBaseSprite;
 			greyOutSprite = greyBaseSprite;
 			sr.sprite = normalSprite;
+			this.side = null;
 			break;
 		}
+	}//method
+
+
+	void OnGUI(){
+		if(menuOn){
+			Rect windowRect = new Rect(20, 20, 120, 150);
+			windowRect = GUILayout.Window(0, windowRect, DoMyWindow, "Menu");
+		}
+	}//method
+
+
+	void showStats(IStats stats){
+		string cost = "Cost : " + stats.getCost();
+		GUILayout.Label(cost);
+		string attackRange = "AttackRange : " + stats.getAttackRange();
+		GUILayout.Label(attackRange);
+		GUILayout.Label("Damage : " + stats.getDamage());
+		GUILayout.Label("Defense : " + stats.getDefense());
+		GUILayout.Label("Mobility : " + stats.getMobility());
+		GUILayout.Label("Repair : " + stats.getRepair());
+		GUILayout.Label("Can Capture Bases : " + stats.getCanCapture());
 	}
-}
+	
+	void DoMyWindow(int windowID) {
+		int ah = this.aerialPic.height;
+		int aw = this.aerialPic.width;
+		int sh = this.soldierPic.height;
+		int sw = this.soldierPic.width;
+		int space = ah + sh;//has spacing of thirty
+		int width = 20 + aw + sw;
+		GUILayout.BeginVertical();
+		GUILayout.BeginHorizontal();
+
+		if(GUILayout.Button(this.aerialPic)){
+			shouldShowStats = true;
+			selectedStats = WorldManager.aerialStats;
+			create = "Aerial";
+		}
+		else if(GUILayout.Button(this.soldierPic)){
+			shouldShowStats = true;
+			selectedStats = WorldManager.soldierStats;
+			create = "Soldier";
+		}
+		GUILayout.EndHorizontal();
+
+		if(shouldShowStats){
+			this.showStats(selectedStats);
+
+			GUILayout.BeginHorizontal();
+			if(GUILayout.Button(this.checkMark)){
+				this.createPlayerAndClose(create);
+			}
+			if(GUILayout.Button((Texture2D)Resources.Load("Textures/close"))){
+				this.menuOn = false;
+			}
+			GUILayout.EndHorizontal();
+
+		}
+		GUILayout.EndVertical();
+	}//method
+
+	void createPlayerAndClose(string prefabName){
+		GameObject player = WorldManager.instantiatePlayer(prefabName, this.side);
+		WorldManager.positionPlayer(player, (HexTile)this );
+		this.menuOn = false;
+		WorldManager.getPlayerScript(player).endTurn();
+	}
+
+	public void turnMenuOn(){
+		this.menuOn = true;
+	}
+
+	public void turnMenuOff(){
+		this.menuOn = false;
+	}
+
+}//class

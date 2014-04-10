@@ -3,18 +3,18 @@ using System.Collections;
 
 public class Aerial : Player {
 
+
 	// Use this for initialization
 	void Start () {
-		this.cost = 350;
-		this.attackRange = 1;
-		this.MOB = 3;
-		this.DEF = 7;
-		this.canCapture = false;
-		this.canAttackAfterMove = true;
-		this.repair = 2;
-		this.HP = 10;
-		this.DMG = 6; //taking ground light variable for now
-
+		this.cost = AerialStats.COST;
+		this.attackRange = AerialStats.ATTACKRANGE;
+		this.MOB = AerialStats.MOBILITY;
+		this.DEF = AerialStats.DEFENSE;
+		this.canCapture = AerialStats.CANCAPTURE;
+		this.canAttackAfterMove =AerialStats.CANATTACKAFTERMOVE;
+		this.repair = AerialStats.REPAIR;
+		this.HP = AerialStats.HEALTH;
+		this.DMG = AerialStats.DAMAGE; //taking ground light variable for now
 	}
 	
 	// Update is called once per frame

@@ -3,17 +3,19 @@ using System.Collections;
 
 public class Soldier : Player {
 
+
 	// Use this for initialization
 	void Start () {
-		this.cost = 100;
-		this.attackRange = 1;
-		this.MOB = 1;
-		this.DEF = 5;
-		this.canCapture = true;
-		this.canAttackAfterMove = true;
-		this.repair = 1;
-		this.HP = 10;
-		this.DMG = 6; //taking ground light variable for now
+		setup();
+		this.cost = SoldierStats.COST;
+		this.attackRange = SoldierStats.ATTACKRANGE;
+		this.MOB = SoldierStats.MOBILITY;
+		this.DEF = SoldierStats.DEFENSE;
+		this.canCapture = SoldierStats.CANCAPTURE;
+		this.canAttackAfterMove = SoldierStats.CANATTACKAFTERMOVE;
+		this.repair = SoldierStats.REPAIR;
+		this.HP = SoldierStats.HEALTH;
+		this.DMG = SoldierStats.DAMAGE; //taking ground light variable for now
 		this.actionsList = new ArrayList();
 
 

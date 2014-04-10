@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class WorldManager : MonoBehaviour {
 	
-	public Map map;
+	public static Map map;
 	public GameObject player;
 	public Sprite playerSprite;
 	public bool playerSet = false;
@@ -13,14 +13,16 @@ public class WorldManager : MonoBehaviour {
 	public static int MOVEMODE = 1;
 	public static int NORMALMODE = 2;
 	public static int MODE;// int 1 is move mode, 2 means normal mode
+	public static AerialStats aerialStats;
+	public static SoldierStats soldierStats;
 
 	// Use this for initialization
 	void Start () {
-		//GUIMenuTest();
-		this.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
+		WorldManager.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
 		BLUE = GameObject.FindGameObjectWithTag("BLUE");
 		RED = GameObject.FindGameObjectWithTag("RED");
-		//player.SendMessage("crecreatePlayerInRandomLocation", map.tileList);
+		WorldManager.aerialStats = new AerialStats();
+		WorldManager.soldierStats = new SoldierStats();
 	}
 	
 	// Update is called once per frame
@@ -32,48 +34,33 @@ public class WorldManager : MonoBehaviour {
 	public void spawnPlayer(){
 		if(!this.playerSet && !map.empty){
 
-			this.createPlayerInRandomLocation("Soldier", "BLUE");
-			this.createPlayerInRandomLocation("Aerial", "BLUE");
-			this.createPlayerInRandomLocation("BadGuyTest", "RED");
+			createPlayerInRandomLocation("Soldier", "BLUE");
+			createPlayerInRandomLocation("Aerial", "BLUE");
+			createPlayerInRandomLocation("BadGuyTest", "RED");
 		
 			playerSet = true;
 		}
 	}
 
-
-	void createPlayerInRandomLocation(string prefabname, string side){
+	public static void createPlayerInRandomLocation(string prefabname, string side){
 		//side = BLUE or RED
 		int rand = Random.Range(0, map.tileList.Count -1);
-		this.positionPlayer( this.instantiatePlayer(prefabname, side), map.tileList[rand]);
+		WorldManager.positionPlayer(WorldManager.instantiatePlayer(prefabname, side), WorldManager.map.tileList[rand]);
 	}
 
 
-	GameObject instantiatePlayer(string prefabName, string side){
+	public static GameObject instantiatePlayer(string prefabName, string side){
 		string path = "Prefabs/" + prefabName;
 		GameObject player = (GameObject)Instantiate(Resources.Load(path));
 		player.name = prefabName;
 		player.tag = prefabName;
 		Player playerScript = WorldManager.getPlayerScript(player);
-		playerScript.player = player;
 		map.player = playerScript;
 		player.transform.parent = GameObject.FindGameObjectWithTag(side).transform;
 		return player;
 	}
 
-	GameObject instantiateRedPlayer(string prefabName){
-		string path = "Prefabs/" + prefabName;
-		GameObject player = (GameObject)Instantiate(Resources.Load(path));
-		player.name = prefabName;
-		player.tag = prefabName;
-		Player playerScript = WorldManager.getPlayerScript(player);
-		playerScript.player = player;
-		map.player = playerScript;
-		player.transform.parent = GameObject.FindGameObjectWithTag("BLUE").transform;
-		return player;
-	}
-
-
-	void positionPlayer(GameObject player, HexTile hextile){
+	public static void positionPlayer(GameObject player, HexTile hextile){
 		player.transform.position = hextile.center;
 		hextile.occupant = player;
 		WorldManager.getPlayerScript(player).currentTileScript = hextile;
