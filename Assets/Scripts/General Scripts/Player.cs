@@ -40,7 +40,9 @@ public class Player:MonoBehaviour  {
 		turnOverTile.transform.position = new Vector2(100,100);
 	}
 
-	public void move(GameObject hextile){
+	public void move(GameObject hextile) {
+
+		player = gameObject;
 		HexTile hexscript = hextile.GetComponent<HexTile>();
 		this.player.transform.position = hexscript.center;
 		hexscript.occupant = this.player;
@@ -50,20 +52,12 @@ public class Player:MonoBehaviour  {
 //		this.endTurn();
 	}//move
 	
-	public void attack(Player enemyScript){
-//		if(this.DMG> enemyScript.DEF){
+	public void attack(Player enemyScript) {
+
 		enemyScript.HP -= this.DMG*(this.DMG/enemyScript.DEF);
 		if(enemyScript.HP <=0){
 			Destroy(enemyScript.gameObject);
 		}
-//		}
-//		else{
-//			this.HP -= enemyScript.DMG;
-//			if(this.HP <=0){
-//				Destroy(this.gameObject);
-//			}
-//		}
-
 		this.endTurn();
 	}
 

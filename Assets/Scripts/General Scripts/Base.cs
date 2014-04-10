@@ -26,7 +26,16 @@ public class Base : HexTile {
 		
 	}
 
-	
+	void OnEnable() {
+		blueBaseSprite = Resources.Load<Sprite>("Sprites/blueBase");
+		blueBaseHighlightSprite = Resources.Load<Sprite>("Sprites/blueBaseHighLight");
+		redBaseSprite = Resources.Load<Sprite>("Sprites/redbase");
+		greyBaseSprite = Resources.Load<Sprite>("Sprites/greyBase");
+		aerialPic = Resources.Load<Texture2D>("Textures/dragonTexture");
+		soldierPic = Resources.Load<Texture2D>("Textures/soldierTexture");
+		checkMark = Resources.Load<Texture2D>("Textures/checkMark");
+	}
+
 	public void highlight() {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.sprite = this.highLightSprite;
@@ -44,36 +53,37 @@ public class Base : HexTile {
 	public void setBase(int baseType) {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		switch(baseType) {
-		case 0:
-			team = GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>();
-			gameObject.transform.parent = team.transform;
-			team.GetComponent<TeamManager>().bases.Add (this);
-			normalSprite = blueBaseSprite;
-			highLightSprite = blueBaseHighlightSprite;
-			occupiedSprite = blueBaseSprite;
-			greyOutSprite = blueBaseSprite;
-			sr.sprite = normalSprite;
-			this.side = "BLUE";
-			break;
-		case 1:
-			gameObject.transform.parent = GameObject.FindGameObjectWithTag("RED").transform;
-			normalSprite = redBaseSprite;
-			highLightSprite = redBaseSprite;
-			occupiedSprite = redBaseSprite;
-			greyOutSprite = redBaseSprite;
-			sr.sprite = normalSprite;
-			this.side = "RED";
-			break;
-		default:
-			normalSprite = greyBaseSprite;
-			highLightSprite = greyBaseSprite;
-			occupiedSprite = greyBaseSprite;
-			greyOutSprite = greyBaseSprite;
-			sr.sprite = normalSprite;
-			this.side = null;
-			break;
+			case 0:
+				team = GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>();
+				gameObject.transform.parent = team.transform;
+				team.GetComponent<TeamManager>().bases.Add (this);
+				normalSprite = blueBaseSprite;
+				highLightSprite = blueBaseHighlightSprite;
+				occupiedSprite = blueBaseSprite;
+				greyOutSprite = blueBaseSprite;
+				sr.sprite = normalSprite;
+				this.side = "BLUE";
+				break;
+			case 1:
+				gameObject.transform.parent = GameObject.FindGameObjectWithTag("RED").transform;
+				normalSprite = redBaseSprite;
+				highLightSprite = redBaseSprite;
+				occupiedSprite = redBaseSprite;
+				greyOutSprite = redBaseSprite;
+				sr.sprite = normalSprite;
+				this.side = "RED";
+				break;
+			default:
+				normalSprite = greyBaseSprite;
+				highLightSprite = greyBaseSprite;
+				occupiedSprite = greyBaseSprite;
+				greyOutSprite = greyBaseSprite;
+				sr.sprite = normalSprite;
+				this.side = null;
+				break;
 		}
-	}//method
+		setWidthAndHeight();
+	}
 
 
 	void OnGUI(){

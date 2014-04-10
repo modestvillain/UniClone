@@ -20,6 +20,8 @@ public class Soldier : Player {
 
 	void OnEnable() {
 		setup();
+		normalSprite = Resources.Load<Sprite>("Sprites/Battlefield_3_Soldier_MP");
+		gameObject.GetComponent<SpriteRenderer>().sprite = normalSprite;
 	}
 	
 	// Update is called once per frame

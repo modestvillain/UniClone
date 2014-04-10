@@ -88,9 +88,11 @@ public class WorldManager : MonoBehaviour {
 		map.player = playerScript;
 		player.transform.parent = GameObject.FindGameObjectWithTag(side).transform;
 		playerScript.team = GameObject.FindGameObjectWithTag(side).GetComponent<TeamManager>();
+
 		if(side == "BLUE"){
 			WorldManager.players.Add(playerScript);
 		}
+
 		return player;
 	}
 
@@ -133,7 +135,4 @@ public class WorldManager : MonoBehaviour {
 	void OnGUI(){
 		gameObject.GetComponent<WorldMenu>().makeMenu();
 	}
-
-
-
 }

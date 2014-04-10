@@ -108,7 +108,7 @@ public class Map : MonoBehaviour {
 		baseScript.location = loc;
 		baseScript.x = modX;
 		baseScript.y = (int)y;
-		baseScript.setWidthAndHeight();
+		//baseScript.setWidthAndHeight();
 		baseScript.center = new Vector2(pos.x + .1f, pos.y + .1f);
 		
 		tileList.Add(baseScript);
@@ -266,10 +266,10 @@ public class Map : MonoBehaviour {
 						tile.deselect();
 					}
 				}
-//				Debug.Log(hit.collider.gameObject.GetComponent<HexTile>().occupant.tag);
 
 				//if you hit a tile...
-				if(hit.collider.tag == "hexTile") {
+				if(hit.collider.tag == "hexTile" || (hit.collider.tag == "Base" && hit.collider.transform.parent.tag != "RED"
+				                                     && hit.collider.gameObject.GetComponent<Base>().isOccupied())) {
 					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
 					if(WorldManager.MOVEMODE && hexScript.isOccupied() && hexScript.occupant.transform.parent.tag != player.transform.parent.tag) {
@@ -277,10 +277,12 @@ public class Map : MonoBehaviour {
 					}
 					hexScript.deselect();
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
-					if(WorldManager.MOVEMODE ) {
+
+					if(WorldManager.MOVEMODE) {
+
 						//if next selected tile is empty.
 						if(legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
-							if(!hexScript.isOccupied()){
+							if(!hexScript.isOccupied()) {
 								player.move(hit.collider.gameObject);
 								hexScript.deselect ();
 							}
@@ -322,7 +324,7 @@ public class Map : MonoBehaviour {
 							//player.allMenuActionsOn();
 							legalTiles = legalMoves (player);
 							List<HexTile> attacks = legalAttacks(player);
-							foreach(HexTile hex in tileList){
+							foreach(HexTile hex in tileList) {
 								hex.greyOut();
 							}
 							foreach(HexTile hex in legalTiles) {
@@ -340,10 +342,10 @@ public class Map : MonoBehaviour {
 						else if(!hexScript.isOccupied()) {
 							hexScript.highlight();
 						}
-
 					}
 				}
 				else if(hit.collider.tag == "Base" && hit.collider.transform.parent.tag != "RED") {
+
 					hit.collider.gameObject.GetComponent<Base>().baseSelected();
 					this.lastBaseSelected = hit.collider.gameObject.GetComponent<Base>();
 					player.isOn = false;// makes the menu turn off
@@ -352,16 +354,11 @@ public class Map : MonoBehaviour {
 				if(this.player!=null && WorldManager.NORMALMODE){
 					player.isOn = false;// makes the menu turn off
 					if(hit.collider.tag != "Base"){
-
 						if(lastBaseSelected!= null){
 							lastBaseSelected.SendMessage("deselect");
 						}
-
 					}
-
-				
 				}
-
 			}
 		}//if
 	}//method

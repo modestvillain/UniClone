@@ -18,7 +18,9 @@ public class Aerial : Player {
 	}
 
 	void OnEnable() {
-		setup();
+		setup ();
+		normalSprite = Resources.Load<Sprite>("Sprites/Cute Dragon");
+		gameObject.GetComponent<SpriteRenderer>().sprite = normalSprite;
 	}
 	
 	// Update is called once per frame
