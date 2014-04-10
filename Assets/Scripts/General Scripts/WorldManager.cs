@@ -10,11 +10,13 @@ public class WorldManager : MonoBehaviour {
 	public bool playerSet = false;
 	public GameObject BLUE;
 	public GameObject RED;
-	public static int MOVEMODE = 1;
-	public static int NORMALMODE = 2;
+	public static bool MOVEMODE = false;
+	public static bool NORMALMODE = true;
+	public static bool ATTACKMODE = false;
 	public static int MODE;// int 1 is move mode, 2 means normal mode
 	public static AerialStats aerialStats;
 	public static SoldierStats soldierStats;
+	public static List<Player> players;
 
 	// Use this for initialization
 	void Start () {
@@ -23,12 +25,37 @@ public class WorldManager : MonoBehaviour {
 		RED = GameObject.FindGameObjectWithTag("RED");
 		WorldManager.aerialStats = new AerialStats();
 		WorldManager.soldierStats = new SoldierStats();
+		WorldManager.players = new List<Player>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		this.spawnPlayer();
 			
+	}
+
+	public static void setNormal() {
+		NORMALMODE = true;
+		ATTACKMODE = false;
+		MOVEMODE = false;
+	}
+
+	public static void setMove() {
+		NORMALMODE = false;
+		ATTACKMODE = false;
+		MOVEMODE = true;
+	}
+
+	public static void setAttack() {
+		NORMALMODE = false;
+		ATTACKMODE = true;
+		MOVEMODE = false;
+	}
+
+	public static void setMoveAndAttack() {
+		NORMALMODE = false;
+		ATTACKMODE = true;
+		MOVEMODE = true;
 	}
 
 	public void spawnPlayer(){
@@ -45,7 +72,8 @@ public class WorldManager : MonoBehaviour {
 	public static void createPlayerInRandomLocation(string prefabname, string side){
 		//side = BLUE or RED
 		int rand = Random.Range(0, map.tileList.Count -1);
-		WorldManager.positionPlayer(WorldManager.instantiatePlayer(prefabname, side), WorldManager.map.tileList[rand]);
+		GameObject player = WorldManager.instantiatePlayer(prefabname, side);
+		WorldManager.positionPlayer(player, WorldManager.map.tileList[rand]);
 	}
 
 
@@ -57,6 +85,10 @@ public class WorldManager : MonoBehaviour {
 		Player playerScript = WorldManager.getPlayerScript(player);
 		map.player = playerScript;
 		player.transform.parent = GameObject.FindGameObjectWithTag(side).transform;
+		playerScript.team = GameObject.FindGameObjectWithTag(side).GetComponent<TeamManager>();
+		if(side == "BLUE"){
+			WorldManager.players.Add(playerScript);
+		}
 		return player;
 	}
 
@@ -89,7 +121,16 @@ public class WorldManager : MonoBehaviour {
 
 	}
 
+	//only for blue team
+	void removeTurnOverTiles(){
+		foreach(Player player in WorldManager.players){
+			player.disableTurnOverTile();
+		}
+	}//method
 
+	void OnGUI(){
+		gameObject.GetComponent<WorldMenu>().makeMenu();
+	}
 
 
 

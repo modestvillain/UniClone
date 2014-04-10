@@ -26,22 +26,6 @@ public class Base : HexTile {
 		
 	}
 
-	public void spawnPlayer() {
-
-	}
-
-	GameObject instantiatePlayer(string prefabName) {
-
-		string path = "Prefabs/" + prefabName;
-		GameObject player = (GameObject)Instantiate(Resources.Load(path));
-		player.name = prefabName;
-		player.tag = prefabName;
-		Player playerScript = WorldManager.getPlayerScript(player);
-		playerScript.player = player;
-		map.player = playerScript;
-		player.transform.parent = team.transform;
-		return player;
-	}
 	
 	public void highlight() {
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();

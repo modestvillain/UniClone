@@ -16,6 +16,10 @@ public class Aerial : Player {
 		this.HP = AerialStats.HEALTH;
 		this.DMG = AerialStats.DAMAGE; //taking ground light variable for now
 	}
+
+	void OnEnable() {
+		setup();
+	}
 	
 	// Update is called once per frame
 	void Update () {

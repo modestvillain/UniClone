@@ -4,7 +4,7 @@ using System.Collections;
 public class SoldierStats: IStats{
 	
 	public static int COST = 100;
-	public static int ATTACKRANGE = 1;
+	public static int ATTACKRANGE = 10;
 	public static int MOBILITY = 1;
 	public static int DEFENSE = 5;
 	public static bool CANCAPTURE = true;
