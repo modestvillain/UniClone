@@ -18,10 +18,7 @@ public class Player:MonoBehaviour  {
 	public bool canAttackAfterMove;
 	public int repair;
 	public bool turnIsOver = false;
-
 	public GameObject turnOverTile;
-
-
 	public bool canMove = false;
 	public bool canAttack = false;  	//for menu
 	public bool isOn = false;
@@ -41,7 +38,6 @@ public class Player:MonoBehaviour  {
 	}
 
 	public void move(GameObject hextile) {
-
 		player = gameObject;
 		HexTile hexscript = hextile.GetComponent<HexTile>();
 		this.player.transform.position = hexscript.center;
@@ -53,7 +49,6 @@ public class Player:MonoBehaviour  {
 	}//move
 	
 	public void attack(Player enemyScript) {
-
 		enemyScript.HP -= this.DMG*(this.DMG/enemyScript.DEF);
 		if(enemyScript.HP <=0){
 			Destroy(enemyScript.gameObject);
@@ -61,33 +56,47 @@ public class Player:MonoBehaviour  {
 		this.endTurn();
 	}
 
+	public void destroyPlayer(HexTile tileScript){
+		tileScript.occupant = null;//change the occupied status of the hex
+		WorldManager.players.Remove(this);//remove from the player array in world manager
+	}
+
+	public void capture(Base b){
+		//if base is not already yours and you can capture bases..
+		bool isAlreadyYourBase = this.ownsBase(b);
+		if (this.canCapture == true && !isAlreadyYourBase){
+			//this.move(b.gameObject);
+			this.player.transform.position = b.center;
+			b.occupant = this.player;
+			this.currentTileScript.occupant = null;
+			b.deselect();
+			this.currentTileScript = b;
+			this.endTurn();
+			b.changeSides(gameObject.transform.parent.tag, this.team);
+
+			b.hasBeenCaptured = true;
+		}
+	}//method
+
 	void OnGUI(){
-		
 		if(isOn){
 			int space = 0;//has spacing of thirty
-			
-			
 			if(canMove){
 				if(GUI.Button(new Rect(20,40,80,20), "Move")) {
 					//Application.LoadLevel(1);
 				}
 				space +=30;
 			}
-			
-			
 			if(canAttack){
 				if(GUI.Button(new Rect(20,40 + space,80,20), "Attack")) {
 					//Application.LoadLevel(2);
 				}
 				space+=30;
 			}
-			
 			if(GUI.Button(new Rect(20,40 + space,80,20), "Cancel")){
 				//then cancel
-				
 			}
 			space +=30;
-			
 			// Make a background box
 			GUI.Box(new Rect(10,10,100,30 + space), "Actions");
 		}
@@ -112,11 +121,15 @@ public class Player:MonoBehaviour  {
 		this.turnIsOver = true;
 		turnOverTile.SetActive(true);
 		this.turnMenuOff();
-		WorldManager.NORMALMODE = true;
+		WorldManager.setNormal();
 	}
 
 	public void disableTurnOverTile(){
 		this.turnOverTile.SetActive(false);
 	}
 
-}
+	public bool ownsBase(Base b){
+		return this.team.bases.Contains(b);
+	}
+
+}//class

@@ -14,10 +14,13 @@ public class WorldManager : MonoBehaviour {
 	public static bool NORMALMODE = true;
 	public static bool ATTACKMODE = false;
 	public static bool PLAYERMODE = true;
+	public static bool WINSTATE = false;
+	public static string WINNER;
 	public static int MODE;// int 1 is move mode, 2 means normal mode
 	public static AerialStats aerialStats;
 	public static SoldierStats soldierStats;
 	public static List<Player> players;
+	public static int numBases = 0;
 
 
 	// Use this for initialization
@@ -33,7 +36,6 @@ public class WorldManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		this.spawnPlayer();
-			
 	}
 
 	public static void setNormal() {
@@ -114,7 +116,6 @@ public class WorldManager : MonoBehaviour {
 		else{
 			return null;
 		}
-		
 	}
 
 	void GUIMenuTest(){
@@ -122,7 +123,6 @@ public class WorldManager : MonoBehaviour {
 		menu.canMove = true;
 		menu.canAttack = true;
 		menu.isOn = true;
-
 	}
 
 	//only for blue team
@@ -134,5 +134,9 @@ public class WorldManager : MonoBehaviour {
 
 	void OnGUI(){
 		gameObject.GetComponent<WorldMenu>().makeMenu();
+		if(WorldManager.WINSTATE){
+			gameObject.GetComponent<WorldMenu>().goToWinState();
+		}
 	}
+
 }

@@ -12,6 +12,13 @@ public class TeamManager : MonoBehaviour {
 		team = new List<Player>();
 	}
 
+	void Update(){
+		if(bases.Count == WorldManager.numBases){
+			WorldManager.WINSTATE = true;
+			WorldManager.WINNER = gameObject.tag;
+		}
+	}
+
 	public bool inTeam(Player player) {
 		foreach(Player p in team) {
 			if(player==p)	return true;
@@ -19,4 +26,9 @@ public class TeamManager : MonoBehaviour {
 		return false;
 	}
 
+	public void removePlayersFromCapturedBases(){
+			foreach(Base b in bases){
+				b.removeCaptor(team);
+			}
+	}
 }
