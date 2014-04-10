@@ -30,7 +30,7 @@ public class HexTile:MonoBehaviour {
 		highLightSprite = Resources.Load<Sprite>("Sprites/highLightHextTile");
 		occupiedSprite = Resources.Load<Sprite>("Sprites/occupiedHexTile");
 		greyOutSprite = Resources.Load<Sprite>("Sprites/greyTile");
-		enemyTileSprite = Resources.Load<Sprite>("Sprites/redHexTile");
+		enemyTileSprite = Resources.Load<Sprite>("Sprites/redHextTile");
 		gameObject.GetComponent<SpriteRenderer>().sprite = normalSprite;
 		setWidthAndHeight();
 	}
