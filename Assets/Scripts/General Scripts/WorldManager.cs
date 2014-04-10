@@ -13,10 +13,12 @@ public class WorldManager : MonoBehaviour {
 	public static bool MOVEMODE = false;
 	public static bool NORMALMODE = true;
 	public static bool ATTACKMODE = false;
+	public static bool PLAYERMODE = true;
 	public static int MODE;// int 1 is move mode, 2 means normal mode
 	public static AerialStats aerialStats;
 	public static SoldierStats soldierStats;
 	public static List<Player> players;
+
 
 	// Use this for initialization
 	void Start () {

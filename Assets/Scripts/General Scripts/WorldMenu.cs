@@ -14,7 +14,13 @@ public class WorldMenu : MonoBehaviour {
 	}
 
 	public void makeMenu(){
-		if(GUILayout.Button("ResetTurn")){
+
+		if(GUILayout.Button ("EndTurn")){
+			WorldManager.PLAYERMODE = false;
+		}
+
+		if(GUILayout.Button ("BeginTurn")){
+			WorldManager.PLAYERMODE = true;
 			gameObject.SendMessage("removeTurnOverTiles");
 		}
 	}

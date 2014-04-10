@@ -33,7 +33,6 @@ public class Base : HexTile {
 	}
 	
 	public void deselect() {
-		//SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		this.turnMenuOff();
 	}
 
@@ -98,12 +97,14 @@ public class Base : HexTile {
 	}
 	
 	void DoMyWindow(int windowID) {
-		int ah = this.aerialPic.height;
+
+		/*int ah = this.aerialPic.height;
 		int aw = this.aerialPic.width;
 		int sh = this.soldierPic.height;
 		int sw = this.soldierPic.width;
 		int space = ah + sh;//has spacing of thirty
-		int width = 20 + aw + sw;
+		int width = 20 + aw + sw;*/
+
 		GUILayout.BeginVertical();
 		GUILayout.BeginHorizontal();
 

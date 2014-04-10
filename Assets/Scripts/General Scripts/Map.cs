@@ -260,8 +260,7 @@ public class Map : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 			
-			if(hit)	{
-				GameObject[] bases = GameObject.FindGameObjectsWithTag("Base");
+			if(hit && WorldManager.PLAYERMODE == true)	{
 				foreach(HexTile tile in tileList) {
 					if(tile.gameObject != hit.collider.gameObject) {
 						tile.deselect();
@@ -278,7 +277,7 @@ public class Map : MonoBehaviour {
 					}
 					hexScript.deselect();
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
-					if(WorldManager.MOVEMODE) {
+					if(WorldManager.MOVEMODE ) {
 						//if next selected tile is empty.
 						if(legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
 							if(!hexScript.isOccupied()){
