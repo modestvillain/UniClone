@@ -7,6 +7,7 @@ public class Player:MonoBehaviour  {
 	public Sprite normalSprite;
 	public HexTile currentTileScript;
 	public ArrayList actionsList;
+	public TeamManager team;
 	public int HP;//health
 	public int DMG;//damage - attack strength
 	public int DEF;//defense

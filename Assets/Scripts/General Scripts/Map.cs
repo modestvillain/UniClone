@@ -207,6 +207,32 @@ public class Map : MonoBehaviour {
 		return legal;
 	}
 
+	public List<HexTile> legalAttacks(Player p) {
+		
+		List<HexTile> inRange = new List<HexTile>();
+		List<HexTile> temp = new List<HexTile>(p.currentTileScript.neighbors);
+		
+		for(int i=1; i<p.attackRange; i++) {
+			foreach(HexTile hex in inRange) {
+				foreach(HexTile ht in hex.neighbors) {
+					if(!temp.Contains(ht)) {
+						temp.Add (ht);
+					}
+				}
+			}
+			foreach(HexTile hex in temp) {
+				inRange.Add(hex);
+			}
+			temp = new List<HexTile>();
+		}
+		List<HexTile> legal = new List<HexTile>();
+		foreach(HexTile hex in inRange) {
+			if(hex.isOccupied() && p.team == ((Player)hex.occupant.GetComponent(hex.occupant.tag)).team)
+				legal.Add(hex);
+		}
+		return legal;
+	}
+
 	/*
 	 * Since the "player" can be one of many different kinds,
 	 * this method pulls the script for the correct player type
@@ -240,11 +266,11 @@ public class Map : MonoBehaviour {
 						tile.deselect();
 					}
 				}
+
 				//if you hit a tile...
 				if(hit.collider.tag == "hexTile") {
 					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
-
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
 					if(WorldManager.MODE == WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
 						if(!hexScript.isOccupied()){
@@ -273,6 +299,7 @@ public class Map : MonoBehaviour {
 							player = (Player)hexScript.occupant.GetComponent(hexScript.occupant.tag);
 							player.allMenuActionsOn();
 							legalTiles = legalMoves (player);
+							List<HexTile> attacks = legalAttacks(player);
 							foreach(HexTile hex in tileList){
 								hex.greyOut();
 							}
@@ -282,6 +309,9 @@ public class Map : MonoBehaviour {
 								if(hex.isOccupied() && hex.occupant.transform.parent.tag == "RED"){
 									hex.highlightEnemy();//if you can reach enemy allow to attack it
 								}
+							}
+							foreach(HexTile hex in attacks) {
+								hex.highlight();
 							}
 						}
 						hexScript.highlight();

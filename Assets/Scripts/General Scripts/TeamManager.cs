@@ -12,4 +12,11 @@ public class TeamManager : MonoBehaviour {
 		team = new List<Player>();
 	}
 
+	public bool inTeam(Player player) {
+		foreach(Player p in team) {
+			if(player==p)	return true;
+		}
+		return false;
+	}
+
 }
