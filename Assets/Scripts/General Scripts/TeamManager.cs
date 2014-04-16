@@ -20,15 +20,16 @@ public class TeamManager : MonoBehaviour {
 	}
 
 	public bool inTeam(Player player) {
-		foreach(Player p in team) {
-			if(player==p)	return true;
-		}
-		return false;
+		return team.Contains(player);
 	}
 
 	public void removePlayersFromCapturedBases(){
 			foreach(Base b in bases){
 				b.removeCaptor(team);
 			}
+	}
+
+	public void removeFromTeam(Player p){
+		team.Remove(p);
 	}
 }

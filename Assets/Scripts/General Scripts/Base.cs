@@ -148,6 +148,13 @@ public class Base : HexTile {
 		GUILayout.EndVertical();
 	}//method
 
+
+	public void createPlayerAndPositionOnBase(string prefabName){
+		GameObject player = WorldManager.instantiatePlayer(prefabName, this.side);
+		WorldManager.positionPlayer(player, (HexTile)this );
+		WorldManager.setNormal();
+	}
+
 	void createPlayerAndClose(string prefabName){
 		GameObject player = WorldManager.instantiatePlayer(prefabName, this.side);
 		WorldManager.positionPlayer(player, (HexTile)this );

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class WorldManager : MonoBehaviour {
 	
 	public static Map map;
+	public static DummyAI AI;
 	public GameObject player;
 	public Sprite playerSprite;
 	public bool playerSet = false;
@@ -31,6 +32,8 @@ public class WorldManager : MonoBehaviour {
 		WorldManager.aerialStats = new AerialStats();
 		WorldManager.soldierStats = new SoldierStats();
 		WorldManager.players = new List<Player>();
+		WorldManager.AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
+
 	}
 	
 	// Update is called once per frame
@@ -87,10 +90,10 @@ public class WorldManager : MonoBehaviour {
 		player.name = prefabName;
 		player.tag = prefabName;
 		Player playerScript = WorldManager.getPlayerScript(player);
-		map.player = playerScript;
+		//map.player = playerScript;
 		player.transform.parent = GameObject.FindGameObjectWithTag(side).transform;
 		playerScript.team = GameObject.FindGameObjectWithTag(side).GetComponent<TeamManager>();
-
+		playerScript.team.team.Add(playerScript);
 		if(side == "BLUE"){
 			WorldManager.players.Add(playerScript);
 		}
@@ -113,6 +116,8 @@ public class WorldManager : MonoBehaviour {
 			return (Player)g.GetComponent("Aerial");
 		else if(g.tag == "BadGuyTest")
 			return (Player)g.GetComponent("BadGuyTest");
+		else if(g.tag == "badAerial")
+			return (Player)g.GetComponent("Aerial");
 		else{
 			return null;
 		}
@@ -126,7 +131,7 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	//only for blue team
-	void removeTurnOverTiles(){
+	public static void removeTurnOverTiles(){
 		foreach(Player player in WorldManager.players){
 			player.disableTurnOverTile();
 		}
@@ -137,6 +142,11 @@ public class WorldManager : MonoBehaviour {
 		if(WorldManager.WINSTATE){
 			gameObject.GetComponent<WorldMenu>().goToWinState();
 		}
+	}
+
+	public static void beginPlayerTurn(){
+		WorldManager.PLAYERMODE = true;
+		removeTurnOverTiles(); 
 	}
 
 }

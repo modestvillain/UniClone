@@ -21,12 +21,8 @@ public class WorldMenu : MonoBehaviour {
 			WorldManager.PLAYERMODE = false;
 			GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>().removePlayersFromCapturedBases();
 			GameObject.FindGameObjectWithTag("RED").GetComponent<TeamManager>().removePlayersFromCapturedBases();
-		}
-		if(GUILayout.Button ("BeginTurn")){
-			WorldManager.PLAYERMODE = true;
-			gameObject.SendMessage("removeTurnOverTiles");
+			WorldManager.AI.startTurn();
 		}
 	}
-
 
 }//class

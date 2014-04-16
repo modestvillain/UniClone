@@ -19,7 +19,13 @@ public class Aerial : Player {
 
 	void OnEnable() {
 		setup ();
-		normalSprite = Resources.Load<Sprite>("Sprites/Cute Dragon");
+		if(this.tag == "Aerial"){
+			normalSprite = Resources.Load<Sprite>("Sprites/Cute Dragon");
+
+		}
+		else{
+			normalSprite = Resources.Load<Sprite>("Sprites/badAerial");
+		}
 		gameObject.GetComponent<SpriteRenderer>().sprite = normalSprite;
 	}
 	

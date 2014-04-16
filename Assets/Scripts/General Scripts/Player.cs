@@ -51,7 +51,8 @@ public class Player:MonoBehaviour  {
 	public void attack(Player enemyScript) {
 		enemyScript.HP -= this.DMG*(this.DMG/enemyScript.DEF);
 		if(enemyScript.HP <=0){
-			Destroy(enemyScript.gameObject);
+			//Destroy(enemyScript.gameObject);
+			enemyScript.currentTileScript.removeOccupant(enemyScript.team.team);
 		}
 		this.endTurn();
 	}

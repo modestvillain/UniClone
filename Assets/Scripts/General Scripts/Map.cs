@@ -187,7 +187,8 @@ public class Map : MonoBehaviour {
 	 * @return	list of tiles a player can reach
 	 */
 	public List<HexTile> legalMoves(Player p) {
-
+		if(p==null)
+			return new List<HexTile>();
 		List<HexTile> legal = new List<HexTile>(p.currentTileScript.neighbors);
 		List<HexTile> temp = new List<HexTile>();
 
@@ -209,7 +210,9 @@ public class Map : MonoBehaviour {
 	}
 
 	public List<HexTile> legalAttacks(Player p) {
-		
+
+		if(p==null)
+			return new List<HexTile>();
 		List<HexTile> inRange = new List<HexTile>(p.currentTileScript.neighbors);
 		List<HexTile> temp = new List<HexTile>();
 		
@@ -228,6 +231,7 @@ public class Map : MonoBehaviour {
 		}
 		List<HexTile> legal = new List<HexTile>();
 		foreach(HexTile hex in inRange) {
+//			Debug.Log(p + " " + hex.occupant);
 			if(hex.isOccupied() && p.team != ((Player)hex.occupant.GetComponent(hex.occupant.tag)).team)
 				legal.Add(hex);
 		}

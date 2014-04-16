@@ -70,4 +70,13 @@ public class HexTile:MonoBehaviour {
 		this.hexWidth =  sr.sprite.texture.width;
 		this.hexHeight = sr.sprite.texture.height;
 	}
-}
+
+	public void removeOccupant(List<Player> players){
+		if(this.isOccupied()){
+			Player script = this.occupant.GetComponent<Player>();
+			players.Remove(script);
+			Destroy(this.occupant);
+			this.occupant = null;
+		}
+	}
+}//class
