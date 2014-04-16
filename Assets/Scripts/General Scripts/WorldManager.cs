@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class WorldManager : MonoBehaviour {
 	
 	public static Map map;
+	public static DummyAI AI;
 	public GameObject player;
 	public Sprite playerSprite;
 	public bool playerSet = false;
@@ -13,10 +14,15 @@ public class WorldManager : MonoBehaviour {
 	public static bool MOVEMODE = false;
 	public static bool NORMALMODE = true;
 	public static bool ATTACKMODE = false;
+	public static bool PLAYERMODE = true;
+	public static bool WINSTATE = false;
+	public static string WINNER;
 	public static int MODE;// int 1 is move mode, 2 means normal mode
 	public static AerialStats aerialStats;
 	public static SoldierStats soldierStats;
 	public static List<Player> players;
+	public static int numBases = 0;
+
 
 	// Use this for initialization
 	void Start () {
@@ -26,12 +32,13 @@ public class WorldManager : MonoBehaviour {
 		WorldManager.aerialStats = new AerialStats();
 		WorldManager.soldierStats = new SoldierStats();
 		WorldManager.players = new List<Player>();
+		WorldManager.AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		this.spawnPlayer();
-			
 	}
 
 	public static void setNormal() {
@@ -83,10 +90,10 @@ public class WorldManager : MonoBehaviour {
 		player.name = prefabName;
 		player.tag = prefabName;
 		Player playerScript = WorldManager.getPlayerScript(player);
-		map.player = playerScript;
+		//map.player = playerScript;
 		player.transform.parent = GameObject.FindGameObjectWithTag(side).transform;
 		playerScript.team = GameObject.FindGameObjectWithTag(side).GetComponent<TeamManager>();
-
+		playerScript.team.team.Add(playerScript);
 		if(side == "BLUE"){
 			WorldManager.players.Add(playerScript);
 		}
@@ -109,10 +116,11 @@ public class WorldManager : MonoBehaviour {
 			return (Player)g.GetComponent("Aerial");
 		else if(g.tag == "BadGuyTest")
 			return (Player)g.GetComponent("BadGuyTest");
+		else if(g.tag == "badAerial")
+			return (Player)g.GetComponent("Aerial");
 		else{
 			return null;
 		}
-		
 	}
 
 	void GUIMenuTest(){
@@ -120,11 +128,10 @@ public class WorldManager : MonoBehaviour {
 		menu.canMove = true;
 		menu.canAttack = true;
 		menu.isOn = true;
-
 	}
 
 	//only for blue team
-	void removeTurnOverTiles(){
+	public static void removeTurnOverTiles(){
 		foreach(Player player in WorldManager.players){
 			player.disableTurnOverTile();
 		}
@@ -132,5 +139,14 @@ public class WorldManager : MonoBehaviour {
 
 	void OnGUI(){
 		gameObject.GetComponent<WorldMenu>().makeMenu();
+		if(WorldManager.WINSTATE){
+			gameObject.GetComponent<WorldMenu>().goToWinState();
+		}
 	}
+
+	public static void beginPlayerTurn(){
+		WorldManager.PLAYERMODE = true;
+		removeTurnOverTiles(); 
+	}
+
 }

@@ -17,6 +17,7 @@ public class Base : HexTile {
 	IStats selectedStats = WorldManager.aerialStats;
 	string create;
 	public TeamManager team;
+	public bool hasBeenCaptured = false;
 	
 	void Start () {
 		
@@ -42,7 +43,6 @@ public class Base : HexTile {
 	}
 	
 	public void deselect() {
-		//SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		this.turnMenuOff();
 	}
 
@@ -66,7 +66,9 @@ public class Base : HexTile {
 				this.side = "BLUE";
 				break;
 			case 1:
-				gameObject.transform.parent = GameObject.FindGameObjectWithTag("RED").transform;
+				team = GameObject.FindGameObjectWithTag("RED").GetComponent<TeamManager>();
+				gameObject.transform.parent = team.transform;
+				team.GetComponent<TeamManager>().bases.Add (this);
 				normalSprite = redBaseSprite;
 				highLightSprite = redBaseSprite;
 				occupiedSprite = redBaseSprite;
@@ -84,6 +86,7 @@ public class Base : HexTile {
 				break;
 		}
 		setWidthAndHeight();
+		WorldManager.numBases ++;
 	}
 
 
@@ -108,12 +111,14 @@ public class Base : HexTile {
 	}
 	
 	void DoMyWindow(int windowID) {
-		int ah = this.aerialPic.height;
+
+		/*int ah = this.aerialPic.height;
 		int aw = this.aerialPic.width;
 		int sh = this.soldierPic.height;
 		int sw = this.soldierPic.width;
 		int space = ah + sh;//has spacing of thirty
-		int width = 20 + aw + sw;
+		int width = 20 + aw + sw;*/
+
 		GUILayout.BeginVertical();
 		GUILayout.BeginHorizontal();
 
@@ -128,7 +133,6 @@ public class Base : HexTile {
 			create = "Soldier";
 		}
 		GUILayout.EndHorizontal();
-
 		if(shouldShowStats){
 			this.showStats(selectedStats);
 
@@ -140,10 +144,16 @@ public class Base : HexTile {
 				this.menuOn = false;
 			}
 			GUILayout.EndHorizontal();
-
 		}
 		GUILayout.EndVertical();
 	}//method
+
+
+	public void createPlayerAndPositionOnBase(string prefabName){
+		GameObject player = WorldManager.instantiatePlayer(prefabName, this.side);
+		WorldManager.positionPlayer(player, (HexTile)this );
+		WorldManager.setNormal();
+	}
 
 	void createPlayerAndClose(string prefabName){
 		GameObject player = WorldManager.instantiatePlayer(prefabName, this.side);
@@ -159,5 +169,58 @@ public class Base : HexTile {
 	public void turnMenuOff(){
 		this.menuOn = false;
 	}
+
+	public void changeSides( string newside, TeamManager newtm){
+			//if now on red team..
+			if(this.side == "RED"){
+				this.team.bases.Remove(this);
+				this.changeSprite("BLUE");
+				newtm.bases.Add(this);
+				this.side = "BLUE";
+			}
+			//if now on blue team..
+			else if(this.side == "BLUE"){
+				this.team.bases.Remove(this);
+				this.changeSprite("RED");
+				this.side = "RED";
+				newtm.bases.Add(this);//add to team manager list
+			}
+			// assume now on nuetral team..
+			else{
+				newtm.bases.Add(this);
+				this.side = newside;
+				this.changeSprite(newside);
+				}	
+			gameObject.transform.parent = newtm.gameObject.transform;
+	}//method
+
+	public void changeSprite(string color){
+		if(color.Equals("BLUE")){
+			this.gameObject.GetComponent<SpriteRenderer>().sprite = this.blueBaseSprite;
+			this.normalSprite = this.blueBaseSprite;
+			this.highLightSprite = this.blueBaseHighlightSprite;
+			this.greyOutSprite = this.blueBaseSprite;
+			this.occupiedSprite = this.blueBaseSprite;
+		}
+		else{
+			this.gameObject.GetComponent<SpriteRenderer>().sprite = this.redBaseSprite;
+			this.normalSprite = this.redBaseSprite;
+			this.greyOutSprite = this.redBaseSprite;
+			this.highLightSprite = this.redBaseSprite;
+			this.occupiedSprite = this.blueBaseSprite;
+		}
+	}
+
+	public void removeCaptor(List<Player> players){
+		if(this.hasBeenCaptured){
+			Player script = this.occupant.GetComponent<Player>();
+			players.Remove(script);
+			script.disableTurnOverTile();
+			Destroy(this.occupant);
+			this.occupant = null;
+			this.hasBeenCaptured = false;
+		}
+	}
+	
 
 }//class

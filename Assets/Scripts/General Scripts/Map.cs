@@ -267,7 +267,8 @@ public class Map : MonoBehaviour {
 	 * @return	list of tiles a player can reach
 	 */
 	public List<HexTile> legalMoves(Player p) {
-
+		if(p==null)
+			return new List<HexTile>();
 		List<HexTile> legal = new List<HexTile>(p.currentTileScript.neighbors);
 		List<HexTile> temp = new List<HexTile>();
 
@@ -289,7 +290,9 @@ public class Map : MonoBehaviour {
 	}
 
 	public List<HexTile> legalAttacks(Player p) {
-		
+
+		if(p==null)
+			return new List<HexTile>();
 		List<HexTile> inRange = new List<HexTile>(p.currentTileScript.neighbors);
 		List<HexTile> temp = new List<HexTile>();
 		
@@ -308,6 +311,7 @@ public class Map : MonoBehaviour {
 		}
 		List<HexTile> legal = new List<HexTile>();
 		foreach(HexTile hex in inRange) {
+//			Debug.Log(p + " " + hex.occupant);
 			if(hex.isOccupied() && p.team != ((Player)hex.occupant.GetComponent(hex.occupant.tag)).team)
 				legal.Add(hex);
 		}
@@ -336,18 +340,14 @@ public class Map : MonoBehaviour {
 	 * 		   and ignore history
 	 */
 	public void selectTile() {
-
 		if (Input.GetMouseButtonDown(0)) {
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-			
-			if(hit)	{
-				GameObject[] bases = GameObject.FindGameObjectsWithTag("Base");
+			if(hit && WorldManager.PLAYERMODE == true)	{
 				foreach(HexTile tile in tileList) {
 					if(tile.gameObject != hit.collider.gameObject) {
 						tile.deselect();
 					}
 				}
-
 				//if you hit a tile...
 				if(hit.collider.tag == "hexTile" || hit.collider.tag == "waterTile" || (hit.collider.tag == "Base" && hit.collider.gameObject.GetComponent<Base>().side != "RED"
 				                                     && hit.collider.gameObject.GetComponent<Base>().isOccupied())) {
@@ -359,7 +359,8 @@ public class Map : MonoBehaviour {
 					hexScript.deselect();
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
 
-					if(WorldManager.MOVEMODE && legalTiles.Contains(hexScript)) {
+					if(WorldManager.MOVEMODE) {
+
 						//if next selected tile is empty.
 						if(legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
 							if(!hexScript.isOccupied()) {
@@ -427,11 +428,20 @@ public class Map : MonoBehaviour {
 						}
 					}
 				}
-				else if(hit.collider.tag == "Base" && hit.collider.gameObject.GetComponent<Base>().side != "RED") {
 
-					hit.collider.gameObject.GetComponent<Base>().baseSelected();
-					this.lastBaseSelected = hit.collider.gameObject.GetComponent<Base>();
-					player.isOn = false;// makes the menu turn off
+				else if(hit.collider.tag == "Base") {
+					Base script =hit.collider.gameObject.GetComponent<Base>();
+					if(this.player.ownsBase(script)){
+						script.baseSelected();
+						this.lastBaseSelected = script;
+						player.isOn = false;// makes the menu turn off
+					}
+					else {
+						List<HexTile> legalTiles = legalMoves (player);
+						if(legalTiles.Contains(script)){
+							player.capture(script);
+						}
+					}
 				}
 
 				if(this.player!=null && WorldManager.NORMALMODE){
