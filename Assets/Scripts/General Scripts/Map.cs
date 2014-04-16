@@ -23,7 +23,7 @@ public class Map : MonoBehaviour {
 		mapHeight = 8;
 		realWidth = mapWidth + (int)((mapHeight - 1) / 2);
 		tiles = new HexTile[realWidth,mapHeight];
-		this.createMap();
+		this.createRandomMap();
 		this.worldManager = GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>();
 	}
 
@@ -67,12 +67,11 @@ public class Map : MonoBehaviour {
 		hextile.location = loc;
 		hextile.x = modX;
 		hextile.y = (int)y;
-		hextile.setWidthAndHeight();
 		hextile.center = new Vector2(pos.x + .1f, pos.y + .1f);
 
 		tileList.Add(hextile);
 		tiles[hextile.x,hextile.y]=hextile;
-		modX++;
+//		modX++;
 	}
 
 	/*
@@ -108,12 +107,48 @@ public class Map : MonoBehaviour {
 		baseScript.location = loc;
 		baseScript.x = modX;
 		baseScript.y = (int)y;
-		//baseScript.setWidthAndHeight();
 		baseScript.center = new Vector2(pos.x + .1f, pos.y + .1f);
 		
 		tileList.Add(baseScript);
 		tiles[baseScript.x,baseScript.y]=baseScript;
-		modX++;
+//		modX++;
+	}
+
+	public void createWaterTile(float x, float y, int upDown, float widthAway) {
+
+		GameObject newT = (GameObject) Instantiate(Resources.Load("Prefabs/waterTile"));
+		newT.transform.parent = this.transform;
+		HexTile hextile = newT.GetComponent<HexTile>();
+		hextile.map = this;
+		
+		Vector2 loc = new Vector2(1.5f*x,y);
+		Vector2 pos = new Vector2();
+		
+		switch (upDown) {
+		case 0:
+			pos.x = loc.x + widthAway;
+			pos.y = loc.y*1.3f;
+			break;
+		case 1:
+			pos.x = loc.x + widthAway-.7f;
+			pos.y = loc.y*1.3f;
+			break;
+		default:									/* COPY OF CASE 0 FOR INITIALIZATION, MINUS X MODIFICATION */
+			pos.x = loc.x + widthAway;
+			pos.y = loc.y*1.3f;
+			break;
+		}
+		newT.transform.position = pos;
+		
+		hextile.position = pos;
+		hextile.location = loc;
+		hextile.x = modX;
+		hextile.y = (int)y;
+		hextile.center = new Vector2(pos.x + .1f, pos.y + .1f);
+		
+		tileList.Add(hextile);
+		tiles[hextile.x,hextile.y]=hextile;
+//		modX++;
 	}
 
 	/*
@@ -136,6 +171,45 @@ public class Map : MonoBehaviour {
 				else {
 					createHexTile(x, y, off, widthAway);
 				}
+				modX++;
+			}
+			modX=count;
+			if(off==1) {off=0; modX=++count;}
+			else if(off==0) off=1;
+			else off=1;
+		}
+
+		createAdjacencies();
+		empty = false;
+	}
+
+	public void createRandomMap() {
+
+		float widthAway = .5f;
+		int off=-1;										/* FOR INITIALIZING FIRST / BOTTOM ROW */
+		int count=0;
+		modX=0;
+
+		int basex = Random.Range(realWidth/4,3*realWidth/4);
+		int basey = Random.Range(mapHeight/4,3*mapHeight/4);
+		
+		for(int y = 0; y < mapHeight; y++) {
+			for(int x = 0; x < mapWidth; x++) {
+				if(y==0 && x==0) {
+					createBase(x, y, off, widthAway,0);
+				}
+				else if(y==mapHeight-1 && x==mapWidth-1) {
+					createBase(x, y, off, widthAway,1);
+				}
+				else if(y==basey && x==basex) {
+					createBase(x, y, off, widthAway,-1);
+				}
+				else {
+					if(Random.Range(0.0f,10.0f)<8.0f)
+						createHexTile(x, y, off, widthAway);
+					else
+						createWaterTile(x, y, off, widthAway);
+				}
 			}
 			modX=count;
 			if(off==1) {off=0; modX=++count;}
@@ -151,35 +225,41 @@ public class Map : MonoBehaviour {
 	 * Using self-defined coordinate system, find neighboring tiles
 	 * and create adjacency list for each individual hex tile
 	 */
-	public void createAdjacencies() {
+	public bool createAdjacencies() {
 
+		bool hasAdj;
+		bool connected = true;
 		foreach(HexTile ht in tileList) {
 			int xp=ht.x+1;
 			int xn=ht.x-1;
 			int yp=ht.y+1;
 			int yn=ht.y-1;
-
+			hasAdj = false;
 			/* CLOCKWISE STARTING AT TILE TO RIGHT */
 
 			if(xp<realWidth) {					// +1, 0
-				if(tiles[xp,ht.y]!=null)	ht.neighbors.Add(tiles[xp,ht.y]);
+				if(tiles[xp,ht.y]!=null)	{ht.neighbors.Add(tiles[xp,ht.y]); hasAdj=true;}
 			}
 			if(yn>=0) {							//  0,-1
-				if(tiles[ht.x,yn]!=null)	ht.neighbors.Add(tiles[ht.x,yn]);
+				if(tiles[ht.x,yn]!=null)	{ht.neighbors.Add(tiles[ht.x,yn]); hasAdj=true;}
 			}
 			if(xn>=0 && yn>=0) {				// -1,-1
-				if(tiles[xn,yn]!=null)		ht.neighbors.Add(tiles[xn,yn]);
+				if(tiles[xn,yn]!=null)		{ht.neighbors.Add(tiles[xn,yn]); hasAdj=true;}
 			}
 			if(xn>=0) {							// -1, 0
-				if(tiles[xn,ht.y]!=null)	ht.neighbors.Add(tiles[xn,ht.y]);
+				if(tiles[xn,ht.y]!=null)	{ht.neighbors.Add(tiles[xn,ht.y]); hasAdj=true;}
 			}
 			if(yp<mapHeight) {					//  0,+1
-				if(tiles[ht.x,yp]!=null)	ht.neighbors.Add(tiles[ht.x,yp]);
+				if(tiles[ht.x,yp]!=null)	{ht.neighbors.Add(tiles[ht.x,yp]); hasAdj=true;}
 			}
 			if(xp<realWidth && yp<mapHeight) {	// +1,+1
-				if(tiles[xp,yp]!=null)		ht.neighbors.Add(tiles[xp,yp]);
+				if(tiles[xp,yp]!=null)		{ht.neighbors.Add(tiles[xp,yp]); hasAdj=true;}
 			}
+
+			if(!hasAdj) connected = false;
 		}
+
+		return connected;
 	}
 
 	/*
@@ -269,7 +349,7 @@ public class Map : MonoBehaviour {
 				}
 
 				//if you hit a tile...
-				if(hit.collider.tag == "hexTile" || (hit.collider.tag == "Base" && hit.collider.transform.parent.tag != "RED"
+				if(hit.collider.tag == "hexTile" || hit.collider.tag == "waterTile" || (hit.collider.tag == "Base" && hit.collider.gameObject.GetComponent<Base>().side != "RED"
 				                                     && hit.collider.gameObject.GetComponent<Base>().isOccupied())) {
 					List<HexTile> legalTiles = legalMoves (player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
@@ -279,12 +359,13 @@ public class Map : MonoBehaviour {
 					hexScript.deselect();
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
 
-					if(WorldManager.MOVEMODE) {
+					if(WorldManager.MOVEMODE && legalTiles.Contains(hexScript)) {
 						//if next selected tile is empty.
 						if(legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
 							if(!hexScript.isOccupied()) {
 								player.move(hit.collider.gameObject);
 								hexScript.deselect ();
+								WorldManager.setNormal();
 							}
 						}
 //						WorldManager.MODE = WorldManager.NORMALMODE;
@@ -297,11 +378,12 @@ public class Map : MonoBehaviour {
 						}
 						else {
 							WorldManager.setNormal();
+							Debug.Log("one");
 							player.endTurn();
 						}
 						//if next selected tile contains an enemy..
 					}
-					else if(WorldManager.ATTACKMODE || WorldManager.MOVEMODE) {
+					else if(WorldManager.ATTACKMODE) {//} || WorldManager.MOVEMODE) {
 						List<HexTile> attacks = legalAttacks(player);
 						if(hexScript.isOccupied()) {
 							if(hexScript.occupant.transform.parent.tag != player.transform.parent.tag && attacks.Contains(hexScript)){
@@ -313,6 +395,7 @@ public class Map : MonoBehaviour {
 							}
 						}
 						WorldManager.setNormal();
+						Debug.Log("two");
 						player.endTurn();
 					}
 					else {
@@ -344,7 +427,7 @@ public class Map : MonoBehaviour {
 						}
 					}
 				}
-				else if(hit.collider.tag == "Base" && hit.collider.transform.parent.tag != "RED") {
+				else if(hit.collider.tag == "Base" && hit.collider.gameObject.GetComponent<Base>().side != "RED") {
 
 					hit.collider.gameObject.GetComponent<Base>().baseSelected();
 					this.lastBaseSelected = hit.collider.gameObject.GetComponent<Base>();
