@@ -12,12 +12,12 @@ public class Base : HexTile {
 	public Texture2D aerialPic;
 	public Texture2D soldierPic;
 	public Texture2D checkMark;
-	bool shouldShowStats = false;
-	bool menuOn = false;
-	IStats selectedStats = WorldManager.aerialStats;
-	string create;
-	public TeamManager team;
+	public TeamManager TM;
 	public bool hasBeenCaptured = false;
+	private bool shouldShowStats = false;
+	private bool menuOn = false;
+	private IStats selectedStats = WorldManager.aerialStats;
+	private string create;
 	
 	void Start () {
 		
@@ -35,46 +35,48 @@ public class Base : HexTile {
 		aerialPic = Resources.Load<Texture2D>("Textures/dragonTexture");
 		soldierPic = Resources.Load<Texture2D>("Textures/soldierTexture");
 		checkMark = Resources.Load<Texture2D>("Textures/checkMark");
+		turnOverTile = (GameObject)Instantiate(Resources.Load("Prefabs/blackoutTile"));
+		turnOverTile.SetActive(false);
 	}
 
 	public void highlight() {
-		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
-		sr.sprite = this.highLightSprite;
+		SpriteRenderer sr = GetComponent<SpriteRenderer>();
+		sr.sprite = highLightSprite;
 	}
 	
 	public void deselect() {
-		this.turnMenuOff();
+		turnMenuOff();
 	}
 
-	public void baseSelected(){
-		this.highlight();
-		this.turnMenuOn();
+	public void baseSelected() {
+		highlight();
+		turnMenuOn();
 	}
 	
 	public void setBase(int baseType) {
-		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		SpriteRenderer sr = GetComponent<SpriteRenderer>();
 		switch(baseType) {
 			case 0:
-				team = GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>();
-				gameObject.transform.parent = team.transform;
-				team.GetComponent<TeamManager>().bases.Add (this);
+				TM = GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>();
+				gameObject.transform.parent = TM.transform;
+				TM.GetComponent<TeamManager>().bases.Add (this);
 				normalSprite = blueBaseSprite;
 				highLightSprite = blueBaseHighlightSprite;
 				occupiedSprite = blueBaseSprite;
 				greyOutSprite = blueBaseSprite;
 				sr.sprite = normalSprite;
-				this.side = "BLUE";
+				side = "BLUE";
 				break;
 			case 1:
-				team = GameObject.FindGameObjectWithTag("RED").GetComponent<TeamManager>();
-				gameObject.transform.parent = team.transform;
-				team.GetComponent<TeamManager>().bases.Add (this);
+				TM = GameObject.FindGameObjectWithTag("RED").GetComponent<TeamManager>();
+				gameObject.transform.parent = TM.transform;
+				TM.GetComponent<TeamManager>().bases.Add (this);
 				normalSprite = redBaseSprite;
 				highLightSprite = redBaseSprite;
 				occupiedSprite = redBaseSprite;
 				greyOutSprite = redBaseSprite;
 				sr.sprite = normalSprite;
-				this.side = "RED";
+				side = "RED";
 				break;
 			default:
 				normalSprite = greyBaseSprite;
@@ -82,23 +84,23 @@ public class Base : HexTile {
 				occupiedSprite = greyBaseSprite;
 				greyOutSprite = greyBaseSprite;
 				sr.sprite = normalSprite;
-				this.side = null;
+				side = null;
 				break;
 		}
 		setWidthAndHeight();
-		WorldManager.numBases ++;
+		WorldManager.numBases++;
 	}
 
 
-	void OnGUI(){
-		if(menuOn){
+	void OnGUI() {
+		if(menuOn) {
 			Rect windowRect = new Rect(20, 20, 120, 150);
 			windowRect = GUILayout.Window(0, windowRect, DoMyWindow, "Menu");
 		}
-	}//method
+	}
 
 
-	void showStats(IStats stats){
+	void showStats(IStats stats) {
 		string cost = "Cost : " + stats.getCost();
 		GUILayout.Label(cost);
 		string attackRange = "AttackRange : " + stats.getAttackRange();
@@ -112,113 +114,130 @@ public class Base : HexTile {
 	
 	void DoMyWindow(int windowID) {
 
-		/*int ah = this.aerialPic.height;
-		int aw = this.aerialPic.width;
-		int sh = this.soldierPic.height;
-		int sw = this.soldierPic.width;
+		/*int ah = aerialPic.height;
+		int aw = aerialPic.width;
+		int sh = soldierPic.height;
+		int sw = soldierPic.width;
 		int space = ah + sh;//has spacing of thirty
 		int width = 20 + aw + sw;*/
 
 		GUILayout.BeginVertical();
 		GUILayout.BeginHorizontal();
 
-		if(GUILayout.Button(this.aerialPic)){
+		if(GUILayout.Button(aerialPic)) {
 			shouldShowStats = true;
 			selectedStats = WorldManager.aerialStats;
 			create = "Aerial";
 		}
-		else if(GUILayout.Button(this.soldierPic)){
+		else if(GUILayout.Button(soldierPic)) {
 			shouldShowStats = true;
 			selectedStats = WorldManager.soldierStats;
 			create = "Soldier";
 		}
 		GUILayout.EndHorizontal();
-		if(shouldShowStats){
-			this.showStats(selectedStats);
+		if(shouldShowStats) {
+			showStats(selectedStats);
 
 			GUILayout.BeginHorizontal();
-			if(GUILayout.Button(this.checkMark)){
-				this.createPlayerAndClose(create);
+			if(GUILayout.Button(checkMark)) {
+				createPlayerAndClose(create);
 			}
-			if(GUILayout.Button((Texture2D)Resources.Load("Textures/close"))){
-				this.menuOn = false;
+			if(GUILayout.Button((Texture2D)Resources.Load("Textures/close"))) {
+				menuOn = false;
 			}
 			GUILayout.EndHorizontal();
 		}
 		GUILayout.EndVertical();
-	}//method
+	}
 
 
-	public void createPlayerAndPositionOnBase(string prefabName){
-		GameObject player = WorldManager.instantiatePlayer(prefabName, this.side);
-		WorldManager.positionPlayer(player, (HexTile)this );
+	public void createPlayerAndPositionOnBase(string prefabName) {
+		GameObject player = WorldManager.instantiatePlayer(prefabName, side);
+		WorldManager.positionPlayer(player, (HexTile)this);
 		WorldManager.setNormal();
 	}
 
-	void createPlayerAndClose(string prefabName){
-		GameObject player = WorldManager.instantiatePlayer(prefabName, this.side);
-		WorldManager.positionPlayer(player, (HexTile)this );
-		this.menuOn = false;
-		WorldManager.getPlayerScript(player).endTurn();
+	void createPlayerAndClose(string prefabName) {
+		if(creditsAreSufficient(prefabName)) {
+			GameObject player = WorldManager.instantiatePlayer(prefabName, side);
+			Player playerScript = (Player)player.GetComponent(player.tag);
+			WorldManager.positionPlayer(player, (HexTile)this );
+			menuOn = false;
+			playerScript.endTurn();
+		}
+		Debug.Log(TM.CREDITS);
 	}
 
-	public void turnMenuOn(){
-		this.menuOn = true;
+	public bool creditsAreSufficient(string name) {
+		if(name=="Soldier" && TM.CREDITS >= SoldierStats.COST) {
+			TM.CREDITS -= SoldierStats.COST;
+			return true;
+		}
+		else if((name=="Aerial" || name=="BadAerial") && TM.CREDITS >= AerialStats.COST) {
+			TM.CREDITS -= AerialStats.COST;
+			return true;
+		}
+		return false;
 	}
 
-	public void turnMenuOff(){
-		this.menuOn = false;
+	public void turnMenuOn() {
+		menuOn = true;
 	}
 
-	public void changeSides( string newside, TeamManager newtm){
+	public void turnMenuOff() {
+		menuOn = false;
+	}
+
+	public void changeSides(string newside, TeamManager newtm) {
 			//if now on red team..
-			if(this.side == "RED"){
-				this.team.bases.Remove(this);
-				this.changeSprite("BLUE");
+			if(side == "RED") {
+				TM.bases.Remove(this);
+				changeSprite("BLUE");
 				newtm.bases.Add(this);
-				this.side = "BLUE";
+				side = "BLUE";
 			}
 			//if now on blue team..
-			else if(this.side == "BLUE"){
-				this.team.bases.Remove(this);
-				this.changeSprite("RED");
-				this.side = "RED";
+			else if(side == "BLUE") {
+				TM.bases.Remove(this);
+				changeSprite("RED");
+				side = "RED";
 				newtm.bases.Add(this);//add to team manager list
 			}
 			// assume now on nuetral team..
 			else{
 				newtm.bases.Add(this);
-				this.side = newside;
-				this.changeSprite(newside);
+				side = newside;
+				changeSprite(newside);
 				}	
 			gameObject.transform.parent = newtm.gameObject.transform;
-	}//method
+		TM = newtm;
+	}
 
-	public void changeSprite(string color){
-		if(color.Equals("BLUE")){
-			this.gameObject.GetComponent<SpriteRenderer>().sprite = this.blueBaseSprite;
-			this.normalSprite = this.blueBaseSprite;
-			this.highLightSprite = this.blueBaseHighlightSprite;
-			this.greyOutSprite = this.blueBaseSprite;
-			this.occupiedSprite = this.blueBaseSprite;
+	public void changeSprite(string color) {
+		if(color.Equals("BLUE")) {
+			gameObject.GetComponent<SpriteRenderer>().sprite = blueBaseSprite;
+			normalSprite = blueBaseSprite;
+			highLightSprite = blueBaseHighlightSprite;
+			greyOutSprite = blueBaseSprite;
+			occupiedSprite = blueBaseSprite;
 		}
 		else{
-			this.gameObject.GetComponent<SpriteRenderer>().sprite = this.redBaseSprite;
-			this.normalSprite = this.redBaseSprite;
-			this.greyOutSprite = this.redBaseSprite;
-			this.highLightSprite = this.redBaseSprite;
-			this.occupiedSprite = this.blueBaseSprite;
+			gameObject.GetComponent<SpriteRenderer>().sprite = redBaseSprite;
+			normalSprite = redBaseSprite;
+			greyOutSprite = redBaseSprite;
+			highLightSprite = redBaseSprite;
+			occupiedSprite = blueBaseSprite;
 		}
 	}
 
-	public void removeCaptor(List<Player> players){
-		if(this.hasBeenCaptured){
-			Player script = this.occupant.GetComponent<Player>();
+	public void removeCaptor(List<Player> players) {
+		if(hasBeenCaptured) {
+			Player script = occupant.GetComponent<Player>();
 			players.Remove(script);
 			script.disableTurnOverTile();
-			Destroy(this.occupant);
-			this.occupant = null;
-			this.hasBeenCaptured = false;
+			Destroy(occupant);
+			occupant = null;
+			hasBeenCaptured = false;
 		}
 	}
 	

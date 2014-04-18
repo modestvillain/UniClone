@@ -10,10 +10,11 @@ public class TeamManager : MonoBehaviour {
 
 	void Start() {
 		team = new List<Player>();
+		CREDITS = 500;
 	}
 
-	void Update(){
-		if(bases.Count == WorldManager.numBases){
+	void Update() {
+		if(bases.Count == WorldManager.numBases) {
 			WorldManager.WINSTATE = true;
 			WorldManager.WINNER = gameObject.tag;
 		}
@@ -23,13 +24,19 @@ public class TeamManager : MonoBehaviour {
 		return team.Contains(player);
 	}
 
-	public void removePlayersFromCapturedBases(){
-			foreach(Base b in bases){
-				b.removeCaptor(team);
-			}
+	public void removePlayersFromCapturedBases() {
+		foreach(Base b in bases) {
+			b.removeCaptor(team);
+		}
 	}
 
-	public void removeFromTeam(Player p){
+	public void removeFromTeam(Player p) {
 		team.Remove(p);
+	}
+
+	public void addCredits() {
+		foreach(Base b in bases) {
+			CREDITS += 100;
+		}
 	}
 }

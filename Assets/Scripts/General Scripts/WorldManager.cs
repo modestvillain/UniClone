@@ -11,6 +11,8 @@ public class WorldManager : MonoBehaviour {
 	public bool playerSet = false;
 	public GameObject BLUE;
 	public GameObject RED;
+	public static TeamManager blueScript;
+	public static TeamManager redScript;
 	public static bool MOVEMODE = false;
 	public static bool NORMALMODE = true;
 	public static bool ATTACKMODE = false;
@@ -23,17 +25,28 @@ public class WorldManager : MonoBehaviour {
 	public static List<Player> players;
 	public static int numBases = 0;
 
-
 	// Use this for initialization
 	void Start () {
 		WorldManager.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
 		BLUE = GameObject.FindGameObjectWithTag("BLUE");
+		blueScript = BLUE.GetComponent<TeamManager>();
 		RED = GameObject.FindGameObjectWithTag("RED");
+		redScript = RED.GetComponent<TeamManager>();
 		WorldManager.aerialStats = new AerialStats();
 		WorldManager.soldierStats = new SoldierStats();
 		WorldManager.players = new List<Player>();
 		WorldManager.AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
 
+	}
+
+	public static void endPlayerTurn() {
+		PLAYERMODE = false;
+		GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>().removePlayersFromCapturedBases();
+		GameObject.FindGameObjectWithTag("RED").GetComponent<TeamManager>().removePlayersFromCapturedBases();
+		foreach(Player p in blueScript.team) {
+			p.endTurn();
+		}
+		AI.startTurn();
 	}
 	
 	// Update is called once per frame
@@ -65,8 +78,8 @@ public class WorldManager : MonoBehaviour {
 		MOVEMODE = true;
 	}
 
-	public void spawnPlayer(){
-		if(!this.playerSet && !map.empty){
+	public void spawnPlayer() {
+		if(!this.playerSet && !map.empty) {
 
 			createPlayerInRandomLocation("Soldier", "BLUE");
 			createPlayerInRandomLocation("Aerial", "BLUE");
@@ -76,7 +89,7 @@ public class WorldManager : MonoBehaviour {
 		}
 	}
 
-	public static void createPlayerInRandomLocation(string prefabname, string side){
+	public static void createPlayerInRandomLocation(string prefabname, string side) {
 		//side = BLUE or RED
 		int rand = Random.Range(0, map.tileList.Count -1);
 		GameObject player = WorldManager.instantiatePlayer(prefabname, side);
@@ -84,27 +97,22 @@ public class WorldManager : MonoBehaviour {
 	}
 
 
-	public static GameObject instantiatePlayer(string prefabName, string side){
+	public static GameObject instantiatePlayer(string prefabName, string side) {
 		string path = "Prefabs/" + prefabName;
 		GameObject player = (GameObject)Instantiate(Resources.Load(path));
 		player.name = prefabName;
 		player.tag = prefabName;
-		Player playerScript = WorldManager.getPlayerScript(player);
-		//map.player = playerScript;
+		Player playerScript = (Player)player.GetComponent(player.tag);
 		player.transform.parent = GameObject.FindGameObjectWithTag(side).transform;
-		playerScript.team = GameObject.FindGameObjectWithTag(side).GetComponent<TeamManager>();
-		playerScript.team.team.Add(playerScript);
-		if(side == "BLUE"){
-			WorldManager.players.Add(playerScript);
-		}
-
+		playerScript.TM = GameObject.FindGameObjectWithTag(side).GetComponent<TeamManager>();
+		playerScript.TM.team.Add(playerScript);
 		return player;
 	}
 
-	public static void positionPlayer(GameObject player, HexTile hextile){
+	public static void positionPlayer(GameObject player, HexTile hextile) {
 		player.transform.position = hextile.center;
 		hextile.occupant = player;
-		WorldManager.getPlayerScript(player).currentTileScript = hextile;
+		((Player)player.GetComponent(player.tag)).currentTileScript = hextile;
 	}
 
 	public static Player getPlayerScript(GameObject g) {
@@ -123,7 +131,7 @@ public class WorldManager : MonoBehaviour {
 		}
 	}
 
-	void GUIMenuTest(){
+	void GUIMenuTest() {
 		ActionsMenu menu = (ActionsMenu)this.gameObject.AddComponent<ActionsMenu>();
 		menu.canMove = true;
 		menu.canAttack = true;
@@ -131,22 +139,22 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	//only for blue team
-	public static void removeTurnOverTiles(){
-		foreach(Player player in WorldManager.players){
+	public static void removeTurnOverTiles() {
+		foreach(Player player in WorldManager.blueScript.team) {
 			player.disableTurnOverTile();
 		}
 	}//method
 
-	void OnGUI(){
+	void OnGUI() {
 		gameObject.GetComponent<WorldMenu>().makeMenu();
-		if(WorldManager.WINSTATE){
+		if(WorldManager.WINSTATE) {
 			gameObject.GetComponent<WorldMenu>().goToWinState();
 		}
 	}
 
-	public static void beginPlayerTurn(){
+	public static void beginPlayerTurn() {
+		blueScript.addCredits();
 		WorldManager.PLAYERMODE = true;
 		removeTurnOverTiles(); 
 	}
-
 }

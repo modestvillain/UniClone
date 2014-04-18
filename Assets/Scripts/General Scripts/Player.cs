@@ -7,7 +7,7 @@ public class Player:MonoBehaviour  {
 	public Sprite normalSprite;
 	public HexTile currentTileScript;
 	public ArrayList actionsList;
-	public TeamManager team;
+	public TeamManager TM;
 	public int HP;//health
 	public int DMG;//damage - attack strength
 	public int DEF;//defense
@@ -34,7 +34,7 @@ public class Player:MonoBehaviour  {
 	public void setup() {
 		player = gameObject;
 		turnOverTile = (GameObject)Instantiate(Resources.Load("Prefabs/blackoutTile"));
-		turnOverTile.transform.position = new Vector2(100,100);
+		turnOverTile.SetActive (false);
 	}
 
 	public void move(GameObject hextile) {
@@ -45,92 +45,84 @@ public class Player:MonoBehaviour  {
 		this.currentTileScript.occupant = null;
 		hexscript.deselect();
 		this.currentTileScript = hexscript;
-//		this.endTurn();
-	}//move
+	}
 	
 	public void attack(Player enemyScript) {
 		enemyScript.HP -= this.DMG*(this.DMG/enemyScript.DEF);
-		if(enemyScript.HP <=0){
-			//Destroy(enemyScript.gameObject);
-			enemyScript.currentTileScript.removeOccupant(enemyScript.team.team);
+		if(enemyScript.HP <=0) {
+			enemyScript.currentTileScript.removeOccupant(enemyScript.TM.team);
 		}
 		this.endTurn();
 	}
 
-	public void destroyPlayer(HexTile tileScript){
+	public void destroyPlayer(HexTile tileScript) {
 		tileScript.occupant = null;//change the occupied status of the hex
 		WorldManager.players.Remove(this);//remove from the player array in world manager
 	}
 
-	public void capture(Base b){
+	public void capture(Base b) {
 		//if base is not already yours and you can capture bases..
-		bool isAlreadyYourBase = this.ownsBase(b);
-		if (this.canCapture == true && !isAlreadyYourBase){
-			//this.move(b.gameObject);
-			this.player.transform.position = b.center;
+		bool isAlreadyYourBase = WorldManager.blueScript.bases.Contains(b);
+		if (canCapture && !isAlreadyYourBase) {
+			player.transform.position = b.center;
 			b.occupant = this.player;
-			this.currentTileScript.occupant = null;
+			currentTileScript.occupant = null;
 			b.deselect();
-			this.currentTileScript = b;
-			this.endTurn();
-			b.changeSides(gameObject.transform.parent.tag, this.team);
-
+			currentTileScript = b;
+			endTurn();
+			b.changeSides(gameObject.transform.parent.tag, TM);
 			b.hasBeenCaptured = true;
 		}
-	}//method
+	}
 
-	void OnGUI(){
-		if(isOn){
+	void OnGUI() {
+		if(isOn) {
 			int space = 0;//has spacing of thirty
-			if(canMove){
+			if(canMove) {
 				if(GUI.Button(new Rect(20,40,80,20), "Move")) {
 					//Application.LoadLevel(1);
 				}
 				space +=30;
 			}
-			if(canAttack){
+			if(canAttack) {
 				if(GUI.Button(new Rect(20,40 + space,80,20), "Attack")) {
 					//Application.LoadLevel(2);
 				}
 				space+=30;
 			}
-			if(GUI.Button(new Rect(20,40 + space,80,20), "Cancel")){
+			if(GUI.Button(new Rect(20,40 + space,80,20), "Cancel")) {
 				//then cancel
 			}
 			space +=30;
 			// Make a background box
 			GUI.Box(new Rect(10,10,100,30 + space), "Actions");
 		}
-	}//method
-
-	public void turnMenuOn(){
-		this.isOn = true;
 	}
 
-	public void turnMenuOff(){
-		this.isOn = false;
+	public void turnMenuOn() {
+		isOn = true;
 	}
 
-	public void allMenuActionsOn(){
-		this.turnMenuOn();
-		this.canMove = true;
-		this.canAttack = true;
+	public void turnMenuOff() {
+		isOn = false;
+	}
+
+	public void allMenuActionsOn() {
+		turnMenuOn();
+		canMove = true;
+		canAttack = true;
 		}
 
-	public void endTurn(){
+	public void endTurn() {
 		turnOverTile.transform.position = currentTileScript.gameObject.transform.position;
-		this.turnIsOver = true;
+		turnIsOver = true;
 		turnOverTile.SetActive(true);
-		this.turnMenuOff();
+		turnMenuOff();
 		WorldManager.setNormal();
 	}
 
-	public void disableTurnOverTile(){
-		this.turnOverTile.SetActive(false);
+	public void disableTurnOverTile() {
+		turnOverTile.SetActive(false);
 	}
 
-	public bool ownsBase(Base b){
-		return this.team.bases.Contains(b);
-	}
-
-}//class
+}

@@ -12,16 +12,13 @@ public class WorldMenu : MonoBehaviour {
 	void Update () {
 	
 	}
-	public void goToWinState(){
+	public void goToWinState() {
 		GUILayout.Box( WorldManager.WINNER + " WON ");
 	}
 
-	public void makeMenu(){
-		if(GUILayout.Button ("EndTurn")){
-			WorldManager.PLAYERMODE = false;
-			GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>().removePlayersFromCapturedBases();
-			GameObject.FindGameObjectWithTag("RED").GetComponent<TeamManager>().removePlayersFromCapturedBases();
-			WorldManager.AI.startTurn();
+	public void makeMenu() {
+		if(GUILayout.Button ("EndTurn")) {
+			WorldManager.endPlayerTurn();
 		}
 	}
 

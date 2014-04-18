@@ -28,8 +28,7 @@ public class Map : MonoBehaviour {
 	}
 
 	public void Update() {
-
-		if(!empty){
+		if(!empty) {
 			this.selectTile();
 		}
 	}
@@ -210,6 +209,7 @@ public class Map : MonoBehaviour {
 					else
 						createWaterTile(x, y, off, widthAway);
 				}
+				modX++;
 			}
 			modX=count;
 			if(off==1) {off=0; modX=++count;}
@@ -267,15 +267,17 @@ public class Map : MonoBehaviour {
 	 * @return	list of tiles a player can reach
 	 */
 	public List<HexTile> legalMoves(Player p) {
-		if(p==null)
+
+		if(p==null)											/* NULL CHECK, NEED TO RETURN NO LEGAL TILES */
 			return new List<HexTile>();
+
 		List<HexTile> legal = new List<HexTile>(p.currentTileScript.neighbors);
 		List<HexTile> temp = new List<HexTile>();
 
 		for(int i=1; i<p.MOB; i++) {
 			foreach(HexTile hex in legal) {
 				foreach(HexTile ht in hex.neighbors) {
-					if(!temp.Contains(ht)) {
+					if(!ht.isOccupied() && !temp.Contains(ht) && !legal.Contains(ht)) {
 						temp.Add (ht);
 					}
 				}
@@ -286,9 +288,27 @@ public class Map : MonoBehaviour {
 			temp = new List<HexTile>();
 		}
 
+		List<HexTile> copy = new List<HexTile>(legal);
+
+		foreach(HexTile ht in copy) {						/* REMOVE TILES THAT SOMEONE ELSE IS ALREADY OCCUPYING */
+			if(ht.isOccupied()) {
+				legal.Remove(ht);
+			}
+		}
+
+		if(p.tag != "Aerial" && p.tag != "BadAerial") {		/* UNLESS AERIAL TYPE, REMOVE WATER TILES */
+			foreach(HexTile ht in copy) {
+				if(ht.tag == "waterTile")
+					legal.Remove(ht);
+			}
+		}
+
 		return legal;
 	}
 
+	/*
+	 * Attacks counterpart to legalMoves
+	 */
 	public List<HexTile> legalAttacks(Player p) {
 
 		if(p==null)
@@ -299,7 +319,7 @@ public class Map : MonoBehaviour {
 		for(int i=1; i<p.attackRange; i++) {
 			foreach(HexTile hex in inRange) {
 				foreach(HexTile ht in hex.neighbors) {
-					if(!temp.Contains(ht)) {
+					if(!temp.Contains(ht) && !inRange.Contains(ht)) {
 						temp.Add (ht);
 					}
 				}
@@ -309,25 +329,23 @@ public class Map : MonoBehaviour {
 			}
 			temp = new List<HexTile>();
 		}
+
 		List<HexTile> legal = new List<HexTile>();
 		foreach(HexTile hex in inRange) {
-//			Debug.Log(p + " " + hex.occupant);
-			if(hex.isOccupied() && p.team != ((Player)hex.occupant.GetComponent(hex.occupant.tag)).team)
+			if(hex.isOccupied() && p.TM != ((Player)hex.occupant.GetComponent(hex.occupant.tag)).TM)
 				legal.Add(hex);
 		}
+
 		return legal;
 	}
 
 	/*
-	 * Since the "player" can be one of many different kinds,
-	 * this method pulls the script for the correct player type
+	 * Simple method to deselect all tiles
 	 */
-	public void setPlayerScript(GameObject g) {
-
-		if(g.tag == "Player")
-			player = (Player)g.GetComponent("Player");
-		else if(g.tag == "Soldier")
-			player = (Player)g.GetComponent("Soldier");
+	public void deselectAll() {
+		foreach(HexTile ht in tileList) {
+			ht.deselect();
+		}
 	}
 
 	/*
@@ -340,9 +358,13 @@ public class Map : MonoBehaviour {
 	 * 		   and ignore history
 	 */
 	public void selectTile() {
+
 		if (Input.GetMouseButtonDown(0)) {
+
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
 			if(hit && WorldManager.PLAYERMODE == true)	{
+
 				foreach(HexTile tile in tileList) {
 					if(tile.gameObject != hit.collider.gameObject) {
 						tile.deselect();
@@ -357,57 +379,63 @@ public class Map : MonoBehaviour {
 						WorldManager.setAttack();
 					}
 					hexScript.deselect();
+
 					/* CHECK IF IN MOVE MODE, IF DESTINATION IS LEGAL, AND IF PLAYER IS ALREADY ON TILE*/
+					if(WorldManager.MOVEMODE && legalTiles.Contains(hexScript) && hexScript != player.currentTileScript) {
 
-					if(WorldManager.MOVEMODE) {
-
-						//if next selected tile is empty.
-						if(legalTiles.Contains(hexScript) && player.currentTileScript!=hexScript) {
-							if(!hexScript.isOccupied()) {
-								player.move(hit.collider.gameObject);
-								hexScript.deselect ();
-								WorldManager.setNormal();
-							}
+						if(!hexScript.isOccupied()) {					/* IF TILE VACANT, MOVE TO TILE */
+							player.move(hit.collider.gameObject);
+							hexScript.deselect();
+							WorldManager.setNormal();
 						}
-//						WorldManager.MODE = WorldManager.NORMALMODE;
+
 						List<HexTile> attacks = legalAttacks(player);
-						if (attacks.Count>0) {
-							WorldManager.setAttack ();
+							
+						if (attacks.Count>0) {							/* HIGHLIGHT ATTACKABLE ENEMIES BEFORE/AFTER MOVE */
+							WorldManager.setAttack();
 							foreach(HexTile hex in attacks) {
 								hex.highlightEnemy();
 							}
 						}
 						else {
 							WorldManager.setNormal();
-							Debug.Log("one");
-							player.endTurn();
+							if(hexScript.isOccupied() && hexScript.occupant != player.gameObject) {		/* IF ATTACKING AVAILABLE, DECIDE BETWEEN */
+								hexScript.highlight();													/* HIGHLIGHTING OCCUPANT */
+							}
+							else {
+								player.endTurn();
+							}
+							player = null;
 						}
-						//if next selected tile contains an enemy..
 					}
-					else if(WorldManager.ATTACKMODE) {//} || WorldManager.MOVEMODE) {
+					else if(WorldManager.ATTACKMODE) {
+
 						List<HexTile> attacks = legalAttacks(player);
 						if(hexScript.isOccupied()) {
-							if(hexScript.occupant.transform.parent.tag != player.transform.parent.tag && attacks.Contains(hexScript)){
+							if(hexScript.occupant.transform.parent.tag != player.transform.parent.tag && attacks.Contains(hexScript)) {
 								hexScript.deselect();
-								Player enemyScript = WorldManager.getPlayerScript(hexScript.occupant);
-								Debug.Log ("Attacking enemy, health is: " + enemyScript.HP );
+								Player enemyScript = (Player)hexScript.occupant.GetComponent(hexScript.occupant.tag);
+								Debug.Log ("Attacking enemy, health is: " + enemyScript.HP);
 								player.attack(enemyScript);
-								Debug.Log ("Attacking enemy, health is NOW: " + enemyScript.HP );
+								Debug.Log ("Attacking enemy, health is NOW: " + enemyScript.HP);
 							}
 						}
+
 						WorldManager.setNormal();
-						Debug.Log("two");
 						player.endTurn();
+						player = null;
 					}
 					else {
 						WorldManager.setNormal();
+						player = null;
 						//if you selected your own memeber..
 						if(hexScript.isOccupied() && hexScript.occupant.transform.parent.tag == "BLUE") {
+
 							WorldManager.setMove();
 							player = (Player)hexScript.occupant.GetComponent(hexScript.occupant.tag);
-							//player.allMenuActionsOn();
 							legalTiles = legalMoves (player);
 							List<HexTile> attacks = legalAttacks(player);
+
 							foreach(HexTile hex in tileList) {
 								hex.greyOut();
 							}
@@ -417,37 +445,37 @@ public class Map : MonoBehaviour {
 							foreach(HexTile hex in attacks) {
 								hex.highlightEnemy();
 							}
-							if(lastBaseSelected!=null){
+							if(lastBaseSelected!=null) {
 								lastBaseSelected.SendMessage("deselect");
 							}
-							hexScript.highlight();
 						}
 
-						else if(!hexScript.isOccupied()) {
-							hexScript.highlight();
-						}
+						hexScript.highlight();
 					}
 				}
 
 				else if(hit.collider.tag == "Base") {
-					Base script =hit.collider.gameObject.GetComponent<Base>();
-					if(this.player.ownsBase(script)){
+					Base script = hit.collider.gameObject.GetComponent<Base>();
+					if(WorldManager.blueScript.bases.Contains(script)) {
 						script.baseSelected();
-						this.lastBaseSelected = script;
-						player.isOn = false;// makes the menu turn off
+						lastBaseSelected = script;
+						if(player != null)
+							player.isOn = false;				// makes the menu turn off
 					}
 					else {
+						WorldManager.setNormal();
+						script.highlight();
 						List<HexTile> legalTiles = legalMoves (player);
-						if(legalTiles.Contains(script)){
+						if(legalTiles.Contains(script)) {
 							player.capture(script);
 						}
 					}
 				}
 
-				if(this.player!=null && WorldManager.NORMALMODE){
+				if(player!=null && WorldManager.NORMALMODE) {
 					player.isOn = false;// makes the menu turn off
-					if(hit.collider.tag != "Base"){
-						if(lastBaseSelected!= null){
+					if(hit.collider.tag != "Base") {
+						if(lastBaseSelected!= null) {
 							lastBaseSelected.SendMessage("deselect");
 						}
 					}
