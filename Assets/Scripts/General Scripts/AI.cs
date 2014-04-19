@@ -16,10 +16,10 @@
 //
 //	public tuple[] getMoveList(TeamManager myTeam,HexTile[] tileList, int credits){
 //		//get Legal Moves
-//			//get all friendly troops
+//		//get all friendly troops
 //		List<Player> listOfFriendlies = myTeam.team;
 //
-//			//get list of legal destinations
+//		//get list of legal destinations
 //		for (int i=0; i<listOfFriendlies.Count; i++) {
 //
 //

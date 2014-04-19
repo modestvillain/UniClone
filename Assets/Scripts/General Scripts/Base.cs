@@ -35,7 +35,11 @@ public class Base : HexTile {
 		aerialPic = Resources.Load<Texture2D>("Textures/dragonTexture");
 		soldierPic = Resources.Load<Texture2D>("Textures/soldierTexture");
 		checkMark = Resources.Load<Texture2D>("Textures/checkMark");
+		greyTile = (GameObject)Instantiate(Resources.Load("Prefabs/greyTile"));
+		greyTile.transform.parent = this.transform;
+		greyTile.SetActive(false);
 		turnOverTile = (GameObject)Instantiate(Resources.Load("Prefabs/blackoutTile"));
+		turnOverTile.transform.parent = this.transform;
 		turnOverTile.SetActive(false);
 	}
 
@@ -108,8 +112,8 @@ public class Base : HexTile {
 		GUILayout.Label("Damage : " + stats.getDamage());
 		GUILayout.Label("Defense : " + stats.getDefense());
 		GUILayout.Label("Mobility : " + stats.getMobility());
-		GUILayout.Label("Repair : " + stats.getRepair());
 		GUILayout.Label("Can Capture Bases : " + stats.getCanCapture());
+		GUILayout.Label("YOUR CREDITS : " + TM.CREDITS);
 	}
 	
 	void DoMyWindow(int windowID) {
@@ -158,7 +162,7 @@ public class Base : HexTile {
 	}
 
 	void createPlayerAndClose(string prefabName) {
-		if(creditsAreSufficient(prefabName)) {
+		if(TM.creditsAreSufficient(prefabName)) {
 			GameObject player = WorldManager.instantiatePlayer(prefabName, side);
 			Player playerScript = (Player)player.GetComponent(player.tag);
 			WorldManager.positionPlayer(player, (HexTile)this );
@@ -166,18 +170,6 @@ public class Base : HexTile {
 			playerScript.endTurn();
 		}
 		Debug.Log(TM.CREDITS);
-	}
-
-	public bool creditsAreSufficient(string name) {
-		if(name=="Soldier" && TM.CREDITS >= SoldierStats.COST) {
-			TM.CREDITS -= SoldierStats.COST;
-			return true;
-		}
-		else if((name=="Aerial" || name=="BadAerial") && TM.CREDITS >= AerialStats.COST) {
-			TM.CREDITS -= AerialStats.COST;
-			return true;
-		}
-		return false;
 	}
 
 	public void turnMenuOn() {
@@ -242,4 +234,4 @@ public class Base : HexTile {
 	}
 	
 
-}//class
+}

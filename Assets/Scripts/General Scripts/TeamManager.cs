@@ -39,4 +39,17 @@ public class TeamManager : MonoBehaviour {
 			CREDITS += 100;
 		}
 	}
+
+	public bool creditsAreSufficient(string name) {
+		if(name=="Soldier" && CREDITS >= SoldierStats.COST) {
+			CREDITS -= SoldierStats.COST;
+			return true;
+		}
+
+		else if((name=="Aerial" || name=="BadAerial") && CREDITS >= AerialStats.COST) {
+			CREDITS -= AerialStats.COST;
+			return true;
+		}
+		return false;
+	}
 }

@@ -2,9 +2,7 @@
 using System.Collections;
 
 public class Soldier : Player {
-
-
-	// Use this for initialization
+	
 	void Start () {
 		this.cost = SoldierStats.COST;
 		this.attackRange = SoldierStats.ATTACKRANGE;
@@ -21,11 +19,7 @@ public class Soldier : Player {
 	void OnEnable() {
 		setup();
 		normalSprite = Resources.Load<Sprite>("Sprites/Battlefield_3_Soldier_MP");
+//		normalSprite = Resources.Load<Sprite>("Sprites/knight");
 		gameObject.GetComponent<SpriteRenderer>().sprite = normalSprite;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 }

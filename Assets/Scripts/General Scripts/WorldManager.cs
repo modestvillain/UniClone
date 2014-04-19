@@ -36,7 +36,6 @@ public class WorldManager : MonoBehaviour {
 		WorldManager.soldierStats = new SoldierStats();
 		WorldManager.players = new List<Player>();
 		WorldManager.AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
-
 	}
 
 	public static void endPlayerTurn() {
@@ -81,11 +80,11 @@ public class WorldManager : MonoBehaviour {
 	public void spawnPlayer() {
 		if(!this.playerSet && !map.empty) {
 
-			createPlayerInRandomLocation("Soldier", "BLUE");
-			createPlayerInRandomLocation("Aerial", "BLUE");
-			createPlayerInRandomLocation("BadGuyTest", "RED");
+			//createPlayerInRandomLocation("Soldier", "BLUE");
+			//createPlayerInRandomLocation("Aerial", "BLUE");
+			//createPlayerInRandomLocation("BadGuyTest", "RED");
 		
-			playerSet = true;
+			//playerSet = true;
 		}
 	}
 

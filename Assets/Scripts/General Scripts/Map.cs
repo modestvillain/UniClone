@@ -225,41 +225,35 @@ public class Map : MonoBehaviour {
 	 * Using self-defined coordinate system, find neighboring tiles
 	 * and create adjacency list for each individual hex tile
 	 */
-	public bool createAdjacencies() {
+	public void createAdjacencies() {
 
-		bool hasAdj;
-		bool connected = true;
 		foreach(HexTile ht in tileList) {
 			int xp=ht.x+1;
 			int xn=ht.x-1;
 			int yp=ht.y+1;
 			int yn=ht.y-1;
-			hasAdj = false;
+
 			/* CLOCKWISE STARTING AT TILE TO RIGHT */
 
 			if(xp<realWidth) {					// +1, 0
-				if(tiles[xp,ht.y]!=null)	{ht.neighbors.Add(tiles[xp,ht.y]); hasAdj=true;}
+				if(tiles[xp,ht.y]!=null)	ht.neighbors.Add(tiles[xp,ht.y]);
 			}
 			if(yn>=0) {							//  0,-1
-				if(tiles[ht.x,yn]!=null)	{ht.neighbors.Add(tiles[ht.x,yn]); hasAdj=true;}
+				if(tiles[ht.x,yn]!=null)	ht.neighbors.Add(tiles[ht.x,yn]);
 			}
 			if(xn>=0 && yn>=0) {				// -1,-1
-				if(tiles[xn,yn]!=null)		{ht.neighbors.Add(tiles[xn,yn]); hasAdj=true;}
+				if(tiles[xn,yn]!=null)		ht.neighbors.Add(tiles[xn,yn]);
 			}
 			if(xn>=0) {							// -1, 0
-				if(tiles[xn,ht.y]!=null)	{ht.neighbors.Add(tiles[xn,ht.y]); hasAdj=true;}
+				if(tiles[xn,ht.y]!=null)	ht.neighbors.Add(tiles[xn,ht.y]);
 			}
 			if(yp<mapHeight) {					//  0,+1
-				if(tiles[ht.x,yp]!=null)	{ht.neighbors.Add(tiles[ht.x,yp]); hasAdj=true;}
+				if(tiles[ht.x,yp]!=null)	ht.neighbors.Add(tiles[ht.x,yp]);
 			}
 			if(xp<realWidth && yp<mapHeight) {	// +1,+1
-				if(tiles[xp,yp]!=null)		{ht.neighbors.Add(tiles[xp,yp]); hasAdj=true;}
+				if(tiles[xp,yp]!=null)		ht.neighbors.Add(tiles[xp,yp]);
 			}
-
-			if(!hasAdj) connected = false;
 		}
-
-		return connected;
 	}
 
 	/*
@@ -290,9 +284,11 @@ public class Map : MonoBehaviour {
 
 		List<HexTile> copy = new List<HexTile>(legal);
 
-		foreach(HexTile ht in copy) {						/* REMOVE TILES THAT SOMEONE ELSE IS ALREADY OCCUPYING */
-			if(ht.isOccupied()) {
-				legal.Remove(ht);
+		if(p.transform.parent.tag=="RED") {
+			foreach(HexTile ht in copy) {						/* REMOVE TILES THAT SOMEONE ELSE IS ALREADY OCCUPYING */
+				if(ht.isOccupied()) {
+					legal.Remove(ht);
+				}
 			}
 		}
 
@@ -370,10 +366,13 @@ public class Map : MonoBehaviour {
 						tile.deselect();
 					}
 				}
-				//if you hit a tile...
-				if(hit.collider.tag == "hexTile" || hit.collider.tag == "waterTile" || (hit.collider.tag == "Base" && hit.collider.gameObject.GetComponent<Base>().side != "RED"
+
+				if(hit.collider.tag == "hexTile" || hit.collider.tag == "waterTile" || hit.collider.tag == "greyTile" ||
+				   (hit.collider.tag == "Base" && hit.collider.gameObject.GetComponent<Base>().side != "RED"
 				                                     && hit.collider.gameObject.GetComponent<Base>().isOccupied())) {
+
 					List<HexTile> legalTiles = legalMoves (player);
+					List<HexTile> attacks = legalAttacks(player);
 					HexTile hexScript = hit.collider.gameObject.GetComponent<HexTile>();
 					if(WorldManager.MOVEMODE && hexScript.isOccupied() && hexScript.occupant.transform.parent.tag != player.transform.parent.tag) {
 						WorldManager.setAttack();
@@ -389,8 +388,7 @@ public class Map : MonoBehaviour {
 							WorldManager.setNormal();
 						}
 
-						List<HexTile> attacks = legalAttacks(player);
-							
+						attacks = legalAttacks(player);
 						if (attacks.Count>0) {							/* HIGHLIGHT ATTACKABLE ENEMIES BEFORE/AFTER MOVE */
 							WorldManager.setAttack();
 							foreach(HexTile hex in attacks) {
@@ -400,7 +398,7 @@ public class Map : MonoBehaviour {
 						else {
 							WorldManager.setNormal();
 							if(hexScript.isOccupied() && hexScript.occupant != player.gameObject) {		/* IF ATTACKING AVAILABLE, DECIDE BETWEEN */
-								hexScript.highlight();													/* HIGHLIGHTING OCCUPANT */
+								hexScript.highlight();													/* HIGHLIGHTING OCCUPANT OR ENDING TURN */
 							}
 							else {
 								player.endTurn();
@@ -410,20 +408,27 @@ public class Map : MonoBehaviour {
 					}
 					else if(WorldManager.ATTACKMODE) {
 
-						List<HexTile> attacks = legalAttacks(player);
 						if(hexScript.isOccupied()) {
+
 							if(hexScript.occupant.transform.parent.tag != player.transform.parent.tag && attacks.Contains(hexScript)) {
 								hexScript.deselect();
 								Player enemyScript = (Player)hexScript.occupant.GetComponent(hexScript.occupant.tag);
 								Debug.Log ("Attacking enemy, health is: " + enemyScript.HP);
 								player.attack(enemyScript);
 								Debug.Log ("Attacking enemy, health is NOW: " + enemyScript.HP);
+								WorldManager.setNormal();
+								player.endTurn();
+								player = null;
 							}
-						}
 
-						WorldManager.setNormal();
-						player.endTurn();
-						player = null;
+						}
+						else {
+							WorldManager.setNormal();
+							player.endTurn();
+							player = null;
+						}
+						if(attacks.Count<1)
+							WorldManager.setNormal();
 					}
 					else {
 						WorldManager.setNormal();
@@ -434,7 +439,7 @@ public class Map : MonoBehaviour {
 							WorldManager.setMove();
 							player = (Player)hexScript.occupant.GetComponent(hexScript.occupant.tag);
 							legalTiles = legalMoves (player);
-							List<HexTile> attacks = legalAttacks(player);
+							attacks = legalAttacks(player);
 
 							foreach(HexTile hex in tileList) {
 								hex.greyOut();
@@ -449,7 +454,6 @@ public class Map : MonoBehaviour {
 								lastBaseSelected.SendMessage("deselect");
 							}
 						}
-
 						hexScript.highlight();
 					}
 				}
@@ -460,7 +464,7 @@ public class Map : MonoBehaviour {
 						script.baseSelected();
 						lastBaseSelected = script;
 						if(player != null)
-							player.isOn = false;				// makes the menu turn off
+							player.isOn = false;				/* TURNS MENU OFF */
 					}
 					else {
 						WorldManager.setNormal();
@@ -481,6 +485,6 @@ public class Map : MonoBehaviour {
 					}
 				}
 			}
-		}//if
-	}//method
-}//class
+		}
+	}
+}
