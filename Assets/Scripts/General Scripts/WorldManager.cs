@@ -22,6 +22,7 @@ public class WorldManager : MonoBehaviour {
 	public static int MODE;// int 1 is move mode, 2 means normal mode
 	public static AerialStats aerialStats;
 	public static SoldierStats soldierStats;
+	public static HeavyStats heavyStats;
 	public static List<Player> players;
 	public static int numBases = 0;
 
@@ -32,10 +33,11 @@ public class WorldManager : MonoBehaviour {
 		blueScript = BLUE.GetComponent<TeamManager>();
 		RED = GameObject.FindGameObjectWithTag("RED");
 		redScript = RED.GetComponent<TeamManager>();
-		WorldManager.aerialStats = new AerialStats();
-		WorldManager.soldierStats = new SoldierStats();
-		WorldManager.players = new List<Player>();
-		WorldManager.AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
+		aerialStats = new AerialStats();
+		soldierStats = new SoldierStats();
+		heavyStats = new HeavyStats();
+		players = new List<Player>();
+		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
 	}
 
 	public static void endPlayerTurn() {
@@ -47,8 +49,7 @@ public class WorldManager : MonoBehaviour {
 		}
 		AI.startTurn();
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		this.spawnPlayer();
 	}

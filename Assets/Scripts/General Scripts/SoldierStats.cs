@@ -3,18 +3,16 @@ using System.Collections;
 
 public class SoldierStats: IStats{
 	
-	public static int COST = 100;
-	public static int ATTACKRANGE = 10;
-	public static int MOBILITY = 1;
-	public static int DEFENSE = 5;
+	public static int COST = 150;
+	public static int ATTACKRANGE = 1;
+	public static int MOBILITY = 3;
+	public static int DEFENSE = 6;
 	public static bool CANCAPTURE = true;
 	public static bool CANATTACKAFTERMOVE = true;
 	public static int REPAIR = 1;
-	public static int HEALTH = 10;
+	public static int HEALTH = 15;
 	public static int DAMAGE = 6;
-	
-	
-	
+
 	public int getCost(){
 		return SoldierStats.COST;
 	}
@@ -43,7 +41,4 @@ public class SoldierStats: IStats{
 	public int getDamage(){
 		return SoldierStats.DAMAGE;
 	}
-	
-	
-	
-}//class
+}

@@ -22,6 +22,7 @@ public class Player:MonoBehaviour  {
 	public bool canMove = false;
 	public bool canAttack = false;  	//for menu
 	public bool isOn = false;
+	public string type;
 
 	void Start() {
 
@@ -48,7 +49,8 @@ public class Player:MonoBehaviour  {
 	}
 	
 	public void attack(Player enemyScript) {
-		enemyScript.HP -= this.DMG*(this.DMG/enemyScript.DEF);
+		enemyScript.HP -= (int)(this.DMG*((float)this.DMG/enemyScript.DEF));
+		Debug.Log(this.DMG*((float)this.DMG/enemyScript.DEF));
 		if(enemyScript.HP <=0) {
 			enemyScript.currentTileScript.removeOccupant(enemyScript.TM.team);
 		}

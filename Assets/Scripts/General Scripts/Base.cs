@@ -11,6 +11,7 @@ public class Base : HexTile {
 	public string side;
 	public Texture2D aerialPic;
 	public Texture2D soldierPic;
+	public Texture2D heavyPic;
 	public Texture2D checkMark;
 	public TeamManager TM;
 	public bool hasBeenCaptured = false;
@@ -34,6 +35,7 @@ public class Base : HexTile {
 		greyBaseSprite = Resources.Load<Sprite>("Sprites/greyBase");
 		aerialPic = Resources.Load<Texture2D>("Textures/dragonTexture");
 		soldierPic = Resources.Load<Texture2D>("Textures/soldierTexture");
+		heavyPic = Resources.Load<Texture2D>("Textures/heavyTexture");
 		checkMark = Resources.Load<Texture2D>("Textures/checkMark");
 		greyTile = (GameObject)Instantiate(Resources.Load("Prefabs/greyTile"));
 		greyTile.transform.parent = this.transform;
@@ -138,6 +140,11 @@ public class Base : HexTile {
 			selectedStats = WorldManager.soldierStats;
 			create = "Soldier";
 		}
+		else if(GUILayout.Button(heavyPic)) {
+			shouldShowStats = true;
+			selectedStats = WorldManager.heavyStats;
+			create = "Heavy";
+		}
 		GUILayout.EndHorizontal();
 		if(shouldShowStats) {
 			showStats(selectedStats);
@@ -169,7 +176,6 @@ public class Base : HexTile {
 			menuOn = false;
 			playerScript.endTurn();
 		}
-		Debug.Log(TM.CREDITS);
 	}
 
 	public void turnMenuOn() {
@@ -181,27 +187,27 @@ public class Base : HexTile {
 	}
 
 	public void changeSides(string newside, TeamManager newtm) {
-			//if now on red team..
-			if(side == "RED") {
-				TM.bases.Remove(this);
-				changeSprite("BLUE");
-				newtm.bases.Add(this);
-				side = "BLUE";
-			}
-			//if now on blue team..
-			else if(side == "BLUE") {
-				TM.bases.Remove(this);
-				changeSprite("RED");
-				side = "RED";
-				newtm.bases.Add(this);//add to team manager list
-			}
-			// assume now on nuetral team..
-			else{
-				newtm.bases.Add(this);
-				side = newside;
-				changeSprite(newside);
-				}	
-			gameObject.transform.parent = newtm.gameObject.transform;
+		//if now on red team..
+		if(side == "RED") {
+			TM.bases.Remove(this);
+			changeSprite("BLUE");
+			newtm.bases.Add(this);
+			side = "BLUE";
+		}
+		//if now on blue team..
+		else if(side == "BLUE") {
+			TM.bases.Remove(this);
+			changeSprite("RED");
+			side = "RED";
+			newtm.bases.Add(this);//add to team manager list
+		}
+		// assume now on nuetral team..
+		else{
+			newtm.bases.Add(this);
+			side = newside;
+			changeSprite(newside);
+			}	
+		gameObject.transform.parent = newtm.gameObject.transform;
 		TM = newtm;
 	}
 
