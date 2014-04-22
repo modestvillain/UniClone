@@ -45,12 +45,12 @@ public class Base : HexTile {
 		turnOverTile.SetActive(false);
 	}
 
-	public void highlight() {
+	public override void highlight() {
 		SpriteRenderer sr = GetComponent<SpriteRenderer>();
 		sr.sprite = highLightSprite;
 	}
 	
-	public void deselect() {
+	public override void deselect() {
 		turnMenuOff();
 	}
 

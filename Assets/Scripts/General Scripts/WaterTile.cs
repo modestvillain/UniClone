@@ -3,6 +3,8 @@ using System.Collections;
 
 public class WaterTile : HexTile {
 
+	public Animator ani;
+
 	void OnEnable() {
 		normalSprite = Resources.Load<Sprite>("Sprites/waterTile");
 		highLightSprite = Resources.Load<Sprite>("Sprites/waterTileHighlight");
@@ -17,5 +19,25 @@ public class WaterTile : HexTile {
 		turnOverTile.transform.parent = this.transform;
 		turnOverTile.SetActive(false);
 		setWidthAndHeight();
+		this.ani = gameObject.GetComponent<Animator>();
+		ani.SetBool("click", false);
 	}
+
+	public override void highlight() {
+		turnOverTile.SetActive(false);
+		greyTile.SetActive(false);
+		/*SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		if(isOccupied())	sr.sprite = occupiedSprite;
+		else 				sr.sprite = highLightSprite;*/
+		ani.SetBool("click", true);
+	}
+	
+	public override void deselect() {
+		turnOverTile.SetActive(false);
+		greyTile.SetActive(false);
+		/*SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		sr.sprite = normalSprite;*/
+		ani.SetBool("click", false);
+	}
+
 }
