@@ -24,9 +24,19 @@ public class Player:MonoBehaviour  {
 	public bool isOn = false;
 	public string type;
 
+	public GUIText healthDisplay;
+	
+
 	void Start() {
 
 	}
+
+	void Update(){
+
+	
+	}
+
+
 
 	void OnEnable() {
 		setup ();
@@ -36,7 +46,10 @@ public class Player:MonoBehaviour  {
 		player = gameObject;
 		turnOverTile = (GameObject)Instantiate(Resources.Load("Prefabs/blackoutTile"));
 		turnOverTile.SetActive (false);
+	
 	}
+
+
 
 	public void move(GameObject hextile) {
 		player = gameObject;
@@ -85,6 +98,18 @@ public class Player:MonoBehaviour  {
 	}
 
 	void OnGUI() {
+
+		Vector2 point = new Vector2(currentTileScript.center.x, currentTileScript.center.y);
+		GUIStyle style = new GUIStyle();
+		style.fontSize = 20;
+		style.onNormal.textColor = Color.cyan;
+		style.onActive.textColor = Color.cyan;
+		style.onFocused.textColor = Color.cyan;
+		style.onHover.textColor = Color.cyan;
+		style.normal.textColor = Color.green;
+		GUI.Label (new Rect (Camera.main.WorldToScreenPoint(point).x + 2, Screen.height - Camera.main.WorldToScreenPoint(point).y  ,100,50), this.HP.ToString(), style);
+
+
 		if(isOn) {
 			int space = 0;//has spacing of thirty
 			if(canMove) {

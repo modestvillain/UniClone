@@ -30,7 +30,7 @@ public class HexTile:MonoBehaviour {
 	void OnEnable() {
 		normalSprite = Resources.Load<Sprite>("Sprites/whiteHexTile");
 		highLightSprite = Resources.Load<Sprite>("Sprites/highLightHextTile");
-		occupiedSprite = Resources.Load<Sprite>("Sprites/occupiedHexTile");
+		occupiedSprite = Resources.Load<Sprite>("Sprites/highLightHextTile");
 		enemyTileSprite = Resources.Load<Sprite>("Sprites/redHextTile");
 		greyTile = (GameObject)Instantiate(Resources.Load("Prefabs/greyTile"));
 		greyTile.transform.parent = this.transform;

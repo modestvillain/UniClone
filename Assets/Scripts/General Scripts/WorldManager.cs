@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class WorldManager : MonoBehaviour {
-	
+	//public static Camera mainCamera;
 	public static Map map;
 	public static DummyAI AI;
 	public GameObject player;
@@ -38,6 +38,7 @@ public class WorldManager : MonoBehaviour {
 		heavyStats = new HeavyStats();
 		players = new List<Player>();
 		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
+		//WorldManager.mainCamera = Camera.m(Camera)GameObject.FindGameObjectWithTag("MainCamera");
 	}
 
 	public static bool redWon() {
@@ -114,6 +115,7 @@ public class WorldManager : MonoBehaviour {
 		player.transform.parent = GameObject.FindGameObjectWithTag(side).transform;
 		playerScript.TM = GameObject.FindGameObjectWithTag(side).GetComponent<TeamManager>();
 		playerScript.TM.team.Add(playerScript);
+
 		return player;
 	}
 

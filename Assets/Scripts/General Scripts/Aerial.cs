@@ -26,4 +26,6 @@ public class Aerial : Player {
 //		}
 		gameObject.GetComponent<SpriteRenderer>().sprite = normalSprite;
 	}
+
+
 }
