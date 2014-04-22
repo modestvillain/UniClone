@@ -2,27 +2,33 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TeamManager : MonoBehaviour {
+public class TeamManager {
 
-	public int CREDITS;
-	public List<Player> team;
-	public List<Base> bases;
+	public GameObject parent;
+	public int CREDITS = 500;
+	public List<Player> team = new List<Player>();
+	public List<Base> bases = new List<Base>();
 
-	void Start() {
-		team = new List<Player>();
-		CREDITS = 500;
+
+	public TeamManager(GameObject parent) {
+		this.parent = parent;
 	}
 
-	void Update() {
-		if(WorldManager.redWon()) {
-			WorldManager.WINSTATE = true;
-			WorldManager.WINNER = "RED";
-		}
-		if(WorldManager.blueWon()) {
-			WorldManager.WINSTATE = true;
-			WorldManager.WINNER = "BLUE";
-		}
-	}
+//	void Start() {
+//		team = new List<Player>();
+//		CREDITS = 500;
+//	}
+
+//	void Update() {
+//		if(WorldManager.redWon()) {
+//			WorldManager.WINSTATE = true;
+//			WorldManager.WINNER = "RED";
+//		}
+//		if(WorldManager.blueWon()) {
+//			WorldManager.WINSTATE = true;
+//			WorldManager.WINNER = "BLUE";
+//		}
+//	}
 
 	public bool inTeam(Player player) {
 		return team.Contains(player);
@@ -43,6 +49,31 @@ public class TeamManager : MonoBehaviour {
 			CREDITS += 100;
 		}
 	}
+
+	public double totalHealth(){
+		double total = 0;
+		foreach(Player p in this.team){
+			total += p.HP;
+		}
+		return total;
+	}//method
+
+	public double totalDamage(){
+		double total = 0;
+		foreach(Player p in this.team){
+			total += p.DMG;
+		}
+		return total;
+	}
+
+	public double totalDefense(){
+		double total = 0;
+		foreach(Player p in this.team){
+			total += p.DEF;
+		}
+		return total;
+	}
+
 
 	public bool creditsAreSufficient(string name) {
 		if((name=="Soldier" || name=="BadSoldier") && CREDITS >= SoldierStats.COST) {

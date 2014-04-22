@@ -72,7 +72,7 @@ public class DummyAI :MonoBehaviour {
 					if(BLUE.bases.Count==0) {
 						break;
 					}
-
+				}
 				else {
 					TM.team[i].move(opTile.gameObject);
 				}
