@@ -67,7 +67,7 @@ public class Player:MonoBehaviour  {
 			enemyScript.currentTileScript.removeOccupant(enemyScript.TM.team);
 			enemyScript.disableTurnOverTile();
 		}
-		if(TM.tag=="BLUE") {
+		if(TM.parent.tag=="BLUE") {
 			this.endTurn();
 		}
 	}
@@ -80,7 +80,7 @@ public class Player:MonoBehaviour  {
 	public void capture(Base b) {
 		//if base is not already yours and you can capture bases..
 		bool isAlreadyYourBase;
-		if(b.TM != null)	isAlreadyYourBase = b.TM.tag == TM.tag;
+		if(b.TM != null)	isAlreadyYourBase = b.TM.parent.tag == TM.parent.tag;
 		else 				isAlreadyYourBase = false;
 		if (canCapture && !isAlreadyYourBase) {
 			player.transform.position = b.center;

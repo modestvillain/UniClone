@@ -63,9 +63,9 @@ public class Base : HexTile {
 		SpriteRenderer sr = GetComponent<SpriteRenderer>();
 		switch(baseType) {
 			case 0:
-				TM = GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>();
-				gameObject.transform.parent = TM.transform;
-				TM.GetComponent<TeamManager>().bases.Add (this);
+				TM = WorldManager.blueScript;
+				gameObject.transform.parent = TM.parent.transform;
+				TM.bases.Add (this);
 				normalSprite = blueBaseSprite;
 				highLightSprite = blueBaseHighlightSprite;
 				occupiedSprite = blueBaseSprite;
@@ -74,9 +74,9 @@ public class Base : HexTile {
 				side = "BLUE";
 				break;
 			case 1:
-				TM = GameObject.FindGameObjectWithTag("RED").GetComponent<TeamManager>();
-				gameObject.transform.parent = TM.transform;
-				TM.GetComponent<TeamManager>().bases.Add (this);
+				TM = WorldManager.redScript;
+				gameObject.transform.parent = TM.parent.transform;
+				TM.bases.Add (this);
 				normalSprite = redBaseSprite;
 				highLightSprite = redBaseSprite;
 				occupiedSprite = redBaseSprite;
@@ -207,7 +207,7 @@ public class Base : HexTile {
 			side = newside;
 			changeSprite(newside);
 			}	
-		gameObject.transform.parent = newtm.gameObject.transform;
+		gameObject.transform.parent = newtm.parent.transform;
 		TM = newtm;
 	}
 

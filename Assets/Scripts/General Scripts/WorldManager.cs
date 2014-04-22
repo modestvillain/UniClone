@@ -27,12 +27,12 @@ public class WorldManager : MonoBehaviour {
 	public static int numBases = 0;
 
 	// Use this for initialization
-	void Start () {
+	void OnEnable () {
 		WorldManager.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
 		BLUE = GameObject.FindGameObjectWithTag("BLUE");
-		blueScript = BLUE.GetComponent<TeamManager>();
+		blueScript = new TeamManager(BLUE);
 		RED = GameObject.FindGameObjectWithTag("RED");
-		redScript = RED.GetComponent<TeamManager>();
+		redScript = new TeamManager(RED);
 		aerialStats = new AerialStats();
 		soldierStats = new SoldierStats();
 		heavyStats = new HeavyStats();
@@ -51,8 +51,8 @@ public class WorldManager : MonoBehaviour {
 
 	public static void endPlayerTurn() {
 		PLAYERMODE = false;
-		GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>().removePlayersFromCapturedBases();
-		GameObject.FindGameObjectWithTag("RED").GetComponent<TeamManager>().removePlayersFromCapturedBases();
+		blueScript.removePlayersFromCapturedBases();
+		redScript.removePlayersFromCapturedBases();
 		foreach(Player p in blueScript.team) {
 			p.endTurn();
 		}
@@ -60,7 +60,14 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	void Update () {
-		this.spawnPlayer();
+		if(redWon()) {
+			WINSTATE = true;
+			WINNER = "RED";
+		}
+		if(blueWon()) {
+			WINSTATE = true;
+			WINNER = "BLUE";
+		}
 	}
 
 	public static void setNormal() {
@@ -113,10 +120,17 @@ public class WorldManager : MonoBehaviour {
 		player.tag = prefabName;
 		Player playerScript = (Player)player.GetComponent(player.tag);
 		player.transform.parent = GameObject.FindGameObjectWithTag(side).transform;
-		playerScript.TM = GameObject.FindGameObjectWithTag(side).GetComponent<TeamManager>();
+		playerScript.TM = getTM(side);
 		playerScript.TM.team.Add(playerScript);
 
 		return player;
+	}
+
+	public static TeamManager getTM(string side) {
+		if(side=="BLUE")
+			return blueScript;
+		else
+			return redScript;
 	}
 
 	public static void positionPlayer(GameObject player, HexTile hextile) {
