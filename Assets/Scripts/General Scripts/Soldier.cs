@@ -18,7 +18,7 @@ public class Soldier : Player {
 
 	void OnEnable() {
 		setup();
-		normalSprite = Resources.Load<Sprite>("Sprites/Battlefield_3_Soldier_MP");
+		normalSprite = Resources.Load<Sprite>("Sprites/soldier");
 //		normalSprite = Resources.Load<Sprite>("Sprites/knight");
 		gameObject.GetComponent<SpriteRenderer>().sprite = normalSprite;
 	}

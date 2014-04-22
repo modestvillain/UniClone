@@ -17,7 +17,7 @@ public class Heavy : Player {
 	
 	void OnEnable() {
 		setup ();
-		normalSprite = Resources.Load<Sprite>("Sprites/ryuk");
+		normalSprite = Resources.Load<Sprite>("Sprites/Heavy");
 		gameObject.GetComponent<SpriteRenderer>().sprite = normalSprite;
 	}
 }
