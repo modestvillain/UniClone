@@ -50,7 +50,7 @@ public class HexTile:MonoBehaviour {
 		return occupant!=null;
 	}
 
-	public void highlight() {
+	public virtual void highlight() {
 		turnOverTile.SetActive(false);
 		greyTile.SetActive(false);
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
@@ -58,7 +58,7 @@ public class HexTile:MonoBehaviour {
 		else 				sr.sprite = highLightSprite;
 	}
 
-	public void deselect() {
+	public virtual void deselect() {
 		turnOverTile.SetActive(false);
 		greyTile.SetActive(false);
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();

@@ -50,7 +50,7 @@ public class Base : HexTile {
 		sr.sprite = highLightSprite;
 	}
 	
-	public void deselect() {
+	public  void deselect() {
 		turnMenuOff();
 	}
 
