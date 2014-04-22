@@ -50,11 +50,13 @@ public class Player:MonoBehaviour  {
 	
 	public void attack(Player enemyScript) {
 		enemyScript.HP -= (int)(this.DMG*((float)this.DMG/enemyScript.DEF));
-		Debug.Log(this.DMG*((float)this.DMG/enemyScript.DEF));
 		if(enemyScript.HP <=0) {
 			enemyScript.currentTileScript.removeOccupant(enemyScript.TM.team);
+			enemyScript.disableTurnOverTile();
 		}
-		this.endTurn();
+		if(TM.tag=="BLUE") {
+			this.endTurn();
+		}
 	}
 
 	public void destroyPlayer(HexTile tileScript) {
@@ -76,6 +78,9 @@ public class Player:MonoBehaviour  {
 			endTurn();
 			b.changeSides(gameObject.transform.parent.tag, TM);
 			b.hasBeenCaptured = true;
+		}
+		else {
+			move(b.gameObject);
 		}
 	}
 
@@ -115,7 +120,7 @@ public class Player:MonoBehaviour  {
 		turnMenuOn();
 		canMove = true;
 		canAttack = true;
-		}
+	}
 
 	public void endTurn() {
 		turnOverTile.transform.position = currentTileScript.gameObject.transform.position;
@@ -128,5 +133,9 @@ public class Player:MonoBehaviour  {
 	public void disableTurnOverTile() {
 		turnOverTile.SetActive(false);
 	}
-
+/*
+	public void disableGreyTile() {
+		greyTile.SetActive(false);
+	}
+*/
 }

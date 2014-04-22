@@ -51,6 +51,11 @@ public class DummyAI :MonoBehaviour {
 							TM.team[i].move(opTile.gameObject);
 						}
 					}
+					List<HexTile> possibleAtts = WorldManager.map.legalAttacks(TM.team[i]);
+					if(possibleAtts.Count>0) {
+						GameObject p = possibleAtts[UnityEngine.Random.Range(0,possibleAtts.Count)].occupant;
+						TM.team[i].attack((Player)p.GetComponent(p.tag));
+					}
 				}
 			}
 			else if(TM.team.Count > 0) {

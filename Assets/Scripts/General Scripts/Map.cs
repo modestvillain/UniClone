@@ -268,10 +268,15 @@ public class Map : MonoBehaviour {
 		List<HexTile> legal = new List<HexTile>(p.currentTileScript.neighbors);
 		List<HexTile> temp = new List<HexTile>();
 
+		foreach(HexTile ht in p.currentTileScript.neighbors) {
+			if(ht.tag=="waterTile")
+				legal.Remove(ht);
+		}
+
 		for(int i=1; i<p.MOB; i++) {
 			foreach(HexTile hex in legal) {
 				foreach(HexTile ht in hex.neighbors) {
-					if((!ht.isOccupied() && !temp.Contains(ht) && !legal.Contains(ht)) && (ht.tag != "waterTile" || (p.tag=="Aerial" || p.tag=="BadAerial"))) {
+					if((!ht.isOccupied() && !temp.Contains(ht) && !legal.Contains(ht)) && (ht.tag != "waterTile" || p.tag=="Aerial" || p.tag=="BadAerial")) {
 						temp.Add (ht);
 					}
 				}
@@ -292,12 +297,6 @@ public class Map : MonoBehaviour {
 			}
 		}
 
-		if(p.tag != "Aerial" && p.tag != "BadAerial") {		/* UNLESS AERIAL TYPE, REMOVE WATER TILES */
-			foreach(HexTile ht in copy) {
-				if(ht.tag == "waterTile")
-					legal.Remove(ht);
-			}
-		}
 
 		return legal;
 	}
@@ -368,8 +367,7 @@ public class Map : MonoBehaviour {
 				}
 
 				if(hit.collider.tag == "hexTile" || hit.collider.tag == "waterTile" || hit.collider.tag == "greyTile" ||
-				   (hit.collider.tag == "Base" && hit.collider.gameObject.GetComponent<Base>().side != "RED"
-				                                     && hit.collider.gameObject.GetComponent<Base>().isOccupied())) {
+				   (hit.collider.tag == "Base" && hit.collider.gameObject.GetComponent<HexTile>().isOccupied())) {
 
 					List<HexTile> legalTiles = legalMoves (player);
 					List<HexTile> attacks = legalAttacks(player);
@@ -472,6 +470,8 @@ public class Map : MonoBehaviour {
 						List<HexTile> legalTiles = legalMoves (player);
 						if(legalTiles.Contains(script)) {
 							player.capture(script);
+							player.endTurn();
+							player = null;
 						}
 					}
 				}
