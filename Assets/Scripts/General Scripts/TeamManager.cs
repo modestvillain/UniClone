@@ -14,9 +14,13 @@ public class TeamManager : MonoBehaviour {
 	}
 
 	void Update() {
-		if(bases.Count == WorldManager.numBases) {
+		if(WorldManager.redWon()) {
 			WorldManager.WINSTATE = true;
-			WorldManager.WINNER = gameObject.tag;
+			WorldManager.WINNER = "RED";
+		}
+		if(WorldManager.blueWon()) {
+			WorldManager.WINSTATE = true;
+			WorldManager.WINNER = "BLUE";
 		}
 	}
 

@@ -187,21 +187,21 @@ public class Base : HexTile {
 	}
 
 	public void changeSides(string newside, TeamManager newtm) {
-		//if now on red team..
+
 		if(side == "RED") {
 			TM.bases.Remove(this);
 			changeSprite("BLUE");
 			newtm.bases.Add(this);
 			side = "BLUE";
 		}
-		//if now on blue team..
+
 		else if(side == "BLUE") {
 			TM.bases.Remove(this);
 			changeSprite("RED");
 			side = "RED";
 			newtm.bases.Add(this);//add to team manager list
 		}
-		// assume now on nuetral team..
+
 		else{
 			newtm.bases.Add(this);
 			side = newside;

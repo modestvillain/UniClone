@@ -40,6 +40,14 @@ public class WorldManager : MonoBehaviour {
 		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
 	}
 
+	public static bool redWon() {
+		return blueScript.bases.Count==0;
+	}
+
+	public static bool blueWon() {
+		return redScript.bases.Count==0;
+	}
+
 	public static void endPlayerTurn() {
 		PLAYERMODE = false;
 		GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>().removePlayersFromCapturedBases();

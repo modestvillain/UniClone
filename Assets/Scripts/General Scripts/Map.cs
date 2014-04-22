@@ -271,7 +271,7 @@ public class Map : MonoBehaviour {
 		for(int i=1; i<p.MOB; i++) {
 			foreach(HexTile hex in legal) {
 				foreach(HexTile ht in hex.neighbors) {
-					if(!ht.isOccupied() && !temp.Contains(ht) && !legal.Contains(ht)) {
+					if((!ht.isOccupied() && !temp.Contains(ht) && !legal.Contains(ht)) && (ht.tag != "waterTile" || (p.tag=="Aerial" || p.tag=="BadAerial"))) {
 						temp.Add (ht);
 					}
 				}

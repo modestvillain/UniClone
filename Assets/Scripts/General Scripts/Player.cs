@@ -64,7 +64,9 @@ public class Player:MonoBehaviour  {
 
 	public void capture(Base b) {
 		//if base is not already yours and you can capture bases..
-		bool isAlreadyYourBase = WorldManager.blueScript.bases.Contains(b);
+		bool isAlreadyYourBase;
+		if(b.TM != null)	isAlreadyYourBase = b.TM.tag == TM.tag;
+		else 				isAlreadyYourBase = false;
 		if (canCapture && !isAlreadyYourBase) {
 			player.transform.position = b.center;
 			b.occupant = this.player;
