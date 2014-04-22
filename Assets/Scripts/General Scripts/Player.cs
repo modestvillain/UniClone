@@ -49,8 +49,6 @@ public class Player:MonoBehaviour  {
 	
 	}
 
-
-
 	public void move(GameObject hextile) {
 		player = gameObject;
 		HexTile hexscript = hextile.GetComponent<HexTile>();
@@ -62,10 +60,15 @@ public class Player:MonoBehaviour  {
 	}
 	
 	public void attack(Player enemyScript) {
+		Debug.Log ("Attacking enemy, health is: " + enemyScript.HP);
 		enemyScript.HP -= (int)(this.DMG*((float)this.DMG/enemyScript.DEF));
 		if(enemyScript.HP <=0) {
+			Debug.Log ("Attacking enemy, health is NOW: 0");
 			enemyScript.currentTileScript.removeOccupant(enemyScript.TM.team);
 			enemyScript.disableTurnOverTile();
+		}
+		else {
+			Debug.Log ("Attacking enemy, health is NOW: " + enemyScript.HP);
 		}
 		if(TM.tag=="BLUE") {
 			this.endTurn();

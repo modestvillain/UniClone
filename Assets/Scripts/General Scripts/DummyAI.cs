@@ -10,6 +10,7 @@ public class DummyAI :MonoBehaviour {
 	private string SOLDIER = "BadSoldier";
 	private string HEAVY = "BadHeavy";
 	private string[] types = new string[3];
+	public string me;
 	private bool created = false;
 
 	void OnEnable() {
@@ -25,7 +26,7 @@ public class DummyAI :MonoBehaviour {
 		TM.addCredits();
 		created = false;
 		if(TM.bases.Count>0 && BLUE.bases.Count>0) {
-			if(UnityEngine.Random.Range(0,10)<8) {
+			if(UnityEngine.Random.Range(0,10)<9) {
 				createNewPlayer(TM.bases[0],types[UnityEngine.Random.Range(0,3)]);
 			}
 			if(TM.team.Count > 0 & !created) {
@@ -70,8 +71,22 @@ public class DummyAI :MonoBehaviour {
 							minDistance = newMin;
 						}
 					}
-					if(opTile != null)
-						TM.team[i].move(opTile.gameObject);
+					if(opTile != null) {
+						if(opTile.gameObject.tag == "Base") {
+							TM.team[i].capture((Base)opTile);
+							if(BLUE.bases.Count==0) {
+								break;
+							}
+						}
+						else {
+							TM.team[i].move(opTile.gameObject);
+						}
+					}
+					List<HexTile> possibleAtts = WorldManager.map.legalAttacks(TM.team[i]);
+					if(possibleAtts.Count>0) {
+						GameObject p = possibleAtts[UnityEngine.Random.Range(0,possibleAtts.Count)].occupant;
+						TM.team[i].attack((Player)p.GetComponent(p.tag));
+					}
 				}
 			}
 		}
@@ -81,7 +96,7 @@ public class DummyAI :MonoBehaviour {
 	private void endAITurn() {
 		GameObject.FindGameObjectWithTag("BLUE").GetComponent<TeamManager>().removePlayersFromCapturedBases();
 		GameObject.FindGameObjectWithTag("RED").GetComponent<TeamManager>().removePlayersFromCapturedBases();
-		WorldManager.beginPlayerTurn();
+		WorldManager.beginPlayerTurn(me);
 	}
 
 	//creates player on top of base
