@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class WorldManager : MonoBehaviour {
-	//public static Camera mainCamera;
-	public static Wait wait;
+
 	public static Map map;
 	public static DummyAI AI;
 	public static DummyAI AI2;
@@ -15,11 +14,11 @@ public class WorldManager : MonoBehaviour {
 	public GameObject RED;
 	public static TeamManager blueScript;
 	public static TeamManager redScript;
-	public static bool MOVEMODE = false;
-	public static bool NORMALMODE = true;
-	public static bool ATTACKMODE = false;
-	public static bool PLAYERMODE = true;
-	public static bool WINSTATE = false;
+	public static bool 	MOVEMODE = false,
+						NORMALMODE = true,
+						ATTACKMODE = false,
+						PLAYERMODE = true,
+						WINSTATE = false;
 	public static string WINNER;
 	public static int MODE;// int 1 is move mode, 2 means normal mode
 	public static AerialStats aerialStats;
@@ -27,11 +26,13 @@ public class WorldManager : MonoBehaviour {
 	public static HeavyStats heavyStats;
 	public static List<Player> players;
 	public static int numBases = 0;
+	public static bool 	switchAI=false,
+						switchPlayer=true;
+
 
 	// Use this for initialization
 
 	void OnEnable () {
-
 		WorldManager.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
 		BLUE = GameObject.FindGameObjectWithTag("BLUE");
 		blueScript = new TeamManager(BLUE);
@@ -40,31 +41,34 @@ public class WorldManager : MonoBehaviour {
 		aerialStats = new AerialStats();
 		soldierStats = new SoldierStats();
 		heavyStats = new HeavyStats();
-		players = new List<Player>();
 		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
 		AI2 = GameObject.FindGameObjectWithTag("AI2").GetComponent<DummyAI>();
-		AI.me = "AI";
-		AI2.me = "AI2";
-		AI.startTurn();
+		AI.TM = blueScript;
+		AI.BLUE = redScript;
+		AI2.TM = redScript;
+		AI2.BLUE = redScript;
 		//WorldManager.mainCamera = Camera.m(Camera)GameObject.FindGameObjectWithTag("MainCamera");
 	}
 
-	public static bool redWon() {
-		return blueScript.bases.Count==0;
-	}
-
-	public static bool blueWon() {
-		return redScript.bases.Count==0;
-	}
-
 	public static void endPlayerTurn() {
+
 		PLAYERMODE = false;
 		blueScript.removePlayersFromCapturedBases();
 		redScript.removePlayersFromCapturedBases();
 		foreach(Player p in blueScript.team) {
 			p.endTurn();
 		}
-		AI.startTurn();
+		switchAI = true;
+	}
+
+	public static void endAITurn() {
+		//PLAYERMODE = true;
+		blueScript.removePlayersFromCapturedBases();
+		redScript.removePlayersFromCapturedBases();
+		foreach(Player p in redScript.team) {
+			p.endTurn();
+		}
+		switchPlayer = true;
 	}
 
 	void Update () {
@@ -76,6 +80,24 @@ public class WorldManager : MonoBehaviour {
 			WINSTATE = true;
 			WINNER = "BLUE";
 		}
+		if(switchPlayer) {
+			Debug.Log("AI");
+			beginPlayerTurn();
+			switchPlayer = false;
+		}
+		else if(switchAI) {
+			Debug.Log("AI2");
+			beginAITurn();
+			switchAI = false;
+		}
+	}
+
+	public static bool redWon() {
+		return blueScript.bases.Count==0;
+	}
+
+	public static bool blueWon() {
+		return redScript.bases.Count==0;
 	}
 
 	public static void setNormal() {
@@ -101,14 +123,6 @@ public class WorldManager : MonoBehaviour {
 		ATTACKMODE = true;
 		MOVEMODE = true;
 	}
-
-	public static void createPlayerInRandomLocation(string prefabname, string side) {
-		//side = BLUE or RED
-		int rand = Random.Range(0, map.tileList.Count -1);
-		GameObject player = WorldManager.instantiatePlayer(prefabname, side);
-		WorldManager.positionPlayer(player, WorldManager.map.tileList[rand]);
-	}
-
 
 	public static GameObject instantiatePlayer(string prefabName, string side) {
 		string path = "Prefabs/" + prefabName;
@@ -136,22 +150,6 @@ public class WorldManager : MonoBehaviour {
 		((Player)player.GetComponent(player.tag)).currentTileScript = hextile;
 	}
 
-	public static Player getPlayerScript(GameObject g) {
-		if(g.tag == "Player")
-			return(Player)g.GetComponent("Player");
-		else if(g.tag == "Soldier")
-			return (Player)g.GetComponent("Soldier");
-		else if(g.tag == "Aerial")
-			return (Player)g.GetComponent("Aerial");
-		else if(g.tag == "BadGuyTest")
-			return (Player)g.GetComponent("BadGuyTest");
-		else if(g.tag == "badAerial")
-			return (Player)g.GetComponent("Aerial");
-		else{
-			return null;
-		}
-	}
-
 	void GUIMenuTest() {
 		ActionsMenu menu = (ActionsMenu)this.gameObject.AddComponent<ActionsMenu>();
 		menu.canMove = true;
@@ -173,14 +171,22 @@ public class WorldManager : MonoBehaviour {
 		}
 	}
 
-	public static void beginPlayerTurn(string me) {
+	public static void beginPlayerTurn() {
 		blueScript.addCredits();
-		//WorldManager.PLAYERMODE = true;
-		//removeTurnOverTiles();
-		wait.waitASec();
-		if(me=="AI")
-			AI2.startTurn();
-		else
-			AI.startTurn();
+		WorldManager.PLAYERMODE = true;
+		removeTurnOverTiles();
+		AI.startTurn();
+		AI.endAITurn();
+		switchPlayer = false;
+		switchAI = true;
+	}
+
+	public static void beginAITurn() {
+		redScript.addCredits();
+		WorldManager.PLAYERMODE = false;
+		AI2.startTurn();
+		AI2.endAITurn();
+		switchPlayer = true;
+		switchAI = false;
 	}
 }

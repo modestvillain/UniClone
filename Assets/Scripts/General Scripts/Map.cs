@@ -358,7 +358,7 @@ public class Map : MonoBehaviour {
 
 			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
-			if(hit && WorldManager.PLAYERMODE == true)	{
+			if(hit && WorldManager.PLAYERMODE)	{
 
 				foreach(HexTile tile in tileList) {
 					if(tile.gameObject != hit.collider.gameObject) {
