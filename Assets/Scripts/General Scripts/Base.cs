@@ -171,7 +171,7 @@ public class Base : HexTile {
 	}
 
 	void createPlayerAndClose(string prefabName) {
-		if(TM.creditsAreSufficient(prefabName)) {
+		if(TM.creditsAreSufficient(prefabName) && TM.team.Count < 5) {
 			GameObject player = WorldManager.instantiatePlayer(prefabName, side);
 			Player playerScript = (Player)player.GetComponent(player.tag);
 			WorldManager.positionPlayer(player, (HexTile)this );

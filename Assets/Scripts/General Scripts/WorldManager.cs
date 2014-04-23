@@ -49,6 +49,12 @@ public class WorldManager : MonoBehaviour {
 		AI.BLUE = redScript;
 		AI2.TM = redScript;
 		AI2.BLUE = redScript;
+		AI2.types[0] = "BadAerial";
+		AI2.types[1] = "BadSoldier";
+		AI2.types[2] = "BadHeavy";
+		AI.types[0] = "Aerial";
+		AI.types[1] = "Soldier";
+		AI.types[2] = "Heavy";
 		//WorldManager.mainCamera = Camera.m(Camera)GameObject.FindGameObjectWithTag("MainCamera");
 	}
 
@@ -77,19 +83,21 @@ public class WorldManager : MonoBehaviour {
 		if(redWon()) {
 			WINSTATE = true;
 			WINNER = "RED";
+			switchPlayer = false;
+			switchAI = false;
 		}
 		if(blueWon()) {
 			WINSTATE = true;
 			WINNER = "BLUE";
+			switchPlayer = false;
+			switchAI = false;
 		}
 		if(switchPlayer) {
-			Debug.Log("AI");
-			beginPlayerTurn();
+			StartCoroutine(beginPlayerTurn());
 			switchPlayer = false;
 		}
 		else if(switchAI) {
-			Debug.Log("AI2");
-			beginAITurn();
+			StartCoroutine(beginAITurn());
 			switchAI = false;
 		}
 	}
@@ -173,7 +181,8 @@ public class WorldManager : MonoBehaviour {
 		}
 	}
 
-	public static void beginPlayerTurn() {
+	public static IEnumerator beginPlayerTurn() {
+		yield return new WaitForSeconds(.75f);
 		blueScript.addCredits();
 		WorldManager.PLAYERMODE = true;
 		removeTurnOverTiles();
@@ -183,7 +192,8 @@ public class WorldManager : MonoBehaviour {
 		switchAI = true;
 	}
 
-	public static void beginAITurn() {
+	public static IEnumerator beginAITurn() {
+		yield return new WaitForSeconds(.75f);
 		redScript.addCredits();
 		WorldManager.PLAYERMODE = false;
 		AI2.startTurn();

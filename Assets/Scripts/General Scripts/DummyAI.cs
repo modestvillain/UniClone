@@ -6,19 +6,19 @@ using System;
 public class DummyAI :MonoBehaviour {
 	public TeamManager TM;
 	public TeamManager BLUE;
-	private string AERIAL = "BadAerial";
-	private string SOLDIER = "BadSoldier";
-	private string HEAVY = "BadHeavy";
-	private string[] types = new string[3];
+	public string AERIAL = "BadAerial";
+	public string SOLDIER = "BadSoldier";
+	public string HEAVY = "BadHeavy";
+	public string[] types = new string[3];
 	public string me;
-	private bool created = false;
+	public bool created = false;
 
 	void Start() {
-//		TM = WorldManager.redScript;
-//		BLUE = WorldManager.blueScript;
+		/*TM = WorldManager.redScript;
+		BLUE = WorldManager.blueScript;
 		types[0] = AERIAL;
 		types[1] = SOLDIER;
-		types[2] = HEAVY;
+		types[2] = HEAVY;*/
 	}
 
 	public void startTurn() {
@@ -42,11 +42,9 @@ public class DummyAI :MonoBehaviour {
 
 	public void doActions(int off) {
 
-		State s = new State(WorldManager.map.tileList,WorldManager.blueScript,WorldManager.redScript);
+		for(int i=0; i<TM.team.Count-off; i++) {
 
-		for(int i=0; i<s.red.team.Count-off; i++) {
-
-			List<HexTile> possibleMoves = WorldManager.map.legalMoves(s.red.team[i]);
+			List<HexTile> possibleMoves = WorldManager.map.legalMoves(TM.team[i]);
 			HexTile opTile = null;
 			double bestScore = -9999999;
 			double weightForCloseToBases = .70;//if you can't capture bases
@@ -59,17 +57,15 @@ public class DummyAI :MonoBehaviour {
 //					opTile = ht;
 //					minDistance = newMin;
 //				}
-				State newS = new State(s);
+				State newS = new State(WorldManager.map.tileList, BLUE, TM);
 				newS.red.team[i].move(ht.gameObject);
-				double score = newS.scoringFunction(weightForCloseToBases, weightForCloseToEnemy,weightForNumBases );
-				Debug.Log("score: " + score);
+				double score = newS.scoringFunction(weightForCloseToBases, weightForCloseToEnemy, weightForNumBases);
 
 				if(score>bestScore) {
 					bestScore = score;
 					opTile = ht;
 				}
 			}
-
 
 			if(opTile != null) {
 				if(opTile.gameObject.tag == "Base") {
