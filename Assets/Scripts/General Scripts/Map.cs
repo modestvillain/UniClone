@@ -411,9 +411,7 @@ public class Map : MonoBehaviour {
 							if(hexScript.occupant.transform.parent.tag != player.transform.parent.tag && attacks.Contains(hexScript)) {
 								hexScript.deselect();
 								Player enemyScript = (Player)hexScript.occupant.GetComponent(hexScript.occupant.tag);
-								Debug.Log ("Attacking enemy, health is: " + enemyScript.HP);
 								player.attack(enemyScript);
-								Debug.Log ("Attacking enemy, health is NOW: " + enemyScript.HP);
 								WorldManager.setNormal();
 								player.endTurn();
 								player = null;

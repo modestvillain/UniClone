@@ -10,6 +10,7 @@ public class DummyAI :MonoBehaviour {
 	private string SOLDIER = "BadSoldier";
 	private string HEAVY = "BadHeavy";
 	private string[] types = new string[3];
+	public string me;
 	private bool created = false;
 
 	void OnEnable() {
@@ -25,7 +26,7 @@ public class DummyAI :MonoBehaviour {
 		TM.addCredits();
 		created = false;
 		if(TM.bases.Count>0 && BLUE.bases.Count>0) {
-			if(UnityEngine.Random.Range(0,10)<8) {
+			if(UnityEngine.Random.Range(0,10)<9) {
 				createNewPlayer(TM.bases[0],types[UnityEngine.Random.Range(0,3)]);
 			}
 			if(TM.team.Count > 0 & !created) {
@@ -89,6 +90,7 @@ public class DummyAI :MonoBehaviour {
 	}
 
 	private void endAITurn() {
+
 		WorldManager.blueScript.removePlayersFromCapturedBases();
 		WorldManager.redScript.removePlayersFromCapturedBases();
 		WorldManager.beginPlayerTurn();

@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 public class WorldManager : MonoBehaviour {
 	//public static Camera mainCamera;
+	public static Wait wait;
 	public static Map map;
 	public static DummyAI AI;
+	public static DummyAI AI2;
 	public GameObject player;
 	public Sprite playerSprite;
 	public bool playerSet = false;
@@ -28,7 +30,9 @@ public class WorldManager : MonoBehaviour {
 	public static int numBases = 0;
 
 	// Use this for initialization
+
 	void OnEnable () {
+
 		WorldManager.map = GameObject.FindGameObjectWithTag("Map").GetComponent<Map>();
 		BLUE = GameObject.FindGameObjectWithTag("BLUE");
 		blueScript = new TeamManager(BLUE);
@@ -40,6 +44,10 @@ public class WorldManager : MonoBehaviour {
 		heavyStats = new HeavyStats();
 		players = new List<Player>();
 		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
+		AI2 = GameObject.FindGameObjectWithTag("AI2").GetComponent<DummyAI>();
+		AI.me = "AI";
+		AI2.me = "AI2";
+		AI.startTurn();
 		//WorldManager.mainCamera = Camera.m(Camera)GameObject.FindGameObjectWithTag("MainCamera");
 	}
 
@@ -94,17 +102,6 @@ public class WorldManager : MonoBehaviour {
 		NORMALMODE = false;
 		ATTACKMODE = true;
 		MOVEMODE = true;
-	}
-
-	public void spawnPlayer() {
-		if(!this.playerSet && !map.empty) {
-
-			//createPlayerInRandomLocation("Soldier", "BLUE");
-			//createPlayerInRandomLocation("Aerial", "BLUE");
-			//createPlayerInRandomLocation("BadGuyTest", "RED");
-		
-			//playerSet = true;
-		}
 	}
 
 	public static void createPlayerInRandomLocation(string prefabname, string side) {
@@ -178,9 +175,14 @@ public class WorldManager : MonoBehaviour {
 		}
 	}
 
-	public static void beginPlayerTurn() {
+	public static void beginPlayerTurn(string me) {
 		blueScript.addCredits();
-		WorldManager.PLAYERMODE = true;
-		removeTurnOverTiles(); 
+		//WorldManager.PLAYERMODE = true;
+		//removeTurnOverTiles();
+		wait.waitASec();
+		if(me=="AI")
+			AI2.startTurn();
+		else
+			AI.startTurn();
 	}
 }
