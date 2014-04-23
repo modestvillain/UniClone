@@ -21,6 +21,7 @@ public class WaterTile : HexTile {
 		setWidthAndHeight();
 		this.ani = gameObject.GetComponent<Animator>();
 		ani.SetBool("click", false);
+		ani.SetBool("enemy", false);
 	}
 
 	public override void highlight() {
@@ -38,6 +39,13 @@ public class WaterTile : HexTile {
 		/*SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
 		sr.sprite = normalSprite;*/
 		ani.SetBool("click", false);
+		ani.SetBool("enemy", false);
 	}
-
+	public override void highlightEnemy() {
+		turnOverTile.SetActive(false);
+		greyTile.SetActive(false);
+		//SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
+		//sr.sprite = this.enemyTileSprite;
+		ani.SetBool("enemy", true);
+	}
 }

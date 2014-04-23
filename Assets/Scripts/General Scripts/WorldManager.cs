@@ -19,6 +19,7 @@ public class WorldManager : MonoBehaviour {
 						ATTACKMODE = false,
 						PLAYERMODE = true,
 						WINSTATE = false;
+	public static TeamManager nuetralScript;
 	public static string WINNER;
 	public static int MODE;// int 1 is move mode, 2 means normal mode
 	public static AerialStats aerialStats;
@@ -38,6 +39,7 @@ public class WorldManager : MonoBehaviour {
 		blueScript = new TeamManager(BLUE);
 		RED = GameObject.FindGameObjectWithTag("RED");
 		redScript = new TeamManager(RED);
+		nuetralScript = new TeamManager();
 		aerialStats = new AerialStats();
 		soldierStats = new SoldierStats();
 		heavyStats = new HeavyStats();

@@ -83,8 +83,8 @@ public class Player:MonoBehaviour  {
 	public void capture(Base b) {
 		//if base is not already yours and you can capture bases..
 		bool isAlreadyYourBase;
-		if(b.TM != null)	isAlreadyYourBase = b.TM.parent.tag == TM.parent.tag;
-		else 				isAlreadyYourBase = false;
+		if(b.TM.parent != null)	isAlreadyYourBase = b.TM.parent.tag == TM.parent.tag;
+		else 					isAlreadyYourBase = false;
 		if (canCapture && !isAlreadyYourBase) {
 			player.transform.position = b.center;
 			b.occupant = this.player;
@@ -161,9 +161,84 @@ public class Player:MonoBehaviour  {
 	public void disableTurnOverTile() {
 		turnOverTile.SetActive(false);
 	}
-/*
-	public void disableGreyTile() {
-		greyTile.SetActive(false);
+
+	public string getSide(){
+		return gameObject.transform.parent.tag;
 	}
-*/
-}
+
+	public TeamManager getEnemy(){
+		TeamManager enemy;
+		if(this.getSide() == "RED"){
+			enemy = WorldManager.blueScript;
+		}
+		else{
+			enemy = WorldManager.redScript;
+		}
+		return enemy;
+	}
+
+	public Player closestEnemyPlayer(){
+		TeamManager enemy = this.getEnemy();
+			int distance = 999999;
+			Player closest = null;
+			foreach(Player ep in enemy.team){
+				int newDist = this.distanceToAnotherPlayer(ep);
+				if(newDist < distance){
+					distance = newDist;
+					closest = ep;
+				}
+			}
+			//return least distance hextile
+			return closest;
+		}
+
+
+	public Base closestEnemeyBase(){
+		return this.closestBase(this.getEnemy());
+	}
+
+	public Base closestNuetralBase(){
+		return this.closestBase(WorldManager.nuetralScript);
+	}
+
+	public Base closestBase(TeamManager tm){
+		//go through all enemy bases after determining who is the enemy
+		int distance = 999999;
+		Base closestBase = null;//tm.bases[0];
+		foreach(Base b in tm.bases){
+			//get distance to it from tile player is on
+			int newDist = b.distanceFromBase(this.currentTileScript);
+			if(newDist < distance){
+				distance = newDist;
+				closestBase = b;
+			}
+		}
+		//return least distance hextile
+		return closestBase;
+	}
+
+	public Base closestEnemeyOrNuetralBase(){
+		Base nuetral = this.closestNuetralBase();
+		Base enemy = this.closestEnemeyBase();
+		if(nuetral == null && enemy == null){
+			return null;
+		}
+		else if(nuetral == null && enemy!=null){
+			return enemy;
+		}
+		else if(enemy == null && nuetral!= null){
+			return nuetral;
+		}
+		else if(nuetral.distanceFromBase(this.currentTileScript) < enemy.distanceFromBase(this.currentTileScript)){
+			return nuetral;
+		}
+		else{
+			return enemy;
+		}
+	}
+
+	public int distanceToAnotherPlayer(Player p){
+		return (int)Mathf.Sqrt((int)Mathf.Pow(p.currentTileScript.x - this.currentTileScript.x,2) + (int)Mathf.Pow(p.currentTileScript.y - this.currentTileScript.y,2));
+	}
+
+}//class
