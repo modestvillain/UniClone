@@ -13,6 +13,7 @@ public class WorldManager : MonoBehaviour {
 	public GameObject RED;
 	public static TeamManager blueScript;
 	public static TeamManager redScript;
+	public static TeamManager nuetralScript;
 	public static bool MOVEMODE = false;
 	public static bool NORMALMODE = true;
 	public static bool ATTACKMODE = false;
@@ -33,6 +34,7 @@ public class WorldManager : MonoBehaviour {
 		blueScript = new TeamManager(BLUE);
 		RED = GameObject.FindGameObjectWithTag("RED");
 		redScript = new TeamManager(RED);
+		nuetralScript = new TeamManager();
 		aerialStats = new AerialStats();
 		soldierStats = new SoldierStats();
 		heavyStats = new HeavyStats();

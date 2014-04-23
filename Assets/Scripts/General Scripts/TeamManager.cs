@@ -9,7 +9,9 @@ public class TeamManager {
 	public List<Player> team = new List<Player>();
 	public List<Base> bases = new List<Base>();
 
+	public TeamManager(){
 
+	}
 	public TeamManager(GameObject parent) {
 		this.parent = parent;
 	}
@@ -70,6 +72,42 @@ public class TeamManager {
 		double total = 0;
 		foreach(Player p in this.team){
 			total += p.DEF;
+		}
+		return total;
+	}
+
+	public double totalMinDistanceToDesiredBases(double weight){
+		double total = 0;
+		foreach(Player p in this.team){
+			Base closest = p.closestEnemeyOrNuetralBase();
+			if(closest!=null){
+				int dist = closest.distanceFromBase(p.currentTileScript);
+				if(p.canCapture){
+					total += dist;
+				}
+				else{
+					total += dist * weight;
+				}
+			}
+
+		}
+
+		return total;
+	}
+
+	public double totalMinDistanceToEnemy(double weight){
+		double total = 0;
+		foreach(Player p in this.team){
+			Player closest = p.closestEnemyPlayer();
+			if(closest!=null){
+				int dist = closest.distanceToAnotherPlayer(p);
+				if(p.canCapture){
+					total += dist * weight;
+				}
+				else{
+					total += dist;
+				}
+			}
 		}
 		return total;
 	}

@@ -85,6 +85,8 @@ public class Base : HexTile {
 				side = "RED";
 				break;
 			default:
+				TM = WorldManager.nuetralScript;
+				TM.bases.Add(this);
 				normalSprite = greyBaseSprite;
 				highLightSprite = greyBaseSprite;
 				occupiedSprite = greyBaseSprite;
@@ -206,6 +208,7 @@ public class Base : HexTile {
 			newtm.bases.Add(this);
 			side = newside;
 			changeSprite(newside);
+			TM.bases.Remove(this);
 			}	
 		gameObject.transform.parent = newtm.parent.transform;
 		TM = newtm;
@@ -224,7 +227,7 @@ public class Base : HexTile {
 			normalSprite = redBaseSprite;
 			greyOutSprite = redBaseSprite;
 			highLightSprite = redBaseSprite;
-			occupiedSprite = blueBaseSprite;
+			occupiedSprite = redBaseSprite;
 		}
 	}
 
@@ -238,6 +241,11 @@ public class Base : HexTile {
 			hasBeenCaptured = false;
 		}
 	}
+
+	public int distanceFromBase(HexTile ht){
+		return (int)Mathf.Sqrt((int)Mathf.Pow(ht.x - this.x,2) + (int)Mathf.Pow(ht.y - this.y,2));
+	}//method
+
 	
 
 }

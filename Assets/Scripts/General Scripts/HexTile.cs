@@ -71,7 +71,7 @@ public class HexTile:MonoBehaviour {
 	}
 	
 
-	public void highlightEnemy() {
+	public virtual void highlightEnemy() {
 		turnOverTile.SetActive(false);
 		greyTile.SetActive(false);
 		SpriteRenderer sr = this.GetComponent<SpriteRenderer>();
