@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public class WorldManager : MonoBehaviour {
 
 	public static Map map;
-	public static DummyAI AI;
-	public static DummyAI AI2;
+	public static AI AI;
+	public static AI AI2;
 	public GameObject player;
 	public Sprite playerSprite;
 	public bool playerSet = false;
@@ -43,18 +43,18 @@ public class WorldManager : MonoBehaviour {
 		aerialStats = new AerialStats();
 		soldierStats = new SoldierStats();
 		heavyStats = new HeavyStats();
-		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
-		AI2 = GameObject.FindGameObjectWithTag("AI2").GetComponent<DummyAI>();
-		AI.TM = blueScript;
+		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<AI>();
+		//AI2 = GameObject.FindGameObjectWithTag("AI2").GetComponent<AI>();
+		/*AI.TM = blueScript;
 		AI.BLUE = redScript;
 		AI2.TM = redScript;
-		AI2.BLUE = redScript;
+		AI2.BLUE = blueScript;
 		AI2.types[0] = "BadAerial";
 		AI2.types[1] = "BadSoldier";
 		AI2.types[2] = "BadHeavy";
 		AI.types[0] = "Aerial";
 		AI.types[1] = "Soldier";
-		AI.types[2] = "Heavy";
+		AI.types[2] = "Heavy";*/
 		//WorldManager.mainCamera = Camera.m(Camera)GameObject.FindGameObjectWithTag("MainCamera");
 	}
 
@@ -70,7 +70,6 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	public static void endAITurn() {
-		//PLAYERMODE = true;
 		blueScript.removePlayersFromCapturedBases();
 		redScript.removePlayersFromCapturedBases();
 		foreach(Player p in redScript.team) {
@@ -93,12 +92,10 @@ public class WorldManager : MonoBehaviour {
 			switchAI = false;
 		}
 		if(switchPlayer) {
-			StartCoroutine(beginPlayerTurn());
-			switchPlayer = false;
+			beginPlayerTurn();
 		}
 		else if(switchAI) {
-			StartCoroutine(beginAITurn());
-			switchAI = false;
+			beginAITurn();
 		}
 	}
 
@@ -172,6 +169,9 @@ public class WorldManager : MonoBehaviour {
 		foreach(Player player in WorldManager.blueScript.team) {
 			player.disableTurnOverTile();
 		}
+		foreach(Player player in WorldManager.redScript.team) {
+			player.disableTurnOverTile();
+		}
 	}//method
 
 	void OnGUI() {
@@ -181,24 +181,20 @@ public class WorldManager : MonoBehaviour {
 		}
 	}
 
-	public static IEnumerator beginPlayerTurn() {
-		yield return new WaitForSeconds(.75f);
-		blueScript.addCredits();
-		WorldManager.PLAYERMODE = true;
-		removeTurnOverTiles();
-		AI.startTurn();
-		AI.endAITurn();
+	public static void beginPlayerTurn() {
+
 		switchPlayer = false;
-		switchAI = true;
+		WorldManager.PLAYERMODE = true;
+		blueScript.addCredits();
+		removeTurnOverTiles();
 	}
 
-	public static IEnumerator beginAITurn() {
-		yield return new WaitForSeconds(.75f);
-		redScript.addCredits();
-		WorldManager.PLAYERMODE = false;
-		AI2.startTurn();
-		AI2.endAITurn();
-		switchPlayer = true;
+	public static void beginAITurn() {
+
 		switchAI = false;
+		WorldManager.PLAYERMODE = false;
+		redScript.addCredits();		
+		AI.startTurn(WorldManager.redScript,WorldManager.blueScript,WorldManager.map);
+		endAITurn();
 	}
 }

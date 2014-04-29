@@ -19,8 +19,8 @@ public class Map : MonoBehaviour {
 
 	void Start() {
 
-		mapWidth = 8;
-		mapHeight = 8;
+		mapWidth = 6;
+		mapHeight = 6;
 		realWidth = mapWidth + (int)((mapHeight - 1) / 2);
 		tiles = new HexTile[realWidth,mapHeight];
 		this.createRandomMap();
@@ -204,7 +204,7 @@ public class Map : MonoBehaviour {
 					createBase(x, y, off, widthAway,-1);
 				}
 				else {
-					if(Random.Range(0.0f,10.0f)<8.0f)
+					if(Random.Range(0.0f,10.0f)<7.0f || x==0 || x==mapWidth-1 || y==0 || y==mapHeight-1)
 						createHexTile(x, y, off, widthAway);
 					else
 						createWaterTile(x, y, off, widthAway);
@@ -269,7 +269,7 @@ public class Map : MonoBehaviour {
 		List<HexTile> temp = new List<HexTile>();
 
 		foreach(HexTile ht in p.currentTileScript.neighbors) {
-			if(ht.tag=="waterTile")
+			if((ht.tag=="waterTile" && p.tag!="Aerial" && p.tag!="BadAerial") || ht.isOccupied())
 				legal.Remove(ht);
 		}
 
@@ -296,8 +296,7 @@ public class Map : MonoBehaviour {
 				}
 			}
 		}
-
-
+		
 		return legal;
 	}
 
