@@ -5,7 +5,7 @@ public class SoldierStats: IStats{
 	
 	public static int COST = 150;
 	public static int ATTACKRANGE = 1;
-	public static int MOBILITY = 3;
+	public static int MOBILITY = 2;
 	public static int DEFENSE = 6;
 	public static bool CANCAPTURE = true;
 	public static bool CANATTACKAFTERMOVE = true;

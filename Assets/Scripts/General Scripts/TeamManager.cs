@@ -38,7 +38,8 @@ public class TeamManager {
 
 	public void removePlayersFromCapturedBases() {
 		foreach(Base b in bases) {
-			b.removeCaptor(team);
+			if(b.isOccupied())
+				b.removeCaptor(team);
 		}
 	}
 

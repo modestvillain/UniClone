@@ -58,6 +58,7 @@ public class DummyAI :MonoBehaviour {
 
 	public void doActions(int off) {
 
+
 		for(int i=0; i<TM.team.Count-off; i++) {
 
 			List<HexTile> possibleMoves = WorldManager.map.legalMoves(TM.team[i]);
@@ -103,15 +104,19 @@ public class DummyAI :MonoBehaviour {
 	}
 
 	public void endAITurn() {
-
 		TM.removePlayersFromCapturedBases();
 		BLUE.removePlayersFromCapturedBases();
 		WorldManager.beginPlayerTurn();
 	}
 
 	//creates player on top of base
+<<<<<<< HEAD
 	public void createNewPlayer(Base b, string playerType) {
 		if(TM.creditsAreSufficient(playerType) && !b.isOccupied()) {
+=======
+	private void createNewPlayer(Base b, string playerType) {
+		if(TM.creditsAreSufficient(playerType) && !b.isOccupied() && TM.team.Count < 5) {
+>>>>>>> 83f9442333ef496bc7056bd4df45c568ccd27b61
 			b.createPlayerAndPositionOnBase(playerType);
 			created = true;
 		}

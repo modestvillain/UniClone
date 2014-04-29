@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public class WorldManager : MonoBehaviour {
 
 	public static Map map;
-	public static DummyAI AI;
-	public static DummyAI AI2;
+	public static AI AI;
+	public static AI AI2;
 	public GameObject player;
 	public Sprite playerSprite;
 	public bool playerSet = false;
@@ -43,42 +43,31 @@ public class WorldManager : MonoBehaviour {
 		aerialStats = new AerialStats();
 		soldierStats = new SoldierStats();
 		heavyStats = new HeavyStats();
-		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
-//		AI2 = GameObject.FindGameObjectWithTag("AI2").GetComponent<DummyAI>();
-//		AI.TM = blueScript;
-//		AI.BLUE = redScript;
-//		AI2.TM = redScript;
-//		AI2.BLUE = redScript;
-//		AI2.types[0] = "BadAerial";
-//		AI2.types[1] = "BadSoldier";
-//		AI2.types[2] = "BadHeavy";
-//		AI.types[0] = "Aerial";
-//		AI.types[1] = "Soldier";
-//		AI.types[2] = "Heavy";
-		//WorldManager.mainCamera = Camera.m(Camera)GameObject.FindGameObjectWithTag("MainCamera");
+		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<AI>();
 	}
 
 	public static void endPlayerTurn() {
 
 		PLAYERMODE = false;
+		switchPlayer = false;
+		switchAI = true;
 		blueScript.removePlayersFromCapturedBases();
 		redScript.removePlayersFromCapturedBases();
 		removeTurnOverTiles();
 		foreach(Player p in blueScript.team) {
 			p.endTurn();
 		}
-		beginAITurn();
 	}
 
 	public static void endAITurn() {
 		PLAYERMODE = true;
+		switchAI = false;
+		switchPlayer = true;
 		blueScript.removePlayersFromCapturedBases();
 		redScript.removePlayersFromCapturedBases();
 		foreach(Player p in redScript.team) {
 			p.endTurn();
 		}
-		switchPlayer = true;
-		beginPlayerTurn();
 	}
 
 	void Update () {
@@ -94,15 +83,12 @@ public class WorldManager : MonoBehaviour {
 			switchPlayer = false;
 			switchAI = false;
 		}
-//		if(switchPlayer) {
-//			StartCoroutine(beginPlayerTurn());
-//
-//			switchPlayer = false;
-//		}
-//		else if(switchAI) {
-//			StartCoroutine(beginAITurn());
-//			switchAI = false;
-//		}
+		if(switchPlayer) {
+			beginPlayerTurn();
+		}
+		else if(switchAI) {
+			beginAITurn();
+		}
 	}
 
 	public static bool redWon() {
@@ -189,17 +175,14 @@ public class WorldManager : MonoBehaviour {
 
 	public static void beginPlayerTurn() {
 		blueScript.addCredits();
-		PLAYERMODE = true;
 		removeTurnOverTiles();
-		switchPlayer = false;
-		switchAI = true;
+		PLAYERMODE = true;
 	}
 
 	public static void beginAITurn() {
-		redScript.addCredits();
-		PLAYERMODE = false;
-		AI.startTurn();
-		switchPlayer = true;
-		switchAI = false;
+		WorldManager.PLAYERMODE = false;
+		redScript.addCredits();		
+		AI.startTurn(WorldManager.redScript,WorldManager.blueScript,WorldManager.map);
+		endAITurn();
 	}
 }
