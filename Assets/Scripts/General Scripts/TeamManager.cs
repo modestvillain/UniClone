@@ -83,10 +83,11 @@ public class TeamManager {
 			if(closest!=null){
 				int dist = closest.distanceFromBase(p.currentTileScript);
 				if(p.canCapture){
-					total += dist;
+					total += dist * weight;
 				}
 				else{
-					total += dist * weight;
+					total += dist;
+					//non-capture distance to nuetral base
 				}
 			}
 
@@ -95,6 +96,8 @@ public class TeamManager {
 		return total;
 	}
 
+
+
 	public double totalMinDistanceToEnemy(double weight){
 		double total = 0;
 		foreach(Player p in this.team){
@@ -102,14 +105,14 @@ public class TeamManager {
 			if(closest!=null){
 				int dist = closest.distanceToAnotherPlayer(p);
 				if(p.canCapture){
-					total += dist * weight;
+					total += 1/dist;
 				}
 				else{
 					total += dist;
 				}
 			}
 		}
-		return total;
+		return 2*total;
 	}
 
 
@@ -129,4 +132,6 @@ public class TeamManager {
 		}
 		return false;
 	}
+
+
 }

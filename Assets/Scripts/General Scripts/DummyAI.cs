@@ -12,23 +12,39 @@ public class DummyAI :MonoBehaviour {
 	public string[] types = new string[3];
 	public string me;
 	public bool created = false;
+	public static bool createdModified;
 
 	void Start() {
-		/*TM = WorldManager.redScript;
+		TM = WorldManager.redScript;
 		BLUE = WorldManager.blueScript;
 		types[0] = AERIAL;
 		types[1] = SOLDIER;
-		types[2] = HEAVY;*/
+		types[2] = HEAVY;
+
+		DummyAI.createdModified = false;
 	}
 
 	public void startTurn() {
 
+		//==========================Test Database stuff==========================
+		RuleBasedSystem sys = new RuleBasedSystem();
+		sys.addPlayersOnThisTeamToDataBase(this);
+
+		new SoldierCanGetToNuetralBase(sys, this);
+		new StillEnemyBase(this, sys);
+		//rules are in order of highest priority
+		//sys.ruleBasedIteration();
+		Debug.Log ("In this database:" + sys.printDatabase());
+
+		//============================end db===================================
 		WorldManager.map.deselectAll();
 		TM.addCredits();
 		created = false;
 		if(TM.bases.Count>0 && BLUE.bases.Count>0) {
 			if(UnityEngine.Random.Range(0,10)<9) {
-				createNewPlayer(TM.bases[0],types[UnityEngine.Random.Range(0,3)]);
+				//createNewPlayer(TM.bases[0],types[UnityEngine.Random.Range(0,3)]);
+				sys.ruleBasedIteration();
+			
 			}
 			if(TM.team.Count > 0 & !created) {
 				doActions (0);
@@ -47,7 +63,7 @@ public class DummyAI :MonoBehaviour {
 			List<HexTile> possibleMoves = WorldManager.map.legalMoves(TM.team[i]);
 			HexTile opTile = null;
 			double bestScore = -9999999;
-			double weightForCloseToBases = .70;//if you can't capture bases
+			double weightForCloseToBases = .60;//if you can't capture bases
 			double weightForCloseToEnemy = .70;//if you can capture bases
 			double weightForNumBases = 2;//if you can capture bases
 
@@ -60,13 +76,13 @@ public class DummyAI :MonoBehaviour {
 				State newS = new State(WorldManager.map.tileList, BLUE, TM);
 				newS.red.team[i].move(ht.gameObject);
 				double score = newS.scoringFunction(weightForCloseToBases, weightForCloseToEnemy, weightForNumBases);
-
+				//Debug.Log("score: " + score);
 				if(score>bestScore) {
 					bestScore = score;
 					opTile = ht;
 				}
 			}
-
+			//Debug.Log ("best score" + bestScore);
 			if(opTile != null) {
 				if(opTile.gameObject.tag == "Base") {
 					TM.team[i].capture((Base)opTile);
@@ -90,16 +106,18 @@ public class DummyAI :MonoBehaviour {
 
 		TM.removePlayersFromCapturedBases();
 		BLUE.removePlayersFromCapturedBases();
-		//WorldManager.beginPlayerTurn();
+		WorldManager.beginPlayerTurn();
 	}
 
 	//creates player on top of base
-	private void createNewPlayer(Base b, string playerType) {
+	public void createNewPlayer(Base b, string playerType) {
 		if(TM.creditsAreSufficient(playerType) && !b.isOccupied()) {
 			b.createPlayerAndPositionOnBase(playerType);
 			created = true;
 		}
 	}
+
+
 
 	private class State {
 		
@@ -144,7 +162,7 @@ public class DummyAI :MonoBehaviour {
 			score+= blue.totalMinDistanceToDesiredBases(weightForCloseToBases) - red.totalMinDistanceToDesiredBases(weightForCloseToBases);
 			
 			//make weight of close to other enemy players more for those who can't capture bases
-			score += blue.totalMinDistanceToEnemy(weightForCloseToEnemy) - red.totalMinDistanceToEnemy(weightForCloseToEnemy);
+			score -=  red.totalMinDistanceToEnemy(weightForCloseToEnemy);
 			return score;
 
 
@@ -152,4 +170,7 @@ public class DummyAI :MonoBehaviour {
 		
 		
 	}//state class
+
+
+
 }

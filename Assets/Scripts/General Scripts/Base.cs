@@ -246,6 +246,22 @@ public class Base : HexTile {
 		return (int)Mathf.Sqrt((int)Mathf.Pow(ht.x - this.x,2) + (int)Mathf.Pow(ht.y - this.y,2));
 	}//method
 
+	public Base closestEnemyBase(TeamManager tm){
+		//go through all enemy bases after determining who is the enemy
+		int distance = 999999;
+		Base closestBase = null;//tm.bases[0];
+		foreach(Base b in tm.bases){
+			//get distance to it from tile player is on
+			int newDist = b.distanceFromBase(this);
+			if(newDist < distance){
+				distance = newDist;
+				closestBase = b;
+			}
+		}
+		//return least distance hextile
+		return closestBase;
+	}
+
 	
 
 }

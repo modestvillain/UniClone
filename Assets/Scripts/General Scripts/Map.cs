@@ -301,6 +301,47 @@ public class Map : MonoBehaviour {
 		return legal;
 	}
 
+	public List<HexTile> legalMovesModified(HexTile hext/*Player p*/, int modifiedMobility, string playerType) {
+		
+		if(hext==null)											/* NULL CHECK, NEED TO RETURN NO LEGAL TILES */
+			return new List<HexTile>();
+		
+		List<HexTile> legal = new List<HexTile>(hext.neighbors);
+		List<HexTile> temp = new List<HexTile>();
+		
+		foreach(HexTile ht in hext.neighbors) {
+			if(ht.tag=="waterTile")
+				legal.Remove(ht);
+		}
+		
+		for(int i=1; i<modifiedMobility; i++) {
+			foreach(HexTile hex in legal) {
+				foreach(HexTile ht in hex.neighbors) {
+					if((!ht.isOccupied() && !temp.Contains(ht) && !legal.Contains(ht)) && (ht.tag != "waterTile" ||playerType=="Aerial" || playerType=="BadAerial")) {
+						temp.Add (ht);
+					}
+				}
+			}
+			foreach(HexTile hex in temp) {
+				legal.Add(hex);
+			}
+			temp = new List<HexTile>();
+		}
+		
+		List<HexTile> copy = new List<HexTile>(legal);
+		
+
+			foreach(HexTile ht in copy) {						/* REMOVE TILES THAT SOMEONE ELSE IS ALREADY OCCUPYING */
+				if(ht.isOccupied()) {
+					legal.Remove(ht);
+				}
+			}
+
+		
+		
+		return legal;
+	}
+
 	/*
 	 * Attacks counterpart to legalMoves
 	 */
