@@ -18,6 +18,7 @@ public class RuleBasedSystem  {
 	public static Identifier AERIAL;
 	public static Identifier HEAVY;
 	public static Identifier STILLENEMYBASE;
+	public static Identifier RED_PLAYERS;
 
 	//some predefined matches
 	public static Match redHasBases; 
@@ -38,13 +39,13 @@ public class RuleBasedSystem  {
 		RuleBasedSystem.AERIAL = new Identifier(true, "AERIAL");
 		RuleBasedSystem.HEAVY = new Identifier(true, "HEAVY");
 		RuleBasedSystem.STILLENEMYBASE = new Identifier(true, "STILLENEMYBASE");
-		//RuleBasedSystem.SPAWNRANDOM = new Identifier(true, "SPAWNRANDOM");
+		RuleBasedSystem.RED_PLAYERS = new Identifier(true, "RED_PLAYERS");
 
 		//predfine some matches
 		RuleBasedSystem.redHasBases = new DatumMatch(RuleBasedSystem.RED__BASE_COUNT, 1, 5);// red has at least one base
 		RuleBasedSystem.blueHasBases = new DatumMatch(RuleBasedSystem.STILLENEMYBASE, 1, 5);// blue has at least one base
 		RuleBasedSystem.isANuetralBase = new DatumMatch(RuleBasedSystem.NUMNEUTRALBASES,1, 4);//nuetral has at least one base
-		RuleBasedSystem.alreadyASolider = new Match(RuleBasedSystem.BADSOLDIER);
+		RuleBasedSystem.alreadyASolider = new DatumMatch(RuleBasedSystem.BADSOLDIER, 1, int.MaxValue);
 
 		this.database = new Database();
 		this.rules = new List<Rule>();
@@ -58,7 +59,7 @@ public class RuleBasedSystem  {
 
 			//check for triggering
 			if(r.ifClause.matches(database, bindings)){
-				Debug.Log ("there is a match");
+				//Debug.Log ("there is a match");
 				//fire the rule
 				r.action(bindings);
 				//exit
@@ -91,26 +92,30 @@ public class RuleBasedSystem  {
 		//go through players on red team, ask what type they are
 		//DataGroup
 		//Identifier is redTEam, with nested with the players
-		Identifier redPlayers = new Identifier(false, "RED_PLAYERS");
+		Identifier redPlayers = new Identifier(true, "RED_PLAYERS");
 		DataGroup dg = new DataGroup();
 		dg.identifier = redPlayers;
 
 
-
+		int badsCount = 0;
 		foreach(Player p in ai.TM.team){
 	//	foreach(Player p in ai.AI_TM.team){
-			Debug.Log ("Player added to database");
+			//Debug.Log ("Player added to database");
 			if(p is BadSoldier){
-				dg.addToChildren(new DataNode(RuleBasedSystem.BADSOLDIER));
+				dg.addToChildren(new Datum(RuleBasedSystem.BADSOLDIER, 1));
+				badsCount++;
 			}
 			else if(p is BadAerial){
-				dg.addToChildren(new DataNode(RuleBasedSystem.BADAERIAL));
+				dg.addToChildren(new Datum(RuleBasedSystem.BADAERIAL, 1));
 			}
 			else{
-					dg.addToChildren(new DataNode(RuleBasedSystem.BADHEAVY));
+				dg.addToChildren(new Datum(RuleBasedSystem.BADHEAVY, 1));
 			}
 		}
+		this.addInfo(new Datum(RuleBasedSystem.BADSOLDIER, badsCount));
 		this.addInfo(dg);
+
+
 	}//method
 
 	public void addPlayersOnEnemyTeamToDataBase(){
@@ -124,20 +129,22 @@ public class RuleBasedSystem  {
 		dg.identifier = bluePlayers;
 		
 		
-		
+
 		foreach(Player p in WorldManager.blueScript.team){
 			//	foreach(Player p in ai.AI_TM.team){
-			Debug.Log ("Player added to database");
+			//Debug.Log ("Player added to database");
 			if(p is Soldier){
-				dg.addToChildren(new DataNode(RuleBasedSystem.SOLDIER));
+				dg.addToChildren(new Datum(RuleBasedSystem.SOLDIER,1));
+
 			}
 			else if(p is Aerial){
-				dg.addToChildren(new DataNode(RuleBasedSystem.AERIAL));
+				dg.addToChildren(new Datum(RuleBasedSystem.AERIAL, 1));
 			}
 			else{
-				dg.addToChildren(new DataNode(RuleBasedSystem.HEAVY));
+				dg.addToChildren(new Datum(RuleBasedSystem.HEAVY, 1));
 			}
 		}
+		// how many bases red has
 		this.addInfo(dg);
 	}//method
 }//class

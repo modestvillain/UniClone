@@ -12,12 +12,20 @@ public class StillEnemyBase : Rule {
 		this.dai = dai;
 		this.sys = sys;
 
+		//DataGroupMatch dgm = new DataGroupMatch();
+		//dgm.identifier = RuleBasedSystem.RED_PLAYERS;
+		//dgm.children.Add(new Not(RuleBasedSystem.alreadyASolider));
+
 		//create match for solider already there
-		Match notAlreadyASolider = new Not(RuleBasedSystem.alreadyASolider);
-		Match comp = new And(notAlreadyASolider, RuleBasedSystem.blueHasBases);
+
+		Match comp = new And(new Not(RuleBasedSystem.alreadyASolider), RuleBasedSystem.blueHasBases);
+		//dgm.children.Add(comp);
 		this.ifClause = comp;
 		sys.addInfo(new Datum(RuleBasedSystem.STILLENEMYBASE, WorldManager.blueScript.bases.Count));
 		sys.addRule(this);
+
+		
+
 	}
 
 	public override void action (List<Binding> bindings)
