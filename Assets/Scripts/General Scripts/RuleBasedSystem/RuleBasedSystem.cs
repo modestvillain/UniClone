@@ -14,6 +14,9 @@ public class RuleBasedSystem  {
 	public static Identifier BADSOLDIER;
 	public static Identifier BADAERIAL;
 	public static Identifier BADHEAVY;
+	public static Identifier SOLDIER;
+	public static Identifier AERIAL;
+	public static Identifier HEAVY;
 	public static Identifier STILLENEMYBASE;
 
 	//some predefined matches
@@ -26,12 +29,16 @@ public class RuleBasedSystem  {
 		RuleBasedSystem.HEALTH = new Identifier( true, "HEALTH");
 		RuleBasedSystem.WEALTH = new Identifier( true, "WEALTH");
 		RuleBasedSystem.NUMNEUTRALBASES = new Identifier( true, "NUMNEUTRALBASES");
-		RuleBasedSystem.RED__BASE_COUNT = new Identifier( true, "RED__BASE_COUNTT");
+		RuleBasedSystem.RED__BASE_COUNT = new Identifier( true, "RED__BASE_COUNT");
 		RuleBasedSystem.SOLDIER_CAN_GET_TO_NEUTRALBASE = new Identifier( true, "SOLDIER_CAN_GET_TO_NEUTRALBASE");
 		RuleBasedSystem.BADSOLDIER = new Identifier(true, "BADSOLDIER");
 		RuleBasedSystem.BADAERIAL = new Identifier(true, "BADAERIAL");
 		RuleBasedSystem.BADHEAVY = new Identifier(true, "BADHEAVY");
-		RuleBasedSystem.STILLENEMYBASE = new Identifier(false, "STILLENEMYBASE");
+		RuleBasedSystem.SOLDIER = new Identifier(true, "SOLDIER");
+		RuleBasedSystem.AERIAL = new Identifier(true, "AERIAL");
+		RuleBasedSystem.HEAVY = new Identifier(true, "HEAVY");
+		RuleBasedSystem.STILLENEMYBASE = new Identifier(true, "STILLENEMYBASE");
+		//RuleBasedSystem.SPAWNRANDOM = new Identifier(true, "SPAWNRANDOM");
 
 		//predfine some matches
 		RuleBasedSystem.redHasBases = new DatumMatch(RuleBasedSystem.RED__BASE_COUNT, 1, 5);// red has at least one base
@@ -78,7 +85,8 @@ public class RuleBasedSystem  {
 		return this.database.print();
 	}
 
-	public void addPlayersOnThisTeamToDataBase(AI ai){
+	public void addPlayersOnThisTeamToDataBase(DummyAI ai){
+	//public void addPlayersOnThisTeamToDataBase(AI ai){
 		//create relavant info for database
 		//go through players on red team, ask what type they are
 		//DataGroup
@@ -89,7 +97,8 @@ public class RuleBasedSystem  {
 
 
 
-		foreach(Player p in ai.AI_TM.team){
+		foreach(Player p in ai.TM.team){
+	//	foreach(Player p in ai.AI_TM.team){
 			Debug.Log ("Player added to database");
 			if(p is BadSoldier){
 				dg.addToChildren(new DataNode(RuleBasedSystem.BADSOLDIER));
@@ -99,6 +108,34 @@ public class RuleBasedSystem  {
 			}
 			else{
 					dg.addToChildren(new DataNode(RuleBasedSystem.BADHEAVY));
+			}
+		}
+		this.addInfo(dg);
+	}//method
+
+	public void addPlayersOnEnemyTeamToDataBase(){
+		//public void addPlayersOnThisTeamToDataBase(AI ai){
+		//create relavant info for database
+		//go through players on red team, ask what type they are
+		//DataGroup
+		//Identifier is redTEam, with nested with the players
+		Identifier bluePlayers = new Identifier(false, "BLUE_PLAYERS");
+		DataGroup dg = new DataGroup();
+		dg.identifier = bluePlayers;
+		
+		
+		
+		foreach(Player p in WorldManager.blueScript.team){
+			//	foreach(Player p in ai.AI_TM.team){
+			Debug.Log ("Player added to database");
+			if(p is Soldier){
+				dg.addToChildren(new DataNode(RuleBasedSystem.SOLDIER));
+			}
+			else if(p is Aerial){
+				dg.addToChildren(new DataNode(RuleBasedSystem.AERIAL));
+			}
+			else{
+				dg.addToChildren(new DataNode(RuleBasedSystem.HEAVY));
 			}
 		}
 		this.addInfo(dg);

@@ -49,7 +49,7 @@ public class TeamManager {
 
 	public void addCredits() {
 		foreach(Base b in bases) {
-			CREDITS += 100;
+			CREDITS += b.payoff;;
 		}
 	}
 

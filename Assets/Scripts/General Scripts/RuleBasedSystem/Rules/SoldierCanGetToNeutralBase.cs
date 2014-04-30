@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class SoldierCanGetToNuetralBase : Rule{
-	AI ai;
+	DummyAI ai;
+	//AI ai;
 	RuleBasedSystem sys;
 
 
-	public SoldierCanGetToNuetralBase(RuleBasedSystem sys, AI ai){
+	public SoldierCanGetToNuetralBase(RuleBasedSystem sys, DummyAI ai){
+	//public SoldierCanGetToNuetralBase(RuleBasedSystem sys, AI ai){
 		this.sys = sys;
 		//need to add and you didn't already spawn a solider
 

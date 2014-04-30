@@ -5,8 +5,10 @@ using System.Collections.Generic;
 public class WorldManager : MonoBehaviour {
 
 	public static Map map;
-	public static AI AI;
-	public static AI AI2;
+//	public static AI AI;
+//	public static AI AI2;
+	public static DummyAI AI;
+	public static DummyAI AI2;
 	public GameObject player;
 	public Sprite playerSprite;
 	public bool playerSet = false;
@@ -19,7 +21,9 @@ public class WorldManager : MonoBehaviour {
 						ATTACKMODE = false,
 						PLAYERMODE = true,
 						WINSTATE = false,
-						AITHINKING = false;
+						AITHINKING = false,
+						DUMMY = true;
+				
 	public static TeamManager nuetralScript;
 	public static string WINNER;
 	public static int MODE;// int 1 is move mode, 2 means normal mode
@@ -44,7 +48,11 @@ public class WorldManager : MonoBehaviour {
 		aerialStats = new AerialStats();
 		soldierStats = new SoldierStats();
 		heavyStats = new HeavyStats();
-		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<AI>();
+
+		//AI = GameObject.FindGameObjectWithTag("AI").GetComponent<AI>();
+
+		AI = GameObject.FindGameObjectWithTag("AI").GetComponent<DummyAI>();
+
 	}
 
 	public static void endPlayerTurn() {
@@ -184,6 +192,7 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	public static void beginPlayerTurn() {
+		switchPlayer = false;
 		WorldManager.AITHINKING = false;
 		blueScript.addCredits();
 		removeTurnOverTiles();
@@ -191,10 +200,16 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	public static void beginAITurn() {
+		switchAI = false;
 		WorldManager.AITHINKING = true;
 		WorldManager.PLAYERMODE = false;
-		redScript.addCredits();		
-		AI.startTurn(WorldManager.redScript,WorldManager.blueScript,WorldManager.map);
+		redScript.addCredits();	
+
+		//AI.startTurn(WorldManager.redScript,WorldManager.blueScript,WorldManager.map);
+		
+
+		AI.startTurn();
+
 		endAITurn();
 	}
 }

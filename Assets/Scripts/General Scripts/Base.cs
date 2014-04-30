@@ -19,7 +19,8 @@ public class Base : HexTile {
 	private bool menuOn = false;
 	private IStats selectedStats = WorldManager.aerialStats;
 	private string create;
-	
+	public int payoff;
+
 	void Start () {
 		
 	}
@@ -63,6 +64,7 @@ public class Base : HexTile {
 		SpriteRenderer sr = GetComponent<SpriteRenderer>();
 		switch(baseType) {
 			case 0:
+				payoff=100;
 				TM = WorldManager.blueScript;
 				gameObject.transform.parent = TM.parent.transform;
 				TM.bases.Add (this);
@@ -74,6 +76,7 @@ public class Base : HexTile {
 				side = "BLUE";
 				break;
 			case 1:
+				payoff=100;
 				TM = WorldManager.redScript;
 				gameObject.transform.parent = TM.parent.transform;
 				TM.bases.Add (this);
@@ -85,6 +88,7 @@ public class Base : HexTile {
 				side = "RED";
 				break;
 			default:
+				payoff=50;
 				TM = WorldManager.nuetralScript;
 				TM.bases.Add(this);
 				normalSprite = greyBaseSprite;
