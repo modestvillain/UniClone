@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class SoldierCanGetToNuetralBase : Rule{
-	DummyAI ai;
+	AI ai;
 	RuleBasedSystem sys;
 
 
-	public SoldierCanGetToNuetralBase(RuleBasedSystem sys, DummyAI ai){
+	public SoldierCanGetToNuetralBase(RuleBasedSystem sys, AI ai){
 		this.sys = sys;
 		//need to add and you didn't already spawn a solider
 
@@ -16,7 +16,7 @@ public class SoldierCanGetToNuetralBase : Rule{
 		sys.addInfo(new Datum(RuleBasedSystem.RED__BASE_COUNT, WorldManager.redScript.bases.Count));// how many bases red has
 
 		if(WorldManager.nuetralScript.bases.Count > 0){
-			bool contains = WorldManager.map.legalMovesModified(WorldManager.redScript.bases[0], 6, "Soldier").Contains(WorldManager.nuetralScript.bases[0]);
+			bool contains = WorldManager.map.legalMovesModified(WorldManager.redScript.bases[0], 4, "Soldier").Contains(WorldManager.nuetralScript.bases[0]);
 			int c;
 			if(contains){
 				c = 1;

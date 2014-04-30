@@ -18,7 +18,8 @@ public class WorldManager : MonoBehaviour {
 						NORMALMODE = true,
 						ATTACKMODE = false,
 						PLAYERMODE = true,
-						WINSTATE = false;
+						WINSTATE = false,
+						AITHINKING = false;
 	public static TeamManager nuetralScript;
 	public static string WINNER;
 	public static int MODE;// int 1 is move mode, 2 means normal mode
@@ -47,7 +48,7 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	public static void endPlayerTurn() {
-
+		WorldManager.AITHINKING =true;
 		PLAYERMODE = false;
 		switchPlayer = false;
 		switchAI = true;
@@ -60,6 +61,7 @@ public class WorldManager : MonoBehaviour {
 	}
 
 	public static void endAITurn() {
+		WorldManager.AITHINKING = false;
 		PLAYERMODE = true;
 		switchAI = false;
 		switchPlayer = true;
@@ -167,19 +169,29 @@ public class WorldManager : MonoBehaviour {
 	}//method
 
 	void OnGUI() {
-		gameObject.GetComponent<WorldMenu>().makeMenu();
+		if(WorldManager.AITHINKING){
+			gameObject.GetComponent<WorldMenu>().AIStatus();
+		}
+	
 		if(WorldManager.WINSTATE) {
 			gameObject.GetComponent<WorldMenu>().goToWinState();
 		}
+
+		if(!WorldManager.AITHINKING){
+			gameObject.GetComponent<WorldMenu>().makeMenu();
+		}
+
 	}
 
 	public static void beginPlayerTurn() {
+		WorldManager.AITHINKING = false;
 		blueScript.addCredits();
 		removeTurnOverTiles();
 		PLAYERMODE = true;
 	}
 
 	public static void beginAITurn() {
+		WorldManager.AITHINKING = true;
 		WorldManager.PLAYERMODE = false;
 		redScript.addCredits();		
 		AI.startTurn(WorldManager.redScript,WorldManager.blueScript,WorldManager.map);

@@ -22,4 +22,10 @@ public class WorldMenu : MonoBehaviour {
 		}
 	}
 
+	public void AIStatus(){
+
+		GUILayout.Box("AI THINKING");
+
+	}
+
 }//class

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class DatumMatch : Match {
 
-		public Identifier identifier;
+		//public Identifier identifier;
 		public int minValue;
 		public int maxValue;
 		public DatumMatch(){

@@ -12,7 +12,7 @@ public class AI : MonoBehaviour {
 	 * 
 	 * *****/
 
-	public TeamManager TM;
+	public TeamManager AI_TM;
 	public int leafLevel=1;
 	public static AIMap map;
 
@@ -23,12 +23,22 @@ public class AI : MonoBehaviour {
 		}
 	}
 
-	public void spawnPlayer(TeamManager tm, string playerType) {
-
-		if(tm.creditsAreSufficient(playerType) && !tm.bases[0].isOccupied()) {
-			tm.bases[0].createPlayerAndPositionOnBase(playerType);
-		}
+	public void spawnPlayer() {
+		RuleBasedSystem sys = new RuleBasedSystem();
+		sys.addPlayersOnThisTeamToDataBase(this);
+		//rules are in order of highest priority
+		new SoldierCanGetToNuetralBase(sys, this);
+		new StillEnemyBase(this, sys);
+		sys.ruleBasedIteration();
+		Debug.Log ("In this database:" + sys.printDatabase());
 	}
+
+	public void createNewPlayer(Base b, string playerType) {
+			if(AI_TM.creditsAreSufficient(playerType) && !b.isOccupied() && AI_TM.team.Count < 5) {
+				b.createPlayerAndPositionOnBase(playerType);
+		//			created = true;
+				}
+			}
 
 	public State getSuccessorState(State oldState, Action action) {
 		
@@ -73,17 +83,10 @@ public class AI : MonoBehaviour {
 		return state;
 	}
 
-	public string getMostExpensive(int credits) {
-		/* JILL PUT YO SHIT HERE */
-		/* JILL PUT YO SHIT HERE */
-		/* JILL PUT YO SHIT HERE */
-		/* JILL PUT YO SHIT HERE */
-		/* JILL PUT YO SHIT HERE */
-		return "BadSoldier";
-	}
 
 	public void startTurn(TeamManager myTeam, TeamManager enemyTeam, Map map) {
 
+		this.AI_TM = myTeam;
 		AIMap m = new AIMap(map);
 		AITM TM = new AITM(myTeam, m);
 		AITM enemyTM = new AITM(enemyTeam, m);
@@ -116,9 +119,9 @@ public class AI : MonoBehaviour {
 			if(victim != null)
 				attacker.attack(victim);
 		}
-		if(vActions[0].respawnType != null) {
-			spawnPlayer(myTeam, vActions[0].respawnType);
-		}
+		//333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
+		if(AI_TM.team.Count < 3)
+			spawnPlayer();
 	}
 
 	public List<Action> getBestMove(AITM myTeam, AITM enemyTeam, AIMap map) {
@@ -154,9 +157,6 @@ public class AI : MonoBehaviour {
 
 		totalMoves[bestId].Insert (0, respawnTarget);
 
-		if(myTeam.team.Count<3) {
-			respawnTarget.respawnType = getMostExpensive(myTeam.CREDITS);
-		}
 
 		return totalMoves[bestId];
 	}
@@ -526,16 +526,39 @@ private double getNodeValue(Node node, int level, bool max) {
 			// better if total strength is better than theirs-- your total strength minus theirs, offense
 			score += TM.totalDefense() - enemyTM.totalDefense();
 			// better if you have more bases than they do -- your bases minus their bases
-			score += 2*(TM.bases.Count - enemyTM.bases.Count);
-			
+			//score += 2*(TM.bases.Count - enemyTM.bases.Count);
+			score += 2*TM.bases.Count;
 			// how close troop is to base how close they are minus how close you are to bases
 			score+= enemyTM.totalMinDistanceToDesiredBases(weightForCloseToBases) - TM.totalMinDistanceToDesiredBases(weightForCloseToBases);
 			
 			//make weight of close to other enemy players more for those who can't capture bases
-			score += enemyTM.totalMinDistanceToEnemy(weightForCloseToEnemy) - TM.totalMinDistanceToEnemy(weightForCloseToEnemy);
+			score -= TM.totalMinDistanceToEnemy(weightForCloseToEnemy);
 			return score;
 		}
 	}
+
+	//		public double scoringFunction(double weightForCloseToBases, double weightForCloseToEnemy, double weightForNumBases){
+	//			double score = 0;
+	//			//total health of all players should be greater than the total health of theirs-- your total health minus theirs
+	//			score += red.totalHealth() - blue.totalHealth();
+	//			//money is good in the begining-- want enough money to buy something substantial, for now just have money
+	//			score += red.CREDITS;
+	//			// want a player that has high enough damage to take out the player's on their map (so want stronger players)-- your total damage minus theirs
+	//			score += red.totalDamage() - blue.totalDamage();
+	//			// better if total strength is better than theirs-- your total strength minus theirs, offense
+	//			score += red.totalDefense() - blue.totalDefense();
+	//			// better if you have more bases than they do -- your bases minus their bases
+	//			score += 2*(red.bases.Count - blue.bases.Count);
+	//
+	//			// how close troop is to base how close they are minus how close you are to bases
+	//			score+= blue.totalMinDistanceToDesiredBases(weightForCloseToBases) - red.totalMinDistanceToDesiredBases(weightForCloseToBases);
+	//			
+	//			//make weight of close to other enemy players more for those who can't capture bases
+	//			score -=  red.totalMinDistanceToEnemy(weightForCloseToEnemy);
+	//			return score;
+	//
+	//
+	//		}//method
 
 	public class AIHexTile {
 		public int x;

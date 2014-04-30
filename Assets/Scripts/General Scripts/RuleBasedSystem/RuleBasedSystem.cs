@@ -31,7 +31,7 @@ public class RuleBasedSystem  {
 		RuleBasedSystem.BADSOLDIER = new Identifier(true, "BADSOLDIER");
 		RuleBasedSystem.BADAERIAL = new Identifier(true, "BADAERIAL");
 		RuleBasedSystem.BADHEAVY = new Identifier(true, "BADHEAVY");
-		RuleBasedSystem.STILLENEMYBASE = new Identifier(true, "STILLENEMYBASE");
+		RuleBasedSystem.STILLENEMYBASE = new Identifier(false, "STILLENEMYBASE");
 
 		//predfine some matches
 		RuleBasedSystem.redHasBases = new DatumMatch(RuleBasedSystem.RED__BASE_COUNT, 1, 5);// red has at least one base
@@ -78,7 +78,7 @@ public class RuleBasedSystem  {
 		return this.database.print();
 	}
 
-	public void addPlayersOnThisTeamToDataBase(DummyAI ai){
+	public void addPlayersOnThisTeamToDataBase(AI ai){
 		//create relavant info for database
 		//go through players on red team, ask what type they are
 		//DataGroup
@@ -89,8 +89,8 @@ public class RuleBasedSystem  {
 
 
 
-		foreach(Player p in ai.TM.team){
-			Debug.Log ("" + p.GetType());
+		foreach(Player p in ai.AI_TM.team){
+			Debug.Log ("Player added to database");
 			if(p is BadSoldier){
 				dg.addToChildren(new DataNode(RuleBasedSystem.BADSOLDIER));
 			}
