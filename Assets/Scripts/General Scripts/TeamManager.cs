@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class TeamManager {
 
 	public GameObject parent;
-	public int CREDITS = 500;
+	public int CREDITS = 400;
 	public List<Player> team = new List<Player>();
 	public List<Base> bases = new List<Base>();
 
