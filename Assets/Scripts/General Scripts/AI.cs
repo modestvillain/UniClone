@@ -13,7 +13,7 @@ public class AI : MonoBehaviour {
 	 * *****/
 
 	public TeamManager AI_TM;
-	public int leafLevel=1;
+	public int leafLevel=2;
 	public static AIMap map;
 
 	public void virtualSpawn(AITM tm, string playerType) {
@@ -131,14 +131,15 @@ public class AI : MonoBehaviour {
 		List<List<Action>> totalMoves=getCompleteMoveList (myTeam, enemyTeam, map);
 
 		double[] values=new double[totalMoves.Count];
-
+		this.leafLevel = 1;
+		//Debug.Log(leafLevel + " best move");
 		for(int i=0; i<totalMoves.Count; i++){
 
 			int credits=state.TM.CREDITS;
 			State successor = getResultantState(state,totalMoves[i]);
 			Node node = new Node(successor);
-			//values[i]=getNodeValue(node, successor.level, true);
-			values[i]=node.state.scoringFunction(.6,.7,2);
+			values[i]=getNodeValue(node, 0, false);
+			//values[i]=node.state.scoringFunction(.6,.7,2);
 		}
 
 		int bestId = 0;
@@ -157,7 +158,6 @@ public class AI : MonoBehaviour {
 
 		totalMoves[bestId].Insert (0, respawnTarget);
 
-
 		return totalMoves[bestId];
 	}
 
@@ -171,35 +171,36 @@ private double getNodeValue(Node node, int level, bool max) {
 
 		if (!max) {
 			//enemy increments level count
-			newLevel=level++;
+			newLevel=++level;
 		}
-
-		if (level == leafLevel) {
+		//Debug.Log(this.leafLevel + " leafLevel and " + level);
+		if (level >= leafLevel && max) {
 			//get value using scoring function
-
 			if(max){
-			//get list of all possible moves
-			List<List<Action>> totalMoves=getCompleteMoveList (myTeam, enemyTeam, map);
-
-			double[] values=new double[totalMoves.Count];
-			for(int i=0; i<totalMoves.Count; i++){
-				//construct successor state node
-				int credits=myTeam.CREDITS;
-				State successor=getResultantState (node.state,totalMoves[i]);
-				values[i]=node.state.scoringFunction(.6,.7,2);														/* PLACEHOLDER FOR REAL WEIGHTS*/
-				}
-				double nodeValue=-999999999;
-				for(int i=0; i<totalMoves.Count; i++){
-					if(values[i]>nodeValue){
-						nodeValue=values[i];
-					}
-			 	}
-				return nodeValue;
-			}
-			else{
-				//min
+				//Debug.Log("max leaf");
 				//get list of all possible moves
 				List<List<Action>> totalMoves=getCompleteMoveList (myTeam, enemyTeam, map);
+
+				double[] values=new double[totalMoves.Count];
+				for(int i=0; i<totalMoves.Count; i++){
+					//construct successor state node
+					int credits=myTeam.CREDITS;
+					State successor=getResultantState (node.state,totalMoves[i]);
+					values[i]=node.state.scoringFunction(.6,.7,2);														/* PLACEHOLDER FOR REAL WEIGHTS*/
+					}
+					double nodeValue=-999999999;
+					for(int i=0; i<totalMoves.Count; i++){
+						if(values[i]>nodeValue){
+							nodeValue=values[i];
+						}
+				 	}
+					return nodeValue;
+			}
+			else{
+				//Debug.Log("min leaf");
+				//min
+				//get list of all possible moves
+				List<List<Action>> totalMoves=getCompleteMoveList (enemyTeam, myTeam, map);
 				double[] values=new double[totalMoves.Count];
 				for(int i=0; i<totalMoves.Count; i++){
 					//construct successor state node
@@ -222,8 +223,9 @@ private double getNodeValue(Node node, int level, bool max) {
 			if(max) {
 				//recurse
 				//get list of all possible moves
-
+				bool newMax = false;
 				List<List<Action>> totalMoves = getCompleteMoveList(myTeam, enemyTeam, map);
+				//Debug.Log(totalMoves.Count + " moves");
 				double[] values = new double[totalMoves.Count];
 
 				for(int i=0; i<totalMoves.Count; i++){
@@ -232,13 +234,6 @@ private double getNodeValue(Node node, int level, bool max) {
 					int credits=node.state.TM.CREDITS;
 					State successorState = getResultantState(node.state,totalMoves[i]);
 					Node successor = new Node(successorState);
-					bool newMax;
-					if(max==true){
-						newMax = false;
-					}
-					else{
-						newMax = true;
-					}
 					values[i] = getNodeValue (successor,newLevel,newMax);				
                }
 
@@ -255,23 +250,18 @@ private double getNodeValue(Node node, int level, bool max) {
 			else{
 				//choose mininum value
 				//total moves needs to work based on team
+				bool newMax=true;
 				List<List<Action>> totalMoves=getCompleteMoveList (enemyTeam, myTeam, map);
+				//Debug.Log(totalMoves.Count + " moves");
 				double[] values=new double[totalMoves.Count];
 				for(int i=0; i<totalMoves.Count; i++){
 					
 					int credits=node.state.enemyTM.CREDITS;
 					State successorState = getResultantState (node.state,totalMoves[i]);
 					Node successor = new Node(successorState);
-					bool newMax;
-					if(max==true){
-						newMax=false;
-					}
-					else{
-						newMax=true;
-					}
+					
 					values[i]=getNodeValue (successor,newLevel,newMax);
 				}
-
 				double nodeValue=99999999;
 				for(int i=0; i<totalMoves.Count; i++){
 					if(values[i]<nodeValue){
@@ -299,8 +289,13 @@ private double getNodeValue(Node node, int level, bool max) {
 		List<AIHexTile> actionTiles=state.legalMoves(attacker);
 		List<Action> actionList=new List<Action>();
 		AIHexTile h = attacker.hex;
-
-		for (int i=0; i<actionTiles.Count; i++) {
+		int threshold;
+		int limiting_factor = .3f;
+		if((int)actionTiles.Count*limiting_factor == 0)
+			threshold = actionTiles.Count;
+		else
+			threshold = (int)(actionTiles.Count*limiting_factor);
+		for (int i=0; i<threshold; i++) {
 			Action action = new Action();
 			action.attacker = attacker;
 			action.destination=actionTiles[i];
@@ -366,22 +361,21 @@ private double getNodeValue(Node node, int level, bool max) {
 
 	private void createChildrenTrooperNodes(StateNode snode) {
 
-		State state = snode.state;
-		List<AIPlayer> troops = snode.unactedTroops;
-		List<TroopNode> children = new List<TroopNode>(); 
+		if(snode.unactedTroops.Count > 0) {
 
-		if(troops.Count > 0) {
-
-			for (int i=0; i<troops.Count; i++) {
-
-				TroopNode newTroopnode = new TroopNode(state);
-				newTroopnode.actingTroop = newTroopnode.state.TM.team[i];
-				List<AIPlayer> newUnactedTroops = new List<AIPlayer>(snode.unactedTroops);
-				newUnactedTroops.Remove (troops[i]);
-				newTroopnode.unactedTroops = newUnactedTroops;
-				createChildrenStateNodes(newTroopnode);
-				children.Add(newTroopnode);
-			}
+			//for (int i=0; i<troops.Count; i++) {
+			State state = snode.state;
+			List<AIPlayer> troops = snode.unactedTroops;
+			List<TroopNode> children = new List<TroopNode>();
+			List<AIPlayer> newUnactedTroops = new List<AIPlayer>(snode.unactedTroops);
+			AIPlayer p = snode.unactedTroops[0];
+			TroopNode newTroopnode = new TroopNode(state);
+			newTroopnode.actingTroop = p;
+			newUnactedTroops.Remove (p);
+			newTroopnode.unactedTroops = newUnactedTroops;
+			createChildrenStateNodes(newTroopnode);
+			children.Add(newTroopnode);
+			//}
 
 			snode.children = children;
 		}
@@ -392,6 +386,7 @@ private double getNodeValue(Node node, int level, bool max) {
 		State s = new State(troop.state);
 		AIPlayer copyTroop = s.getPlayer(troop.actingTroop);
 		List<Action> actionList=getLegalActions(s, copyTroop);
+
 		List<StateNode> children = new List<StateNode> ();
 
 		for (int i=0; i<actionList.Count; i++) {
@@ -529,7 +524,7 @@ private double getNodeValue(Node node, int level, bool max) {
 			//score += 2*(TM.bases.Count - enemyTM.bases.Count);
 			score += 2*TM.bases.Count;
 			// how close troop is to base how close they are minus how close you are to bases
-			score+= enemyTM.totalMinDistanceToDesiredBases(weightForCloseToBases) - TM.totalMinDistanceToDesiredBases(weightForCloseToBases);
+			score += enemyTM.totalMinDistanceToDesiredBases(weightForCloseToBases) - TM.totalMinDistanceToDesiredBases(weightForCloseToBases);
 			
 			//make weight of close to other enemy players more for those who can't capture bases
 			score -= TM.totalMinDistanceToEnemy(weightForCloseToEnemy);
