@@ -14,6 +14,7 @@ public class Map : MonoBehaviour {
 	public int realWidth;
 	public int mapWidth;
 	public int mapHeight;
+	public float threshold = 6f;
 	public bool empty=true;
 	public Base lastBaseSelected;
 
@@ -204,7 +205,7 @@ public class Map : MonoBehaviour {
 					createBase(x, y, off, widthAway,-1);
 				}
 				else {
-					if(Random.Range(0.0f,10.0f)<7.0f || x==0 || x==mapWidth-1 || y==0 || y==mapHeight-1)
+					if(Random.Range(0.0f,10.0f)< threshold || x==0 || x==mapWidth-1 || y==0 || y==mapHeight-1)
 						createHexTile(x, y, off, widthAway);
 					else
 						createWaterTile(x, y, off, widthAway);
